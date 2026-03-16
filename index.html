@@ -6,7 +6,7 @@
   <title>VIZALOK</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <!-- Firebase Compat SDK (v10.x - still supported for simple CDN setups) -->
+  <!-- Firebase Compat SDK v10.14.1 -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -49,9 +49,9 @@
     <div class="flex-1 flex flex-col">
       <!-- TOP BAR -->
       <div class="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center px-8 justify-between">
-        <input 
-          type="text" 
-          placeholder="Search songs, artists..." 
+        <input
+          type="text"
+          placeholder="Search songs, artists..."
           class="bg-zinc-800 rounded-3xl px-6 py-2 w-96 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
         <div class="flex items-center gap-6">
@@ -59,9 +59,9 @@
             <img src="https://picsum.photos/id/64/32/32" alt="Profile" class="w-8 h-8 rounded-2xl">
             <span id="username" class="font-medium">Username</span>
           </div>
-          <button 
-            onclick="signIn()" 
-            id="signInBtn" 
+          <button
+            onclick="signIn()"
+            id="signInBtn"
             class="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-2 rounded-3xl text-sm font-medium hover:opacity-90 transition"
           >
             Sign In
@@ -71,7 +71,7 @@
 
       <!-- MAIN GRID CONTENT -->
       <div class="flex-1 overflow-auto p-8 grid grid-cols-12 gap-8">
-        <!-- Featured Music (col-span-8) -->
+        <!-- Featured Music -->
         <div class="col-span-8 bg-zinc-900 rounded-3xl p-8">
           <div class="text-xs text-zinc-400 mb-3">Featured Music</div>
           <div class="flex gap-8">
@@ -89,25 +89,22 @@
           </div>
         </div>
 
-        <!-- Leaderboard (col-span-8 below featured) -->
+        <!-- Leaderboard -->
         <div class="col-span-8 bg-zinc-900 rounded-3xl p-8">
           <div class="font-semibold text-lg mb-4">Leaderboard</div>
           <div class="grid grid-cols-2 gap-6 text-sm text-zinc-300">
             Top Artists • Most Popular • Most Sales
           </div>
-          <!-- Add your cards/table here later -->
         </div>
 
-        <!-- Right Sidebar: Live Streams + Trending (col-span-4) -->
+        <!-- Right Sidebar -->
         <div class="col-span-4 space-y-6">
           <div class="bg-zinc-900 rounded-3xl p-6">
             <div class="font-semibold mb-2">Live Streams</div>
-            <!-- Placeholder content -->
             <p class="text-sm text-zinc-400">No live streams right now...</p>
           </div>
           <div class="bg-zinc-900 rounded-3xl p-6">
             <div class="font-semibold mb-2">Trending Creators</div>
-            <!-- Placeholder content -->
             <p class="text-sm text-zinc-400">Trending soon...</p>
           </div>
         </div>
@@ -116,12 +113,12 @@
   </div>
 
   <script>
-    // Your Firebase config (looks correct from your screenshot)
+    // Corrected Firebase config (matches your project vizalok-7259)
     const firebaseConfig = {
       apiKey: "AIzaSyCXtvOzhTqYQPjoOfMP4a7rdmv1t2GN-sg",
-      authDomain: "vizalok-72e59.firebaseapp.com",
-      projectId: "vizalok-72e59",
-      storageBucket: "vizalok-72e59.firebasestorage.app",
+      authDomain: "vizalok-7259.firebaseapp.com",
+      projectId: "vizalok-7259",
+      storageBucket: "vizalok-7259.firebasestorage.app",
       messagingSenderId: "589574371802",
       appId: "1:589574371802:web:cda08e23b7d3e63efce8e3",
       measurementId: "G-VGN5GCK7DC"
@@ -132,12 +129,41 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    console.log('Firebase initialized!'); // Check browser console
+    console.log('Firebase initialized successfully! Open browser console (F12) to see this.');
 
-    // Basic sign-in placeholder (expand later with providers)
-    function signIn() {
-      alert('Sign-in flow coming soon! (Google / Xumm / Email etc.)');
-      // Example: auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    // Real Google sign-in function
+    async function signIn() {
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await auth.signInWithPopup(provider);
+        console.log('Signed in as:', result.user.displayName || result.user.email);
+      } catch (error) {
+        console.error('Sign-in error:', error.code, error.message);
+        if (error.code === 'auth/unauthorized-domain') {
+          alert('Domain error: Add "vizalok.com" to Authorized domains in Firebase console → Authentication → Settings.');
+        } else if (error.code === 'auth/popup-blocked') {
+          alert('Popup blocked by browser. Allow popups for vizalok.com and try again.');
+        } else {
+          alert('Sign-in failed: ' + error.message);
+        }
+      }
     }
 
-    // Listen for auth state changes
+    // Listen for auth state → show profile or sign-in button
+    auth.onAuthStateChanged((user) => {
+      const signInBtn = document.getElementById('signInBtn');
+      const profileDiv = document.getElementById('profile');
+      const usernameSpan = document.getElementById('username');
+
+      if (user) {
+        signInBtn.classList.add('hidden');
+        profileDiv.classList.remove('hidden');
+        usernameSpan.textContent = user.displayName || user.email?.split('@')[0] || 'User';
+      } else {
+        signInBtn.classList.remove('hidden');
+        profileDiv.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
