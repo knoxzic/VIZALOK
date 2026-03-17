@@ -89,81 +89,8 @@
           </div>
         </div>
 
-        <!-- Leaderboard -->
+        <!-- Leaderboard (now dynamic) -->
         <div class="col-span-8 bg-zinc-900 rounded-3xl p-8">
-          <div class="font-semibold text-lg mb-4">Leaderboard</div>
-          <div class="grid grid-cols-2 gap-6 text-sm text-zinc-300">
-            Top Artists • Most Popular • Most Sales
-          </div>
-        </div>
-
-        <!-- Right Sidebar -->
-        <div class="col-span-4 space-y-6">
-          <div class="bg-zinc-900 rounded-3xl p-6">
-            <div class="font-semibold mb-2">Live Streams</div>
-            <p class="text-sm text-zinc-400">No live streams right now...</p>
-          </div>
-          <div class="bg-zinc-900 rounded-3xl p-6">
-            <div class="font-semibold mb-2">Trending Creators</div>
-            <p class="text-sm text-zinc-400">Trending soon...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Corrected Firebase config (matches your project vizalok-7259)
-    const firebaseConfig = {
-      apiKey: "AIzaSyCXtvOzhTqYQPjoOfMP4a7rdmv1t2GN-sg",
-      authDomain: "vizalok-7259.firebaseapp.com",
-      projectId: "vizalok-7259",
-      storageBucket: "vizalok-7259.firebasestorage.app",
-      messagingSenderId: "589574371802",
-      appId: "1:589574371802:web:cda08e23b7d3e63efce8e3",
-      measurementId: "G-VGN5GCK7DC"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    console.log('Firebase initialized successfully! Open browser console (F12) to see this.');
-
-    // Real Google sign-in function
-    async function signIn() {
-      try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const result = await auth.signInWithPopup(provider);
-        console.log('Signed in as:', result.user.displayName || result.user.email);
-      } catch (error) {
-        console.error('Sign-in error:', error.code, error.message);
-        if (error.code === 'auth/unauthorized-domain') {
-          alert('Domain error: Add "vizalok.com" to Authorized domains in Firebase console → Authentication → Settings.');
-        } else if (error.code === 'auth/popup-blocked') {
-          alert('Popup blocked by browser. Allow popups for vizalok.com and try again.');
-        } else {
-          alert('Sign-in failed: ' + error.message);
-        }
-      }
-    }
-
-    // Listen for auth state → show profile or sign-in button
-    auth.onAuthStateChanged((user) => {
-      const signInBtn = document.getElementById('signInBtn');
-      const profileDiv = document.getElementById('profile');
-      const usernameSpan = document.getElementById('username');
-
-      if (user) {
-        signInBtn.classList.add('hidden');
-        profileDiv.classList.remove('hidden');
-        usernameSpan.textContent = user.displayName || user.email?.split('@')[0] || 'User';
-      } else {
-        signInBtn.classList.remove('hidden');
-        profileDiv.classList.add('hidden');
-      }
-    });
-  </script>
-</body>
-</html>
+          <div class="font-semibold text-lg mb-4">Top Tracks (Live from Firestore)</div>
+          <ul id="leaderboard-list" class="space-y-3 text-sm text-zinc-300">
+            <!-- Songs will appear here
