@@ -3,93 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIZALOK • Choose Your Platform</title>
+  <title>VIZALOK • From Inspired to Inspiring</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    .rock-bg {
-      background: linear-gradient(135deg, #0f172a 0%, #1e2937 50%, #0a0a0a 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .rock-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px);
-      background-size: 50px 50px;
-      opacity: 0.6;
+    .sleek-bg {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f172a 100%);
     }
 
-    .logo-container {
-      filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.9));
+    .logo-float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .bubble {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .bubble:hover {
+      transform: scale(1.08) translateY(-10px);
+      box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
+    }
+
+    .video-bg {
+      position: absolute;
+      inset: 0;
+      object-fit: cover;
+      opacity: 0.15;
+      z-index: -1;
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen rock-bg">
+<body class="bg-zinc-950 text-white min-h-screen sleek-bg overflow-hidden">
 
-  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+  <!-- Optional subtle looping video background (add your short clip here) -->
+  <video autoplay loop muted playsinline class="video-bg">
+    <source src="YOUR-SHORT-CLIP.mp4" type="video/mp4">
+  </video>
+
+  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative z-10">
     
-    <!-- Central Logo & Brand -->
-    <div class="flex flex-col items-center text-center mb-20 logo-container">
-      <img src="logo.png" alt="VIZALOK Logo" class="w-64 h-64 mb-8 object-contain">
+    <!-- Logo + Tagline -->
+    <div class="flex flex-col items-center text-center mb-16 logo-float">
+      <img src="logo.png" alt="VIZALOK Logo" class="w-56 h-56 mb-6 object-contain">
       <h1 class="text-8xl font-black tracking-[-6px] text-white" 
-          style="text-shadow: 0 15px 40px rgba(0,0,0,0.95), 0 0 50px rgb(165 243 252 / 0.4);">
+          style="text-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 60px rgb(165 243 252 / 0.4);">
         VIZALOK
       </h1>
-      <p class="mt-8 text-2xl text-zinc-400 max-w-md text-center">
+      <p class="mt-8 text-2xl text-zinc-300 max-w-md text-center leading-tight">
         From being inspired to inspiring
       </p>
     </div>
 
-    <p class="text-zinc-400 text-2xl mb-16">Choose Your Platform</p>
+    <p class="text-zinc-400 text-2xl mb-12 tracking-wide">Choose Your Platform</p>
 
-    <!-- Three Cards -->
+    <!-- Smaller Interactive Bubbles -->
     <div class="grid md:grid-cols-3 gap-8 max-w-4xl w-full">
       
-      <!-- Music Card -->
+      <!-- Music Bubble -->
       <div onclick="window.location.href='music.html'" 
-           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
-        <div class="h-12 flex justify-center mb-6">
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
+        <div class="h-14 flex justify-center mb-6">
           <i class="fa-solid fa-music text-5xl text-cyan-400"></i>
         </div>
-        <h3 class="text-4xl font-bold mb-2">Music</h3>
-        <div class="text-cyan-400 text-2xl mb-8">♪</div>
-        <p class="text-zinc-400 text-sm">Stream • Upload • Live • Royalties</p>
-      </div>
-
-      <!-- Creators Card -->
-      <div onclick="alert('Creators Portal — Coming Soon')" 
-           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-purple-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
-        <div class="h-12 flex justify-center mb-6">
-          <i class="fa-solid fa-palette text-5xl text-purple-400"></i>
+        <h3 class="text-3xl font-bold mb-2">Music</h3>
+        <p class="text-zinc-400 text-sm mb-8">Stream • Upload • Live • Royalties</p>
+        <div class="text-cyan-400 font-medium flex items-center justify-center gap-2 text-sm">
+          Enter Music Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
-        <h3 class="text-4xl font-bold mb-2">Creators</h3>
-        <div class="text-purple-400 text-2xl mb-8">✦</div>
-        <p class="text-zinc-400 text-sm">Upload • Monetize • Analytics</p>
       </div>
 
-      <!-- Community Card -->
-      <div onclick="alert('Community Portal — Coming Soon\n\n• Top Creators feed\n• Discussions\n• Artist discovery\n• Live events')" 
-           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-emerald-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
-        <div class="h-12 flex justify-center mb-6">
-          <i class="fa-solid fa-users text-5xl text-emerald-400"></i>
-        </div>
-        <h3 class="text-4xl font-bold mb-2">Community</h3>
-        <div class="text-emerald-400 text-2xl mb-8">👥</div>
-        <p class="text-zinc-400 text-sm">Connect • Discover • Discuss</p>
-      </div>
-
-    </div>
-
-    <div class="mt-20 text-zinc-500 text-sm">VIZALOK • Independent music & creator ecosystem</div>
-  </div>
-
-</body>
-</html>
+      <!--
