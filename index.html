@@ -3,94 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIZALOK</title>
+  <title>VIZALOK • Choose Your Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <!-- Firebase Compat SDK v10.14.1 -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
+
+    .rock-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e2937 50%, #0a0a0a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .rock-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.6;
+    }
+
+    .logo-container {
+      filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.9));
+    }
   </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <div class="flex h-screen overflow-hidden">
-    <!-- SIDEBAR -->
-    <div class="w-64 bg-zinc-900/95 border-r border-zinc-800 flex flex-col">
-      <div class="p-6 flex items-center gap-3">
-        <img src="logo.png" alt="VIZALOK Logo" class="w-12 h-12 opacity-70 object-contain">
-        <div>
-          <span class="text-3xl font-bold tracking-tighter">VIZALOK</span>
-          <span class="block text-xs bg-blue-500/20 text-blue-400 px-3 py-0.5 rounded-full mt-1 w-fit">XRP+</span>
-        </div>
-      </div>
-      <nav class="flex-1 px-3 space-y-1 text-sm">
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-3xl bg-zinc-800 hover:bg-zinc-700 transition">
-          <i class="fa-solid fa-house w-5"></i> Home/Discover
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-3xl hover:bg-zinc-800 transition">
-          <i class="fa-solid fa-cloud-arrow-up w-5"></i> Upload Song
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-3xl hover:bg-zinc-800 transition">
-          <i class="fa-solid fa-list w-5"></i> My Catalog
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-3xl hover:bg-zinc-800 transition">
-          <i class="fa-solid fa-broadcast-tower w-5"></i> Live Streams
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-3xl hover:bg-zinc-800 transition">
-          <i class="fa-solid fa-coins w-5"></i> Royalties
-        </a>
-      </nav>
+<body class="bg-zinc-950 text-white min-h-screen rock-bg">
+
+  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    
+    <!-- Central Logo & Brand -->
+    <div class="flex flex-col items-center text-center mb-20 logo-container">
+      <img src="logo.png" alt="VIZALOK Logo" class="w-64 h-64 mb-8 object-contain">
+      <h1 class="text-8xl font-black tracking-[-6px] text-white" 
+          style="text-shadow: 0 15px 40px rgba(0,0,0,0.95), 0 0 50px rgb(165 243 252 / 0.4);">
+        VIZALOK
+      </h1>
+      <p class="mt-8 text-2xl text-zinc-400 max-w-md text-center">
+        From being inspired to inspiring
+      </p>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="flex-1 flex flex-col">
-      <!-- TOP BAR -->
-      <div class="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center px-8 justify-between">
-        <input
-          type="text"
-          placeholder="Search songs, artists..."
-          class="bg-zinc-800 rounded-3xl px-6 py-2 w-96 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-        <div class="flex items-center gap-6">
-          <div id="profile" class="hidden items-center gap-3 cursor-pointer">
-            <img src="https://picsum.photos/id/64/32/32" alt="Profile" class="w-8 h-8 rounded-2xl">
-            <span id="username" class="font-medium">Username</span>
-          </div>
-          <button
-            onclick="signIn()"
-            id="signInBtn"
-            class="bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-2 rounded-3xl text-sm font-medium hover:opacity-90 transition"
-          >
-            Sign In
-          </button>
+    <p class="text-zinc-400 text-2xl mb-16">Choose Your Platform</p>
+
+    <!-- Three Cards -->
+    <div class="grid md:grid-cols-3 gap-8 max-w-4xl w-full">
+      
+      <!-- Music Card -->
+      <div onclick="window.location.href='music.html'" 
+           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
+        <div class="h-12 flex justify-center mb-6">
+          <i class="fa-solid fa-music text-5xl text-cyan-400"></i>
         </div>
+        <h3 class="text-4xl font-bold mb-2">Music</h3>
+        <div class="text-cyan-400 text-2xl mb-8">♪</div>
+        <p class="text-zinc-400 text-sm">Stream • Upload • Live • Royalties</p>
       </div>
 
-      <!-- MAIN GRID CONTENT -->
-      <div class="flex-1 overflow-auto p-8 grid grid-cols-12 gap-8">
-        <!-- Featured Music -->
-        <div class="col-span-8 bg-zinc-900 rounded-3xl p-8">
-          <div class="text-xs text-zinc-400 mb-3">Featured Music</div>
-          <div class="flex gap-8">
-            <img src="https://picsum.photos/id/1015/320/320" alt="Artwork" class="w-64 h-64 rounded-2xl object-cover">
-            <div class="flex-1">
-              <div class="text-4xl font-semibold">300 / myss</div>
-              <div class="text-zinc-400 mt-1">VIZALOK</div>
-              <div class="mt-12 h-1 bg-zinc-700 rounded-full overflow-hidden">
-                <div class="h-full w-1/3 bg-blue-500 rounded-full"></div>
-              </div>
-              <button class="mt-8 text-5xl text-blue-400 hover:text-blue-300 transition">
-                <i class="fa-solid fa-circle-play"></i>
-              </button>
-            </div>
-          </div>
+      <!-- Creators Card -->
+      <div onclick="alert('Creators Portal — Coming Soon')" 
+           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-purple-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
+        <div class="h-12 flex justify-center mb-6">
+          <i class="fa-solid fa-palette text-5xl text-purple-400"></i>
         </div>
+        <h3 class="text-4xl font-bold mb-2">Creators</h3>
+        <div class="text-purple-400 text-2xl mb-8">✦</div>
+        <p class="text-zinc-400 text-sm">Upload • Monetize • Analytics</p>
+      </div>
 
-        <!-- Leaderboard (now dynamic) -->
-        <div class="col-span-8 bg-zinc-900 rounded-3xl p-8">
-          <div class="font-semibold text-lg mb-4">Top Tracks (Live from Firestore)</div>
-          <ul id="leaderboard-list" class="space-y-3 text-sm text-zinc-300">
-            <!-- Songs will appear here
+      <!-- Community Card -->
+      <div onclick="alert('Community Portal — Coming Soon\n\n• Top Creators feed\n• Discussions\n• Artist discovery\n• Live events')" 
+           class="bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 hover:border-emerald-400 rounded-3xl p-10 text-center cursor-pointer transition-all">
+        <div class="h-12 flex justify-center mb-6">
+          <i class="fa-solid fa-users text-5xl text-emerald-400"></i>
+        </div>
+        <h3 class="text-4xl font-bold mb-2">Community</h3>
+        <div class="text-emerald-400 text-2xl mb-8">👥</div>
+        <p class="text-zinc-400 text-sm">Connect • Discover • Discuss</p>
+      </div>
+
+    </div>
+
+    <div class="mt-20 text-zinc-500 text-sm">VIZALOK • Independent music & creator ecosystem</div>
+  </div>
+
+</body>
+</html>
