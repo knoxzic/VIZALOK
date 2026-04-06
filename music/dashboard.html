@@ -3,67 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Library - Vizalok Music</title>
+  <title>Vizalok | Music</title>
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <style>
+    body { margin:0; background:#0a0a0f; color:white; font-family:'Inter', sans-serif; }
+    .dashboard {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 240px;
+      background: #111827;
+      padding: 20px 0;
+      border-right: 1px solid #1f2937;
+    }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1f2937;
+      border-radius: 16px;
+      aspect-ratio: 1 / 1;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-  <div class="container" style="max-width:1100px; padding:40px 20px; text-align:center;">
-    
-    <h1 style="color:#00f5ff; margin-bottom:10px;">My Library</h1>
-    
-    <div id="welcome-box" style="margin:30px 0; padding:30px; background:rgba(30,30,60,0.9); border-radius:16px; border:1px solid #00f5ff33;">
-      <h2 id="welcome-text">Welcome</h2>
-      <p id="user-email" style="color:#aaa; margin-top:10px;"></p>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div style="padding: 0 20px 20px;">
+        <img src="../logo.png" alt="Vizalok" width="60">
+      </div>
+      <div style="padding: 10px 20px; background:#1f2937; margin:10px 20px; border-radius:12px;">Home</div>
+      <div style="padding: 10px 20px; margin:10px 20px; border-radius:12px;">Store</div>
+      <div style="padding: 10px 20px; margin:10px 20px; border-radius:12px;">Profile</div>
+      <div style="padding: 10px 20px; margin:10px 20px; border-radius:12px;">Settings</div>
+      <div style="padding: 10px 20px; margin:10px 20px; border-radius:12px;">Help</div>
     </div>
 
-    <div style="background:rgba(20,20,40,0.8); padding:40px; border-radius:16px; margin:40px 0;">
-      <p style="color:#ccc; font-size:1.1rem;">
-        Your personal music library is loading...<br><br>
-        Tracks you've invested in will appear here soon.
-      </p>
-    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h1 style="margin:0;">What's Trending</h1>
+        <div style="display:flex; gap:15px; align-items:center;">
+          <input type="text" placeholder="Search" style="padding:10px 16px; width:300px; background:#1f2937; border:none; border-radius:999px; color:white;">
+          <div>🛎️</div>
+          <div style="width:40px; height:40px; background:#4f46e5; border-radius:50%;"></div>
+        </div>
+      </div>
 
-    <button onclick="logout()" style="padding:14px 32px; background:#ff4444; color:white; border:none; border-radius:12px; font-size:1.1rem; cursor:pointer;">
-      Logout
-    </button>
+      <div class="grid">
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+      </div>
+    </div>
   </div>
 
   <script>
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
-      authDomain: "vizalok-music.firebaseapp.com",
-      projectId: "vizalok-music",
-      storageBucket: "vizalok-music.firebasestorage.app",
-      messagingSenderId: "431775929269",
-      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Check if user is logged in
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = 'index.html';
-      } else {
-        const displayName = user.displayName || "User";
-        document.getElementById('welcome-text').textContent = `Welcome, ${displayName}!`;
-        document.getElementById('user-email').textContent = user.email;
-      }
-    });
-
-    function logout() {
-      if (confirm("Are you sure you want to logout?")) {
-        auth.signOut().then(() => {
-          window.location.href = 'index.html';
-        });
-      }
-    }
+    // Simple auth check (you can expand later)
+    // For now we assume they came from login
   </script>
 </body>
 </html>
