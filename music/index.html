@@ -47,21 +47,15 @@
       <h2 id="formTitle">Sign in to access your Library</h2>
       
       <form id="authForm">
-        <!-- Two inputs side by side during Login -->
-        <div class="input-row">
-          <div class="input-group" style="flex: 1;">
-            <input type="text" id="identifier" placeholder="Email address" required>
-          </div>
-          <div class="input-group" style="flex: 1;">
-            <input type="password" id="password" placeholder="Password (min 6 characters)" required>
-          </div>
+        <div class="input-group">
+          <input type="email" id="email" placeholder="Email address" required>
         </div>
-
-        <!-- Username field only shows during Sign Up -->
         <div class="input-group" id="usernameGroup" style="display: none;">
           <input type="text" id="username" placeholder="Username (display name)" required>
         </div>
-
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Password (min 6 characters)" required>
+        </div>
         <button type="submit" id="authButton" class="btn-primary">Login</button>
       </form>
 
@@ -82,7 +76,7 @@
     const usernameGroup = document.getElementById('usernameGroup');
     const formTitle = document.getElementById('formTitle');
 
-    // Toggle between Login and Sign Up
+    // Toggle Login / Sign Up
     switchModeLink.addEventListener('click', (e) => {
       e.preventDefault();
       isLoginMode = !isLoginMode;
@@ -104,19 +98,19 @@
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const identifier = document.getElementById('identifier').value.trim();
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const username = document.getElementById('username').value.trim();
 
-      if (!identifier || password.length < 6) {
-        alert("Please fill in all required fields");
+      if (!email || password.length < 6) {
+        alert("Please enter your email and password (min 6 characters)");
         return;
       }
 
       try {
         if (isLoginMode) {
-          // LOGIN - using identifier (email)
-          await signInWithEmailAndPassword(window.firebaseAuth, identifier, password);
+          // LOGIN - using email only
+          await signInWithEmailAndPassword(window.firebaseAuth, email, password);
           alert("✅ Login successful!");
           window.location.href = 'dashboard.html';
         } else {
@@ -126,7 +120,7 @@
             return;
           }
 
-          const userCredential = await createUserWithEmailAndPassword(window.firebaseAuth, identifier, password);
+          const userCredential = await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
           
           await updateProfile(userCredential.user, { displayName: username });
 
