@@ -6,7 +6,6 @@
   <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
@@ -45,7 +44,6 @@
   </div>
 
   <script>
-    // Initialize Firebase (compat version - more reliable for simple HTML)
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
       authDomain: "vizalok-music.firebaseapp.com",
@@ -66,7 +64,6 @@
     const usernameGroup = document.getElementById('usernameGroup');
     const authForm = document.getElementById('authForm');
 
-    // Toggle between Login and Sign Up
     switchModeLink.addEventListener('click', (e) => {
       e.preventDefault();
       isLoginMode = !isLoginMode;
@@ -84,53 +81,49 @@
       }
     });
 
-    // Form Submit
     authForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const username = document.getElementById('username').value.trim();
 
       if (!email || password.length < 6) {
-        alert("Please enter your email and a password of at least 6 characters.");
+        alert("Please enter email and password (min 6 characters)");
         return;
       }
 
-      if (!isLoginMode && !username) {
-        alert("Please choose a username.");
-        return;
-      }
+      console.log("Attempting login with:", email);   // For debugging
 
       if (isLoginMode) {
         // LOGIN
         auth.signInWithEmailAndPassword(email, password)
-          .then(() => {
-            alert("✅ Login successful!");
+          .then((userCredential) => {
+            console.log("Login successful!", userCredential.user);
+            alert("✅ Login successful! Redirecting to dashboard...");
             window.location.href = 'dashboard.html';
           })
-          .catch(error => {
+          .catch((error) => {
+            console.error("Login error:", error);
             alert("❌ Login failed: " + error.message);
           });
       } else {
-        // SIGN UP
+        // SIGN UP (simplified for now)
+        const username = document.getElementById('username').value.trim();
+        if (!username) {
+          alert("Please choose a username");
+          return;
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
           .then((userCredential) => {
-            return auth.currentUser.updateProfile({
-              displayName: username
-            });
+            return userCredential.user.updateProfile({ displayName: username });
           })
           .then(() => {
-            alert(`✅ Account created successfully!\n\nWelcome, ${username}!`);
-            // Reset to login mode
-            isLoginMode = true;
-            authButton.textContent = "Login";
-            formTitle.textContent = "Sign in to access your Library";
-            usernameGroup.style.display = "none";
-            switchModeLink.textContent = "Sign Up";
+            alert(`✅ Account created! Welcome, ${username}`);
+            window.location.href = 'dashboard.html';
           })
-          .catch(error => {
-            alert("❌ Signup failed: " + error.message);
+          .catch((error) => {
+            alert("❌ " + error.message);
           });
       }
     });
