@@ -3,37 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Library - Vizalok Music</title>
+  <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
 <body>
-  <div class="container" style="max-width:1100px; padding:40px 20px; text-align:center;">
-    
-    <h1 style="color:#00f5ff; margin-bottom:10px;">My Library</h1>
-    
-    <div id="welcome-box" style="margin:30px 0; padding:30px; background:rgba(30,30,60,0.9); border-radius:16px; border:1px solid #00f5ff33;">
-      <h2 id="welcome-text">Welcome</h2>
-      <p id="user-email" style="color:#aaa; margin-top:10px;"></p>
+  <div class="container">
+    <div class="logo">
+      <img src="../logo.png" alt="Vizalok" width="140">
     </div>
+    
+    <h1><span class="neon">Vizalok Music</span></h1>
+    <p class="tagline">Stream • Support • Own • Earn with XRP</p>
 
-    <div style="background:rgba(20,20,40,0.8); padding:40px; border-radius:16px; margin:40px 0;">
-      <p style="color:#ccc; font-size:1.1rem;">
-        Your personal music library is loading...<br><br>
-        Tracks you've invested in will appear here soon.
+    <div class="login-card">
+      <h2 id="formTitle">Sign in to access your Library</h2>
+      
+      <form id="authForm">
+        <div class="input-group">
+          <input type="email" id="email" placeholder="Email address" required>
+        </div>
+        <div class="input-group" id="usernameGroup" style="display: none;">
+          <input type="text" id="username" placeholder="Username (display name)" required>
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Password (min 6 characters)" required>
+        </div>
+        <button type="submit" id="authButton" class="btn-primary">Login</button>
+      </form>
+
+      <p class="switch">
+        Don't have an account? 
+        <a href="#" id="switchMode">Sign Up</a>
       </p>
     </div>
 
-    <button onclick="logout()" style="padding:14px 32px; background:#ff4444; color:white; border:none; border-radius:12px; font-size:1.1rem; cursor:pointer;">
-      Logout
-    </button>
+    <p class="back"><a href="../index.html">← Back to Vizalok Home</a></p>
   </div>
 
   <script>
-    // Initialize Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
       authDomain: "vizalok-music.firebaseapp.com",
@@ -46,24 +56,77 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Check if user is logged in
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = 'index.html';
+    let isLoginMode = true;
+
+    const formTitle = document.getElementById('formTitle');
+    const authButton = document.getElementById('authButton');
+    const switchModeLink = document.getElementById('switchMode');
+    const usernameGroup = document.getElementById('usernameGroup');
+    const authForm = document.getElementById('authForm');
+
+    switchModeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLoginMode = !isLoginMode;
+
+      if (isLoginMode) {
+        authButton.textContent = "Login";
+        formTitle.textContent = "Sign in to access your Library";
+        usernameGroup.style.display = "none";
+        switchModeLink.textContent = "Sign Up";
       } else {
-        const displayName = user.displayName || "User";
-        document.getElementById('welcome-text').textContent = `Welcome, ${displayName}!`;
-        document.getElementById('user-email').textContent = user.email;
+        authButton.textContent = "Create Account";
+        formTitle.textContent = "Create your Vizalok Music Account";
+        usernameGroup.style.display = "block";
+        switchModeLink.textContent = "Login";
       }
     });
 
-    function logout() {
-      if (confirm("Are you sure you want to logout?")) {
-        auth.signOut().then(() => {
-          window.location.href = 'index.html';
-        });
+    authForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || password.length < 6) {
+        alert("Please enter email and password (min 6 characters)");
+        return;
       }
-    }
+
+      console.log("Attempting login with:", email);   // For debugging
+
+      if (isLoginMode) {
+        // LOGIN
+        auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            console.log("Login successful!", userCredential.user);
+            alert("✅ Login successful! Redirecting to dashboard...");
+            window.location.href = 'dashboard.html';
+          })
+          .catch((error) => {
+            console.error("Login error:", error);
+            alert("❌ Login failed: " + error.message);
+          });
+      } else {
+        // SIGN UP (simplified for now)
+        const username = document.getElementById('username').value.trim();
+        if (!username) {
+          alert("Please choose a username");
+          return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            return userCredential.user.updateProfile({ displayName: username });
+          })
+          .then(() => {
+            alert(`✅ Account created! Welcome, ${username}`);
+            window.location.href = 'dashboard.html';
+          })
+          .catch((error) => {
+            alert("❌ " + error.message);
+          });
+      }
+    });
   </script>
 </body>
 </html>
