@@ -5,100 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  <!-- Firebase SDK (Modular v10+) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    .container {
-      text-align: center;
-      max-width: 420px;
-      width: 100%;
-      padding: 40px 20px;
-      animation: fadeIn 1s ease-out forwards;
-    }
+    // ================== YOUR FIREBASE CONFIG ==================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
+      authDomain: "vizalok-music.firebaseapp.com",
+      projectId: "vizalok-music",
+      storageBucket: "vizalok-music.firebasestorage.app",
+      messagingSenderId: "431775929269",
+      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
+    };
 
-    .logo {
-      animation: floatLogo 6s ease-in-out infinite, fadeIn 1.2s ease-out forwards;
-    }
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    h1 {
-      font-size: 2.8rem;
-      margin: 20px 0 8px;
-      animation: fadeInUp 0.8s ease-out 0.3s forwards;
-      opacity: 0;
-    }
-
-    .tagline {
-      animation: fadeInUp 0.8s ease-out 0.6s forwards;
-      opacity: 0;
-    }
-
-    .login-card {
-      animation: fadeInUp 1s ease-out 0.9s forwards;
-      opacity: 0;
-    }
-
-    .input-group {
-      position: relative;
-      margin: 16px 0;
-    }
-
-    input {
-      width: 100%;
-      padding: 16px 20px;
-      background: rgba(20, 20, 40, 0.8);
-      border: 1px solid rgba(0, 245, 255, 0.3);
-      border-radius: 12px;
-      color: white;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-
-    input:focus {
-      border-color: #00f5ff;
-      box-shadow: 0 0 0 4px rgba(0, 245, 255, 0.15);
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(90deg, #00f5ff, #8b5cf6);
-      color: black;
-      font-weight: 700;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      margin-top: 10px;
-    }
-
-    .btn-primary:hover {
-      transform: scale(1.05) translateY(-3px);
-      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes floatLogo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-  </style>
+    // Make auth available globally for script.js if needed
+    window.firebaseAuth = auth;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  </script>
 </head>
 <body>
   <div class="container">
@@ -112,24 +43,76 @@
     <div class="login-card">
       <h2>Sign in to access your Library</h2>
       
-      <form id="loginForm">
+      <form id="authForm">
         <div class="input-group">
           <input type="email" id="email" placeholder="Email address" required>
         </div>
         <div class="input-group">
-          <input type="password" id="password" placeholder="Password" required>
+          <input type="password" id="password" placeholder="Password (min 6 characters)" required>
         </div>
-        <button type="submit" class="btn-primary">Login</button>
+        <button type="submit" id="authButton" class="btn-primary">Login</button>
       </form>
 
-      <p class="switch">Don't have an account? 
-        <a href="#" onclick="showSignup()">Sign Up</a>
+      <p class="switch">
+        Don't have an account? 
+        <a href="#" id="switchMode">Sign Up</a>
       </p>
     </div>
 
     <p class="back"><a href="../index.html">← Back to Vizalok Home</a></p>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    let isLoginMode = true;
+    const authForm = document.getElementById('authForm');
+    const authButton = document.getElementById('authButton');
+    const switchModeLink = document.getElementById('switchMode');
+
+    // Toggle between Login and Sign Up
+    switchModeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLoginMode = !isLoginMode;
+      
+      if (isLoginMode) {
+        authButton.textContent = "Login";
+        switchModeLink.textContent = "Sign Up";
+      } else {
+        authButton.textContent = "Create Account";
+        switchModeLink.textContent = "Login";
+      }
+    });
+
+    // Handle form submission
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || password.length < 6) {
+        alert("Please enter a valid email and password (at least 6 characters)");
+        return;
+      }
+
+      try {
+        if (isLoginMode) {
+          // Login
+          await signInWithEmailAndPassword(window.firebaseAuth, email, password);
+          alert("✅ Login successful! Welcome to your Library.");
+          window.location.href = 'dashboard.html';
+        } else {
+          // Sign Up
+          await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+          alert("✅ Account created successfully!\n\nYou can now log in.");
+          // Switch back to login mode after successful signup
+          isLoginMode = true;
+          authButton.textContent = "Login";
+          switchModeLink.textContent = "Sign Up";
+        }
+      } catch (error) {
+        alert("❌ Error: " + error.message);
+      }
+    });
+  </script>
 </body>
 </html>
