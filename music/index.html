@@ -6,12 +6,11 @@
   <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- Firebase SDK (Modular v10+) -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    // ================== YOUR FIREBASE CONFIG ==================
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
       authDomain: "vizalok-music.firebaseapp.com",
@@ -21,11 +20,9 @@
       appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Make auth available globally for script.js if needed
     window.firebaseAuth = auth;
     window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
@@ -68,24 +65,15 @@
     const authButton = document.getElementById('authButton');
     const switchModeLink = document.getElementById('switchMode');
 
-    // Toggle between Login and Sign Up
     switchModeLink.addEventListener('click', (e) => {
       e.preventDefault();
       isLoginMode = !isLoginMode;
-      
-      if (isLoginMode) {
-        authButton.textContent = "Login";
-        switchModeLink.textContent = "Sign Up";
-      } else {
-        authButton.textContent = "Create Account";
-        switchModeLink.textContent = "Login";
-      }
+      authButton.textContent = isLoginMode ? "Login" : "Create Account";
+      switchModeLink.textContent = isLoginMode ? "Sign Up" : "Login";
     });
 
-    // Handle form submission
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
@@ -96,21 +84,18 @@
 
       try {
         if (isLoginMode) {
-          // Login
           await signInWithEmailAndPassword(window.firebaseAuth, email, password);
-          alert("✅ Login successful! Welcome to your Library.");
+          alert("✅ Login successful!");
           window.location.href = 'dashboard.html';
         } else {
-          // Sign Up
           await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
-          alert("✅ Account created successfully!\n\nYou can now log in.");
-          // Switch back to login mode after successful signup
+          alert("✅ Account created! You can now log in.");
           isLoginMode = true;
           authButton.textContent = "Login";
           switchModeLink.textContent = "Sign Up";
         }
       } catch (error) {
-        alert("❌ Error: " + error.message);
+        alert("❌ " + error.message);
       }
     });
   </script>
