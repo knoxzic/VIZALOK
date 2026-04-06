@@ -9,23 +9,29 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
+    
     .sleek-bg {
       background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f172a 100%);
     }
+    
     .logo-float {
       animation: float 6s ease-in-out infinite;
     }
+    
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
+    
     .bubble {
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    
     .bubble:hover {
       transform: scale(1.08) translateY(-10px);
       box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
     }
+    
     .video-bg {
       position: absolute;
       inset: 0;
@@ -36,14 +42,14 @@
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen sleek-bg overflow-hidden">
-
+  
   <!-- Optional subtle looping video background -->
   <video autoplay loop muted playsinline class="video-bg">
     <source src="YOUR-SHORT-CLIP.mp4" type="video/mp4">
   </video>
 
   <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative z-10">
-   
+  
     <!-- Logo + Tagline -->
     <div class="flex flex-col items-center text-center mb-16 logo-float">
       <img src="logo.png" alt="VIZALOK Logo" class="w-56 h-56 mb-6 object-contain">
@@ -58,11 +64,11 @@
 
     <p class="text-zinc-400 text-2xl mb-12 tracking-wide">Choose Your Platform</p>
 
-    <!-- Interactive Bubbles (4 columns on large screens) -->
+    <!-- Interactive Bubbles -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl w-full">
-     
-      <!-- Music Bubble -->
-      <div onclick="window.location.href='music.html'"
+    
+      <!-- Music Bubble - FIXED -->
+      <div onclick="window.location.href='music/'"
            class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
         <div class="h-14 flex justify-center mb-6">
           <i class="fa-solid fa-music text-5xl text-cyan-400"></i>
@@ -100,7 +106,7 @@
         </div>
       </div>
 
-      <!-- New Crewmember / Driver Portal -->
+      <!-- Crewmember / Driver Portal -->
       <div onclick="alert('Crewmember Login Portal\n\nBecome a Driver in Your Area!\n\nUse your personal car or commercial vehicle.\nFlexible hours • Earn great pay')"
            class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-8 text-center cursor-pointer">
         <div class="h-14 flex justify-center mb-6">
@@ -115,7 +121,6 @@
           Crewmember Login <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
-
     </div>
 
     <!-- Extra CTA -->
@@ -129,6 +134,5 @@
 
     <div class="mt-20 text-zinc-500 text-xs">VIZALOK • Independent music & creator ecosystem</div>
   </div>
-
 </body>
 </html>
