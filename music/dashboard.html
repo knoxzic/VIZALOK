@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vizalok | Music</title>
+  <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,11 +28,11 @@
       flex-direction: column;
     }
     .logo-sidebar {
-      padding: 0 24px 30px;
+      padding: 0 24px 40px;
     }
     .nav-item {
       padding: 14px 24px;
-      margin: 4px 16px;
+      margin: 6px 16px;
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -40,7 +40,7 @@
     }
     .nav-item:hover {
       background: #1f2937;
-      transform: translateX(6px);
+      transform: translateX(8px);
     }
     .nav-item.active {
       background: #1e40af;
@@ -50,33 +50,33 @@
     /* Main Content */
     .main-content {
       flex: 1;
-      padding: 24px;
+      padding: 30px;
       overflow-y: auto;
     }
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32px;
+      margin-bottom: 40px;
     }
     .search-bar {
       background: #1f2937;
       border: none;
-      padding: 12px 20px;
+      padding: 14px 24px;
       border-radius: 9999px;
-      width: 380px;
+      width: 420px;
       color: white;
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
     .top-right {
       display: flex;
       align-items: center;
       gap: 20px;
     }
-    .trending-title {
-      font-size: 2rem;
-      margin-bottom: 24px;
+    .main-title {
+      font-size: 2.4rem;
       font-weight: 700;
+      margin-bottom: 32px;
     }
     .grid {
       display: grid;
@@ -86,19 +86,14 @@
     .card {
       background: #1f2937;
       border-radius: 16px;
-      aspect-ratio: 1 / 1.1;
+      aspect-ratio: 1 / 1.05;
       transition: all 0.4s ease;
       cursor: pointer;
       overflow: hidden;
     }
     .card:hover {
       transform: scale(1.06);
-      box-shadow: 0 20px 40px rgba(0, 245, 255, 0.15);
-    }
-    .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      box-shadow: 0 20px 40px rgba(0, 245, 255, 0.2);
     }
   </style>
 </head>
@@ -107,47 +102,30 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="logo-sidebar">
-        <img src="../logo.png" alt="Vizalok" width="70">
+        <img src="../logo.png" alt="Vizalok" width="75">
       </div>
       
-      <div class="nav-item active" onclick="alert('Home clicked - Dashboard')">🏠 Home</div>
-      <div class="nav-item" onclick="alert('Store coming soon')">🛒 Store</div>
-      <div class="nav-item" onclick="alert('Profile coming soon')">👤 Profile</div>
-      <div class="nav-item" onclick="alert('Settings coming soon')">⚙️ Settings</div>
-      <div class="nav-item" onclick="alert('Help coming soon')">❓ Help</div>
+      <div class="nav-item active" onclick="alert('Home - Dashboard')">🏠 Home</div>
+      <div class="nav-item" onclick="alert('Store - Coming Soon')">🛒 Store</div>
+      <div class="nav-item" onclick="alert('Profile - Coming Soon')">👤 Profile</div>
+      <div class="nav-item" onclick="alert('Settings - Coming Soon')">⚙️ Settings</div>
+      <div class="nav-item" onclick="alert('Help - Coming Soon')">❓ Help</div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
       <div class="top-bar">
-        <h1 class="trending-title">What's Trending</h1>
+        <h1 class="main-title">Vizalok Music</h1>
         
         <div class="top-right">
-          <input type="text" class="search-bar" placeholder="Search songs, artists...">
-          <div style="font-size:1.5rem; cursor:pointer;">🛎️</div>
-          <div style="width:42px; height:42px; background:#6366f1; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+          <input type="text" class="search-bar" placeholder="Search songs, artists, or tracks...">
+          <div style="font-size:1.6rem; cursor:pointer;">🛎️</div>
+          <div style="width:44px; height:44px; background:#6366f1; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer;">
             B
           </div>
         </div>
       </div>
 
-      <!-- Trending Grid -->
+      <!-- Content Grid -->
       <div class="grid">
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+1" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+2" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+3" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+4" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+5" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+6" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+7" alt=""></div>
-        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=Track+8" alt=""></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Basic auth check (you can expand later)
-    // For now we assume user came from login
-  </script>
-</body>
-</html>
+        <div class="card"><img src="https://via.placeholder.com/300x340/1e2937/64748b?text=
