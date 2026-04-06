@@ -9,7 +9,12 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      updateProfile 
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
@@ -43,10 +48,10 @@
       
       <form id="authForm">
         <div class="input-group">
-          <input type="email" id="email" placeholder="Email address" required>
+          <input type="text" id="identifier" placeholder="Email or Username" required>
         </div>
-        <div class="input-group" id="usernameGroup">
-          <input type="text" id="username" placeholder="Username (display name)" required>
+        <div class="input-group" id="usernameGroup" style="display: none;">
+          <input type="text" id="username" placeholder="Choose a Username" required>
         </div>
         <div class="input-group">
           <input type="password" id="password" placeholder="Password (min 6 characters)" required>
@@ -60,22 +65,4 @@
       </p>
     </div>
 
-    <p class="back"><a href="../index.html">← Back to Vizalok Home</a></p>
-  </div>
-
-  <script>
-    let isLoginMode = true;
-    const authForm = document.getElementById('authForm');
-    const authButton = document.getElementById('authButton');
-    const switchModeLink = document.getElementById('switchMode');
-    const usernameGroup = document.getElementById('usernameGroup');
-    const formTitle = document.getElementById('formTitle');
-
-    // Toggle Login / Sign Up
-    switchModeLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      isLoginMode = !isLoginMode;
-
-      if (isLoginMode) {
-        authButton.textContent = "Login";
-        formTitle.textContent = "
+    <p class="back"><a href="../
