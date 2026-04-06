@@ -9,7 +9,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
@@ -26,6 +26,7 @@
     window.firebaseAuth = auth;
     window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.updateProfile = updateProfile;
   </script>
 </head>
 <body>
@@ -38,11 +39,14 @@
     <p class="tagline">Stream • Support • Own • Earn with XRP</p>
 
     <div class="login-card">
-      <h2>Sign in to access your Library</h2>
+      <h2 id="formTitle">Sign in to access your Library</h2>
       
       <form id="authForm">
         <div class="input-group">
           <input type="email" id="email" placeholder="Email address" required>
+        </div>
+        <div class="input-group" id="usernameGroup">
+          <input type="text" id="username" placeholder="Username (display name)" required>
         </div>
         <div class="input-group">
           <input type="password" id="password" placeholder="Password (min 6 characters)" required>
@@ -64,40 +68,14 @@
     const authForm = document.getElementById('authForm');
     const authButton = document.getElementById('authButton');
     const switchModeLink = document.getElementById('switchMode');
+    const usernameGroup = document.getElementById('usernameGroup');
+    const formTitle = document.getElementById('formTitle');
 
+    // Toggle Login / Sign Up
     switchModeLink.addEventListener('click', (e) => {
       e.preventDefault();
       isLoginMode = !isLoginMode;
-      authButton.textContent = isLoginMode ? "Login" : "Create Account";
-      switchModeLink.textContent = isLoginMode ? "Sign Up" : "Login";
-    });
 
-    authForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (!email || password.length < 6) {
-        alert("Please enter a valid email and password (at least 6 characters)");
-        return;
-      }
-
-      try {
-        if (isLoginMode) {
-          await signInWithEmailAndPassword(window.firebaseAuth, email, password);
-          alert("✅ Login successful!");
-          window.location.href = 'dashboard.html';
-        } else {
-          await createUserWithEmailAndPassword(window.firebaseAuth, email, password);
-          alert("✅ Account created! You can now log in.");
-          isLoginMode = true;
-          authButton.textContent = "Login";
-          switchModeLink.textContent = "Sign Up";
-        }
-      } catch (error) {
-        alert("❌ " + error.message);
-      }
-    });
-  </script>
-</body>
-</html>
+      if (isLoginMode) {
+        authButton.textContent = "Login";
+        formTitle.textContent = "
