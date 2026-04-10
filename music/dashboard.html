@@ -10,8 +10,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <div class="flex h-screen">
+<body class="bg-zinc-950 text-white min-h-screen overflow-hidden">
+  <div class="flex h-screen w-screen">
 
     <!-- Sidebar -->
     <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content - Now Full Width -->
     <div class="flex-1 p-10 overflow-y-auto">
       <!-- Top Bar -->
       <div class="flex justify-between items-center mb-12">
@@ -93,56 +93,9 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Your beats from the repo
+    // Your beats
     const beats = [
       { name: "Vizalok - Diy", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav" },
       { name: "Vizalok - La Themed", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav" },
-      { name: "knoxzic - Cookin", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav" }
-    ];
-
-    // Auth Check
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = 'index.html';
-      } else {
-        const name = user.displayName || user.email?.split('@')[0] || "Listener";
-        document.getElementById('displayName').textContent = name;
-        renderBeats();
-      }
-    });
-
-    // Render Library Grid
-    function renderBeats() {
-      const grid = document.getElementById('beatsGrid');
-      grid.innerHTML = '';
-
-      beats.forEach(beat => {
-        const cardHTML = `
-          <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 hover:border-cyan-400 transition-all">
-            <div class="flex items-center gap-4 mb-6">
-              <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
-              <div class="flex-1">
-                <h4 class="font-semibold text-lg">${beat.name}</h4>
-                <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
-              </div>
-            </div>
-            
-            <audio controls class="w-full accent-cyan-400" style="height: 48px;">
-              <source src="${beat.url}" type="audio/wav">
-            </audio>
-          </div>
-        `;
-        grid.innerHTML += cardHTML;
-      });
-    }
-
-    // Logout
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = 'index.html';
-      });
-    }
-  </script>
-</body>
-</html>
+      { name: "knoxzic - Cookin", url: "https
      
