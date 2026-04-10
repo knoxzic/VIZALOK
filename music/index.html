@@ -6,7 +6,7 @@
   <title>Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- Firebase SDK (compat version - more reliable for this setup) -->
+  <!-- Firebase SDK (compat version) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
@@ -15,32 +15,36 @@
     <div class="logo">
       <img src="../logo.png" alt="Vizalok" width="140">
     </div>
-    
+   
     <h1><span class="neon">Vizalok Music</span></h1>
     <p class="tagline">Stream • Support • Own • Earn with XRP</p>
-
+    
     <div class="login-card">
       <h2 id="formTitle">Sign in to access your Library</h2>
-      
-      <form id="authForm">
+     
+      <form id="authForm" novalidate>  <!-- ← This disables browser validation -->
         <div class="input-group">
-          <input type="email" id="email" placeholder="Email address" required>
+          <input type="email" id="email" placeholder="Email address" autocomplete="email">
         </div>
         <div class="input-group" id="usernameGroup" style="display: none;">
-          <input type="text" id="username" placeholder="Username (display name)" required>
+          <input type="text" id="username" placeholder="Username (display name)" autocomplete="username">
         </div>
         <div class="input-group">
-          <input type="password" id="password" placeholder="Password (min 6 characters)" required>
+          <input type="password" id="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
         </div>
+        
         <button type="submit" id="authButton" class="btn-primary">Login</button>
       </form>
 
       <p class="switch">
-        Don't have an account? 
+        Don't have an account?
         <a href="#" id="switchMode">Sign Up</a>
       </p>
+      
+      <!-- Custom error message area -->
+      <p id="errorMessage" class="text-red-500 text-sm mt-4 text-center hidden"></p>
     </div>
-
+    
     <p class="back"><a href="../index.html">← Back to Vizalok Home</a></p>
   </div>
 
@@ -65,8 +69,9 @@
     const switchModeLink = document.getElementById('switchMode');
     const usernameGroup = document.getElementById('usernameGroup');
     const authForm = document.getElementById('authForm');
+    const errorMessage = document.getElementById('errorMessage');
 
-    // Toggle Login / Sign Up
+    // Toggle between Login and Sign Up
     switchModeLink.addEventListener('click', (e) => {
       e.preventDefault();
       isLoginMode = !isLoginMode;
@@ -82,18 +87,86 @@
         usernameGroup.style.display = "block";
         switchModeLink.textContent = "Login";
       }
+      errorMessage.classList.add('hidden');
     });
 
-    // Form Submit
-    authForm.addEventListener('submit', (e) => {
+    // Form Submit Handler
+    authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      errorMessage.classList.add('hidden');
 
       const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      const password = document.getElementById('password').value.trim();
+      const username = document.getElementById('username').value.trim();
 
-      if (!email || password.length < 6) {
-        alert("Please enter your email and password (minimum 6 characters)");
+      // Simple client-side validation
+      if (!email) {
+        showError("Please enter your email address");
+        return;
+      }
+      if (password.length < 6) {
+        showError("Password must be at least 6 characters");
+        return;
+      }
+      if (!isLoginMode && !username) {
+        showError("Please choose a username");
         return;
       }
 
-      if (isLoginMode)
+      authButton.disabled = true;
+      authButton.textContent = isLoginMode ? "Logging in..." : "Creating account...";
+
+      try {
+        if (isLoginMode) {
+          // LOGIN
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          console.log("Login successful!", userCredential.user);
+          // Redirect to dashboard after successful login
+          window.location.href = 'dashboard.html';   // Change this when you have the real dashboard
+        } else {
+          // SIGN UP
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          console.log("Account created!", userCredential.user);
+          
+          // Optional: Update display name with username
+          if (username) {
+            await userCredential.user.updateProfile({ displayName: username });
+          }
+          
+          alert("Account created successfully! You can now sign in.");
+          // Switch back to login mode
+          isLoginMode = true;
+          authButton.textContent = "Login";
+          formTitle.textContent = "Sign in to access your Library";
+          usernameGroup.style.display = "none";
+          switchModeLink.textContent = "Sign Up";
+        }
+      } catch (error) {
+        console.error(error);
+        let msg = "Something went wrong. Please try again.";
+        
+        if (error.code === 'auth/email-already-in-use') msg = "This email is already registered.";
+        else if (error.code === 'auth/invalid-email') msg = "Invalid email address.";
+        else if (error.code === 'auth/weak-password') msg = "Password is too weak.";
+        else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') 
+          msg = "Incorrect email or password.";
+        
+        showError(msg);
+      } finally {
+        authButton.disabled = false;
+        authButton.textContent = isLoginMode ? "Login" : "Create Account";
+      }
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
+    }
+
+    // Optional: Auto-focus email field
+    window.addEventListener('load', () => {
+      document.getElementById('email').focus();
+    });
+  </script>
+</body>
+</html>
