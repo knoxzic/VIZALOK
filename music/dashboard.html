@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
   <div class="max-w-7xl mx-auto p-6">
@@ -41,28 +43,208 @@
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
         <i class="fa-solid fa-music"></i> Your Library
       </h3>
-      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <!-- Beats will appear here -->
       </div>
     </div>
   </div>
 
-  <script>
-    const auth = firebase.auth();
+  <!-- Hidden audio element for playback -->
+  <audio id="audioPlayer"></audio>
 
-    // Show username
+  <script>
+    // Initialize Firebase first
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfF-6IhFvGMiPIXvKVP8_VKJ2oE7N-Afo",
+      authDomain: "vizalok-d0eaf.firebaseapp.com",
+      projectId: "vizalok-d0eaf",
+      storageBucket: "vizalok-d0eaf.appspot.com",
+      messagingSenderId: "965838726289",
+      appId: "1:965838726289:web:8c1bfe82ba31e82ce88d8c"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    let currentPlayingCard = null;
+
+    // Global beats data
+    const beats = [
+      { name: 'Vizalok - Diy', file: 'Vizalok - Diy.wav' },
+      { name: 'Vizalok - La Themed', file: 'Vizalok - La Themed.wav' },
+      { name: 'knoxzic - Cookin', file: 'knoxzic - Cookin.wav' }
+    ];
+
+    // Show username and initialize dashboard
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName || user.email?.split('@')[0] || "Listener";
         document.getElementById('displayName').textContent = name;
+        loadBeats();
       } else {
-        window.location.href = '../index.html';   // Go back to main Vizalok home
+        window.location.href = '../index.html';
       }
     });
 
-    // Improved Logout - sends back to vizalok.com (main home)
+    // Load beats into grid
+    function loadBeats() {
+      const grid = document.getElementById('beatsGrid');
+      grid.innerHTML = '';
+
+      beats.forEach((beat, index) => {
+        const card = createBeatCard(beat, index);
+        grid.appendChild(card);
+      });
+    }
+
+    // Create beat card
+    function createBeatCard(beat, index) {
+      const card = document.createElement('div');
+      card.className = 'bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-lg p-6 hover:from-zinc-700 hover:to-zinc-800 transition border border-cyan-500/20 group';
+      card.id = `beat-${index}`;
+
+      card.innerHTML = `
+        <div class="mb-4">
+          <h4 class="text-lg font-semibold text-white truncate mb-2">${beat.name}</h4>
+          <div class="flex items-center justify-between text-xs text-zinc-400 mb-3">
+            <span>.wav</span>
+            <span>3:24</span>
+          </div>
+        </div>
+
+        <!-- Waveform Visualization -->
+        <div class="bg-zinc-950/50 rounded-lg p-4 mb-4 h-16 flex items-center justify-center overflow-hidden">
+          <canvas class="wave-canvas w-full h-full"></canvas>
+        </div>
+
+        <!-- Player Controls -->
+        <div class="flex items-center gap-3 mb-4">
+          <button class="play-btn w-12 h-12 bg-cyan-500 hover:bg-cyan-400 text-black rounded-full flex items-center justify-center flex-shrink-0 transition shadow-lg shadow-cyan-500/50">
+            <i class="fa-solid fa-play text-lg"></i>
+          </button>
+          <div class="flex-1">
+            <div class="progress-bar w-full h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+              <div class="progress-fill h-full bg-cyan-400 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-zinc-500 mt-1">
+              <span class="current-time">0:00</span>
+              <span class="total-time">3:24</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="flex items-center gap-2 text-xs text-zinc-400 border-t border-zinc-700 pt-3">
+          <i class="fa-solid fa-waveform-lines"></i>
+          <span>Ready to play</span>
+        </div>
+      `;
+
+      // Add event listeners
+      const playBtn = card.querySelector('.play-btn');
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        togglePlay(beat, card);
+      });
+
+      // Draw waveform
+      setTimeout(() => {
+        drawWaveform(card.querySelector('.wave-canvas'));
+      }, 100);
+
+      return card;
+    }
+
+    // Toggle play/pause
+    function togglePlay(beat, card) {
+      const audio = document.getElementById('audioPlayer');
+      const playBtn = card.querySelector('.play-btn');
+      const beatPath = `./beats/${beat.file}`;
+
+      // Stop other tracks
+      if (currentPlayingCard && currentPlayingCard !== card) {
+        resetCard(currentPlayingCard);
+        audio.pause();
+      }
+
+      if (audio.src !== beatPath || audio.paused) {
+        // Play
+        audio.src = beatPath;
+        audio.play().catch(err => console.error('Playback error:', err));
+        playBtn.innerHTML = '<i class="fa-solid fa-pause text-lg"></i>';
+        currentPlayingCard = card;
+
+        // Update progress
+        audio.ontimeupdate = () => updateProgress(card, audio);
+        audio.onended = () => {
+          resetCard(card);
+          currentPlayingCard = null;
+        };
+      } else {
+        // Pause
+        audio.pause();
+        playBtn.innerHTML = '<i class="fa-solid fa-play text-lg"></i>';
+      }
+    }
+
+    // Reset card
+    function resetCard(card) {
+      if (!card) return;
+      const playBtn = card.querySelector('.play-btn');
+      playBtn.innerHTML = '<i class="fa-solid fa-play text-lg"></i>';
+      card.querySelector('.progress-fill').style.width = '0%';
+      card.querySelector('.current-time').textContent = '0:00';
+    }
+
+    // Update progress
+    function updateProgress(card, audio) {
+      if (!card || !audio.duration) return;
+      const percentage = (audio.currentTime / audio.duration) * 100;
+      card.querySelector('.progress-fill').style.width = percentage + '%';
+      card.querySelector('.current-time').textContent = formatTime(audio.currentTime);
+    }
+
+    // Format time
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Draw waveform
+    function drawWaveform(canvas) {
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.offsetWidth;
+      const height = canvas.offsetHeight;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const centerY = height / 2;
+      const barCount = 50;
+      const barWidth = width / barCount;
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.globalAlpha = 0.6;
+
+      for (let i = 0; i < barCount; i++) {
+        const randomHeight = Math.random() * height * 0.7;
+        const x = i * barWidth + 2;
+        const y = centerY - randomHeight / 2;
+        ctx.fillRect(x, y, barWidth - 4, randomHeight);
+      }
+    }
+
+    // Logout
     function logout() {
+      document.getElementById('audioPlayer').pause();
       auth.signOut().then(() => {
         window.location.href = '../index.html';
       }).catch(() => {
-        window.location.href = '../index
+        window.location.href = '../index.html';
+      });
+    }
+  </script>
+</body>
+</html>
