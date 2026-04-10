@@ -1,91 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vizalok Music • Library</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <!-- Firebase Compat Version (matches your login) -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-</head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <div class="max-w-screen-2xl mx-auto">
-    
-    <!-- Navbar -->
-    <div class="flex justify-between items-center px-8 py-6 border-b border-cyan-500/20">
-      <div class="flex items-center gap-4">
-        <img src="../logo.png" alt="Vizalok" width="52">
-        <h1 class="text-4xl font-black tracking-[-2px] text-cyan-400">VIZALOK MUSIC</h1>
-      </div>
-      
-      <div class="flex items-center gap-6">
-        <button onclick="logout()" 
-                class="px-6 py-3 bg-zinc-800 hover:bg-red-600/20 text-red-400 rounded-2xl flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-      </div>
-    </div>
-
-    <div class="flex">
-      <!-- Sidebar -->
-      <div class="w-72 bg-zinc-900 min-h-[calc(100vh-88px)] p-6 border-r border-cyan-500/20">
-        <div class="space-y-2">
-          <div onclick="alert('Home')" class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400 cursor-pointer">
-            <i class="fa-solid fa-house text-xl"></i>
-            <span class="font-medium">Home</span>
-          </div>
-          <div onclick="alert('Store - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-            <i class="fa-solid fa-store text-xl"></i>
-            <span class="font-medium">Store</span>
-          </div>
-          <div onclick="alert('Profile - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-            <i class="fa-solid fa-user text-xl"></i>
-            <span class="font-medium">Profile</span>
-          </div>
-          <div onclick="alert('Settings - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-            <i class="fa-solid fa-gear text-xl"></i>
-            <span class="font-medium">Settings</span>
-          </div>
-          <div onclick="alert('Help - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-            <i class="fa-solid fa-circle-question text-xl"></i>
-            <span class="font-medium">Help</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content -->
-      <div class="flex-1 p-10">
-        <!-- Welcome -->
-        <div class="mb-12">
-          <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-          <p class="text-zinc-400 text-lg">Your personal music library</p>
-        </div>
-
-        <!-- Library Grid -->
-        <div>
-          <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
-            <i class="fa-solid fa-music"></i> Your Library
-          </h3>
-          
-          <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Beats populated by JS -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <audio id="globalAudio" preload="metadata"></audio>
-
   <script>
-    // Firebase Setup
+    // ====================== FIREBASE SETUP ======================
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
       authDomain: "vizalok-music.firebaseapp.com",
       projectId: "vizalok-music",
       storageBucket: "vizalok-music.firebasestorage.app",
       messagingSenderId: "431775929269",
-      appId: "1:431775929269:web:3da6230e3c4ab88b43b
+      appId: "1:431775929269:web:3da6230e3c4ab88b43b"   // fixed + completed
+    };
+
+    // Initialize Firebase (Compat version)
+    firebase.initializeApp(firebaseConfig);
+
+    // ====================== LOGOUT ======================
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";   // Change if your login page has a different name/path
+      }).catch((error) => {
+        console.error("Logout error:", error);
+        alert("Failed to sign out. Please try again.");
+      });
+    }
+
+    // ====================== SHOW USER NAME ======================
+    function loadUserInfo() {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        const displayNameEl = document.getElementById("displayName");
+        displayNameEl.textContent = user.displayName || user.email?.split('@')[0] || "User";
+      } else {
+        // Not logged in → redirect to login
+        window.location.href = "index.html";
+      }
+    }
+
+    // ====================== MUSIC PLAYER ======================
+    const globalAudio = document.getElementById("globalAudio");
+    let currentPlayingCard = null;
+
+    function playBeat(card, filePath, title) {
+      // Stop any currently playing track
+      if (currentPlayingCard && currentPlayingCard !== card) {
+        currentPlayingCard.classList.remove("ring-2", "ring-cyan-400");
+      }
+
+      globalAudio.src = filePath;
+      globalAudio.play().catch(err => {
+        console.error("Playback failed:", err);
+        alert("Could not play this track. Check file path or format.");
+      });
+
+      currentPlayingCard = card;
+      card.classList.add("ring-2", "ring-cyan-400");
+    }
+
+    function pauseAll() {
+      globalAudio.pause();
+      if (currentPlayingCard) {
+        currentPlayingCard.classList.remove("ring-2", "ring-cyan-400");
+        currentPlayingCard = null;
+      }
+    }
+
+    // ====================== LOAD BEATS ======================
+    // Add your actual MP4 filenames here (exact names + casing!)
+    // Example: if your files are in music/beats/song.mp4 → use "music/beats/song.mp4"
+    const beats = [
+      {
+        title: "Beat 1",
+        file: "music/your-first-beat.mp4"   // ← CHANGE THESE TO YOUR REAL FILES
+      },
+      {
+        title: "Beat 2",
+        file: "music/your-second-beat.mp4"
+      },
+      // Add more objects here for each MP4 file
+      // {
+      //   title: "My Cool Beat",
+      //   file: "music/beats/cool-beat.mp4"
+      // }
+    ];
+
+    function loadBeats() {
+      const grid = document.getElementById("beatsGrid");
+      grid.innerHTML = "";
+
+      if (beats.length === 0) {
+        grid.innerHTML = `<p class="text-zinc-400 col-span-full">No beats added yet. Add them in the script.</p>`;
+        return;
+      }
+
+      beats.forEach(beat => {
+        const cardHTML = `
+          <div onclick="playBeat(this, '${beat.file}', '${beat.title}')" 
+               class="bg-zinc-900 rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition-all group">
+            <div class="h-48 bg-zinc-800 flex items-center justify-center relative">
+              <i class="fa-solid fa-music text-6xl text-cyan-500/30 group-hover:text-cyan-400 transition-colors"></i>
+              <div class="absolute bottom-3 right-3 bg-black/70 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-play"></i> Play
+              </div>
+            </div>
+            <div class="p-5">
+              <h4 class="font-semibold text-lg">${beat.title}</h4>
+              <p class="text-zinc-400 text-sm mt-1">Vizalok Original</p>
+            </div>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
+      });
+    }
+
+    // ====================== INIT ======================
+    window.onload = function() {
+      loadUserInfo();
+      loadBeats();
+
+      // Optional: Pause when audio ends
+      globalAudio.addEventListener("ended", () => {
+        if (currentPlayingCard) {
+          currentPlayingCard.classList.remove("ring-2", "ring-cyan-400");
+          currentPlayingCard = null;
+        }
+      });
+    };
+  </script>
