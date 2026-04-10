@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Firebase (updated to newer compat version for stability) -->
+  <!-- Firebase Compat Version -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
@@ -40,21 +40,21 @@
       <p class="text-zinc-400">Your Library • Sample Beats</p>
     </div>
 
-    <!-- Beats Library -->
+    <!-- Library -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
         <i class="fa-solid fa-music"></i> Your Library
       </h3>
-      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Beats populated here -->
+      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Beats will be inserted here by JavaScript -->
       </div>
     </div>
   </div>
 
-  <audio id="audioPlayer"></audio>
+  <audio id="globalAudio" preload="metadata"></audio>
 
   <script>
-    // Firebase Config (use your current project)
+    // Firebase Setup
     const firebaseConfig = {
       apiKey: "AIzaSyDfF-6IhFvGMiPIXvKVP8_VKJ2oE7N-Afo",
       authDomain: "vizalok-d0eaf.firebaseapp.com",
@@ -67,52 +67,90 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Full Raw GitHub URLs for your beats
+    const audio = document.getElementById('globalAudio');
+
+    // Your Beats with correct raw GitHub URLs
     const beats = [
-      { 
-        name: 'Vizalok - Diy', 
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav" 
+      {
+        name: "Vizalok - Diy",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
       },
-      { 
-        name: 'Vizalok - La Themed', 
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav" 
+      {
+        name: "Vizalok - La Themed",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
       },
-      { 
-        name: 'knoxzic - Cookin', 
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav" 
+      {
+        name: "knoxzic - Cookin",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
       }
     ];
 
-    let currentPlayingCard = null;
-    const audio = document.getElementById('audioPlayer');
-
-    // Auth & Load
+    // Show username
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName || user.email?.split('@')[0] || "Listener";
         document.getElementById('displayName').textContent = name;
-        loadBeats();
+        renderBeats();
       } else {
         window.location.href = '../index.html';
       }
     });
 
-    function loadBeats() {
+    // Render the beats
+    function renderBeats() {
       const grid = document.getElementById('beatsGrid');
       grid.innerHTML = '';
 
       beats.forEach((beat, index) => {
-        const card = createBeatCard(beat, index);
-        grid.appendChild(card);
+        const cardHTML = `
+          <div class="bg-zinc-900 border border-cyan-400/30 rounded-3xl p-6 hover:border-cyan-400 transition-all">
+            <div class="flex items-center gap-4 mb-4">
+              <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
+              <div>
+                <h4 class="font-semibold text-lg">${beat.name}</h4>
+                <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
+              </div>
+            </div>
+            
+            <audio controls loop class="w-full accent-cyan-400" style="height: 42px;">
+              <source src="${beat.url}" type="audio/wav">
+              Your browser does not support audio playback.
+            </audio>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
       });
     }
 
-    function createBeatCard(beat, index) {
-      const card = document.createElement('div');
-      card.className = 'bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-3xl p-6 hover:from-zinc-700 hover:to-zinc-800 transition border border-cyan-500/30 group';
-      card.id = `beat-${index}`;
+    // Logout
+    function logout() {
+      audio.pause();
+      auth.signOut().then(() => {
+        window.location.href = '../index.html';
+      }).catch(() => {
+        window.location.href = '../index.html';
+      });
+    }
 
-      card.innerHTML = `
+    // XRP Price
+    async function fetchXRPPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_24hr_change=true');
+        const data = await res.json();
+        const price = data.ripple.usd;
+        const change = data.ripple.usd_24h_change?.toFixed(2) || '0';
+        
+        document.getElementById('xrp-price').textContent = '$' + price.toLocaleString();
+        const changeEl = document.getElementById('xrp-change');
+        changeEl.textContent = change + '%';
+        changeEl.className = parseFloat(change) >= 0 ? 'text-emerald-400 text-xs' : 'text-red-400 text-xs';
+      } catch (e) {}
+    }
+    setInterval(fetchXRPPrice, 30000);
+    fetchXRPPrice();
+  </script>
+</body>
+</html>
         <div class="mb-4">
           <h4 class="text-lg font-semibold text-white truncate mb-1">${beat.name}</h4>
           <div class="flex items-center justify-between text-xs text-zinc-400">
