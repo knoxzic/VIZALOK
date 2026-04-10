@@ -11,7 +11,7 @@
 <body class="bg-zinc-950 text-white min-h-screen">
   <div class="max-w-7xl mx-auto p-6">
     
-    <!-- Top Navbar -->
+    <!-- Navbar -->
     <div class="flex justify-between items-center mb-10 border-b border-cyan-500/20 pb-6">
       <div class="flex items-center gap-4">
         <img src="../logo.png" alt="Vizalok" width="50">
@@ -30,21 +30,20 @@
       </div>
     </div>
 
-    <!-- Welcome -->
+    <!-- Welcome with Real Username -->
     <div class="mb-12">
-      <h2 class="text-3xl font-bold mb-4">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-      <p class="text-zinc-400 mb-6">Your Library • Content stored on Storj decentralized network</p>
+      <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
+      <p class="text-zinc-400">Your Library • Content stored on Storj decentralized network</p>
       
-      <!-- Featured Video Player -->
-      <div class="bg-black rounded-3xl overflow-hidden border border-cyan-400/30 shadow-2xl relative">
+      <!-- Video Player -->
+      <div class="bg-black rounded-3xl overflow-hidden border border-cyan-400/30 shadow-2xl mt-8">
         <video id="featuredVideo" 
                controls 
                class="w-full aspect-video"
-               poster="../poster.jpg">   <!-- Add a poster.jpg in your music folder for a nice thumbnail -->
+               poster="../poster.jpg">
           <source id="videoSource" 
-                  src="https://link.storjshare.io/raw/jul2zyrmnpwrzchbjkzxpuyenpxq/vizalokvideos/vizalok-welcomevideo.mov" 
-                  type="video/quicktime">   <!-- .mov files usually use quicktime -->
-          Your browser does not support the video tag.
+                  src="YOUR_VIDEO_RAW_URL_HERE" 
+                  type="video/mp4">
         </video>
       </div>
       
@@ -57,7 +56,58 @@
       </div>
     </div>
 
-    <!-- Library Grid -->
+    <!-- Library -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
-        <
+        <i class="fa-solid fa-music"></i> Your Library
+      </h3>
+      <div id="libraryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div class="col-span-full text-center py-16 text-zinc-500 border border-dashed border-zinc-700 rounded-3xl">
+          Your purchased music and videos will appear here soon.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        const name = user.displayName || user.email?.split('@')[0] || "Listener";
+        document.getElementById('displayName').textContent = name;
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    function logout() {
+      auth.signOut().then(() => window.location.href = 'index.html');
+    }
+
+    // XRP Price
+    async function fetchXRPPrice() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_24hr_change=true');
+        const data = await res.json();
+        const price = data.ripple.usd;
+        const change = data.ripple.usd_24h_change.toFixed(2);
+        document.getElementById('xrp-price').textContent = '$' + price.toLocaleString();
+        const changeEl = document.getElementById('xrp-change');
+        changeEl.textContent = change + '%';
+        changeEl.className = change > 0 ? 'text-emerald-400 text-xs' : 'text-red-400 text-xs';
+      } catch (e) {}
+    }
+    setInterval(fetchXRPPrice, 30000);
+    fetchXRPPrice();
+
+    // Video load error feedback
+    window.addEventListener('load', () => {
+      const video = document.getElementById('featuredVideo');
+      video.addEventListener('error', () => {
+        console.error("Video failed to load. Check the source URL.");
+      });
+    });
+  </script>
+</body>
+</html>
