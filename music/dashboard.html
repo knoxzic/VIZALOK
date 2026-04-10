@@ -3,156 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vizalok Music • Library</title>
+  <title>My Library - Vizalok Music</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Firebase Compat Version -->
+  <!-- Firebase SDK - Compat version (same as login) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+  <style>
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+    }
+    .welcome {
+      font-size: 2.2rem;
+      color: #00f5ff;
+    }
+    .main-card {
+      background: rgba(30, 30, 60, 0.9);
+      border-radius: 20px;
+      padding: 60px 40px;
+      border: 1px solid rgba(0, 245, 255, 0.25);
+    }
+    .logout-btn {
+      padding: 14px 32px;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <div class="max-w-7xl mx-auto p-6">
-    
-    <!-- Navbar -->
-    <div class="flex justify-between items-center mb-10 border-b border-cyan-500/20 pb-6">
-      <div class="flex items-center gap-4">
-        <img src="../logo.png" alt="Vizalok" width="50">
-        <h1 class="text-4xl font-black tracking-[-2px] neon">VIZALOK MUSIC</h1>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1 class="welcome" id="welcome-text">Welcome</h1>
+        <p id="user-email" style="color:#aaa; margin-top:8px;"></p>
       </div>
-      <div class="flex items-center gap-6">
-        <div id="xrp-value" class="text-sm font-medium flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-2xl border border-cyan-400/30">
-          <span class="text-cyan-400">XRP</span>
-          <span id="xrp-price" class="text-emerald-400 font-mono">$ --</span>
-          <span id="xrp-change" class="text-xs"></span>
-        </div>
-        <button onclick="logout()" 
-                class="px-6 py-3 bg-zinc-800 hover:bg-red-600/20 text-red-400 rounded-2xl flex items-center gap-2 transition">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-      </div>
+      <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
-    <!-- Welcome -->
-    <div class="mb-12">
-      <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-      <p class="text-zinc-400">Your Library • Sample Beats</p>
-    </div>
-
-    <!-- Library -->
-    <div>
-      <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-music"></i> Your Library
-      </h3>
-      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Beats will be inserted here by JavaScript -->
-      </div>
+    <div class="main-card">
+      <h2>Your Music Library</h2>
+      <p style="color:#ccc; margin: 30px 0; line-height:1.6;">
+        Welcome to your personal dashboard.<br>
+        Your invested tracks, royalties, and portfolio will appear here soon.
+      </p>
     </div>
   </div>
 
-  <audio id="globalAudio" preload="metadata"></audio>
-
   <script>
-    // Firebase Setup
+    // Initialize Firebase - Same as login page
     const firebaseConfig = {
-      apiKey: "AIzaSyDfF-6IhFvGMiPIXvKVP8_VKJ2oE7N-Afo",
-      authDomain: "vizalok-d0eaf.firebaseapp.com",
-      projectId: "vizalok-d0eaf",
-      storageBucket: "vizalok-d0eaf.appspot.com",
-      messagingSenderId: "965838726289",
-      appId: "1:965838726289:web:8c1bfe82ba31e82ce88d8c"
+      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
+      authDomain: "vizalok-music.firebaseapp.com",
+      projectId: "vizalok-music",
+      storageBucket: "vizalok-music.firebasestorage.app",
+      messagingSenderId: "431775929269",
+      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
     };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const audio = document.getElementById('globalAudio');
-
-    // Your Beats with correct raw GitHub URLs
-    const beats = [
-      {
-        name: "Vizalok - Diy",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
-      },
-      {
-        name: "Vizalok - La Themed",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
-      },
-      {
-        name: "knoxzic - Cookin",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
-      }
-    ];
-
-    // Show username
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        const name = user.displayName || user.email?.split('@')[0] || "Listener";
-        document.getElementById('displayName').textContent = name;
-        renderBeats();
+    // Check auth state
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'index.html';
       } else {
-        window.location.href = '../index.html';
+        const displayName = user.displayName || "User";
+        document.getElementById('welcome-text').textContent = `Welcome, ${displayName}!`;
+        document.getElementById('user-email').textContent = user.email;
       }
     });
 
-    // Render the beats
-    function renderBeats() {
-      const grid = document.getElementById('beatsGrid');
-      grid.innerHTML = '';
-
-      beats.forEach((beat, index) => {
-        const cardHTML = `
-          <div class="bg-zinc-900 border border-cyan-400/30 rounded-3xl p-6 hover:border-cyan-400 transition-all">
-            <div class="flex items-center gap-4 mb-4">
-              <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
-              <div>
-                <h4 class="font-semibold text-lg">${beat.name}</h4>
-                <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
-              </div>
-            </div>
-            
-            <audio controls loop class="w-full accent-cyan-400" style="height: 42px;">
-              <source src="${beat.url}" type="audio/wav">
-              Your browser does not support audio playback.
-            </audio>
-          </div>
-        `;
-        grid.innerHTML += cardHTML;
-      });
-    }
-
-    // Logout
     function logout() {
-      audio.pause();
-      auth.signOut().then(() => {
-        window.location.href = '../index.html';
-      }).catch(() => {
-        window.location.href = '../index.html';
-      });
+      if (confirm("Are you sure you want to logout?")) {
+        auth.signOut().then(() => {
+          window.location.href = 'index.html';
+        });
+      }
     }
-
-    // XRP Price
-    async function fetchXRPPrice() {
-      try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_24hr_change=true');
-        const data = await res.json();
-        const price = data.ripple.usd;
-        const change = data.ripple.usd_24h_change?.toFixed(2) || '0';
-        
-        document.getElementById('xrp-price').textContent = '$' + price.toLocaleString();
-        const changeEl = document.getElementById('xrp-change');
-        changeEl.textContent = change + '%';
-        changeEl.className = parseFloat(change) >= 0 ? 'text-emerald-400 text-xs' : 'text-red-400 text-xs';
-      } catch (e) {}
-    }
-    setInterval(fetchXRPPrice, 30000);
-    fetchXRPPrice();
   </script>
 </body>
 </html>
-        <div class="mb-4">
-          <h4 class="text-lg font-semibold text-white truncate mb-1">${beat.name}</h4>
-          <div class="flex items-center justify-between text-xs text-zinc-400">
-            <span>.wav • Beat</span>
-            <span>Loop Enabled
