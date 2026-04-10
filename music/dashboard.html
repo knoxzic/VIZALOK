@@ -5,21 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vizalok Music • Library</title>
   <link rel="stylesheet" href="style.css">
-  
+ 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
   <div class="max-w-screen-2xl mx-auto flex min-h-screen">
-
     <!-- Sidebar -->
     <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
       <div class="flex items-center gap-3 mb-12">
-        <img src="../logo.png" alt="Vizalok" width="60">
+        <img src="logo.png" alt="Vizalok" width="60">
         <h1 class="text-3xl font-black tracking-tight">VIZALOK</h1>
       </div>
-
       <div class="space-y-1 flex-1">
         <div class="nav-item active flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400">
           <i class="fa-solid fa-house"></i>
@@ -42,8 +40,7 @@
           <span>Help</span>
         </div>
       </div>
-
-      <button onclick="logout()" 
+      <button onclick="logout()"
               class="mt-auto flex items-center gap-3 px-5 py-4 text-red-400 hover:bg-red-500/10 rounded-2xl w-full">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span>Logout</span>
@@ -63,8 +60,7 @@
         <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
           <i class="fa-solid fa-music"></i> Your Library
         </h3>
-
-        <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div id="beatsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           <!-- Populated by JavaScript -->
         </div>
       </div>
@@ -83,68 +79,19 @@
       messagingSenderId: "431775929269",
       appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Your beats from the repo
+    // Your beats (using raw GitHub URLs - they work well)
     const beats = [
       {
         name: "Vizalok - Diy",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
+        url: "https://raw.githubusercontent.com/knoxzic/VIZALOK/main/music/beats/Vizalok%20-%20Diy.wav"
       },
       {
         name: "Vizalok - La Themed",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
+        url: "https://raw.githubusercontent.com/knoxzic/VIZALOK/main/music/beats/Vizalok%20-%20La%20Themed.wav"
       },
       {
         name: "knoxzic - Cookin",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
-      }
-    ];
-
-    // Auth Check
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = 'index.html';
-      } else {
-        const name = user.displayName || user.email?.split('@')[0] || "Listener";
-        document.getElementById('displayName').textContent = name;
-        renderBeats();
-      }
-    });
-
-    // Render Library Grid
-    function renderBeats() {
-      const grid = document.getElementById('beatsGrid');
-      grid.innerHTML = '';
-
-      beats.forEach(beat => {
-        const card = `
-          <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 hover:border-cyan-400 transition-all">
-            <div class="flex items-center gap-4 mb-6">
-              <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
-              <div class="flex-1">
-                <h4 class="font-semibold text-lg">${beat.name}</h4>
-                <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
-              </div>
-            </div>
-            
-            <audio controls class="w-full accent-cyan-400" style="height: 48px;">
-              <source src="${beat.url}" type="audio/wav">
-            </audio>
-          </div>
-        `;
-        grid.innerHTML += card;
-      });
-    }
-
-    // Logout
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = 'index.html';
-      });
-    }
-  </script>
-</body>
-</html>
+        url: "https://raw
