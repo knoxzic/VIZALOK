@@ -36,13 +36,13 @@
       <p class="text-zinc-400">Your Library • Sample Beats</p>
     </div>
 
-    <!-- Sample Beats Library -->
+    <!-- Beats Library -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
         <i class="fa-solid fa-music"></i> Your Library
       </h3>
       <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Beats populated by JS -->
+        <!-- Beats will appear here -->
       </div>
     </div>
   </div>
@@ -50,87 +50,19 @@
   <script>
     const auth = firebase.auth();
 
-    // Display username
+    // Show username
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName || user.email?.split('@')[0] || "Listener";
         document.getElementById('displayName').textContent = name;
       } else {
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';   // Go back to main Vizalok home
       }
     });
 
+    // Improved Logout - sends back to vizalok.com (main home)
     function logout() {
-      auth.signOut().then(() => window.location.href = 'index.html');
-    }
-
-    // XRP Price
-    async function fetchXRPPrice() {
-      try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ripple&vs_currencies=usd&include_24hr_change=true');
-        const data = await res.json();
-        const price = data.ripple.usd;
-        const change = data.ripple.usd_24h_change.toFixed(2);
-        
-        document.getElementById('xrp-price').textContent = '$' + price.toLocaleString();
-        const changeEl = document.getElementById('xrp-change');
-        changeEl.textContent = change + '%';
-        changeEl.className = change > 0 ? 'text-emerald-400 text-xs' : 'text-red-400 text-xs';
-      } catch (e) {}
-    }
-    setInterval(fetchXRPPrice, 30000);
-    fetchXRPPrice();
-
-    // YOUR BEATS (with correct raw URLs and auto-loop)
-    const sampleBeats = [
-      {
-        title: "Diy",
-        artist: "Vizalok",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
-      },
-      {
-        title: "La Themed",
-        artist: "Vizalok",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
-      },
-      {
-        title: "Cookin",
-        artist: "knoxzic",
-        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
-      }
-    ];
-
-    // Render beats with LOOP enabled
-    function renderBeats() {
-      const grid = document.getElementById('beatsGrid');
-      grid.innerHTML = '';
-
-      sampleBeats.forEach(beat => {
-        const card = document.createElement('div');
-        card.className = "bg-zinc-900 border border-cyan-400/30 rounded-3xl p-6 hover:border-cyan-400 transition-all duration-300";
-        
-        card.innerHTML = `
-          <div class="flex items-center gap-4 mb-5">
-            <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
-            <div class="flex-1 min-w-0">
-              <h4 class="font-semibold text-lg truncate">${beat.title}</h4>
-              <p class="text-zinc-400 text-sm">${beat.artist}</p>
-            </div>
-          </div>
-          
-          <audio controls loop class="w-full accent-cyan-400" preload="metadata">
-            <source src="${beat.url}" type="audio/wav">
-            Your browser does not support the audio element.
-          </audio>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    // Initialize
-    window.addEventListener('load', () => {
-      renderBeats();
-    });
-  </script>
-</body>
-</html>
+      auth.signOut().then(() => {
+        window.location.href = '../index.html';
+      }).catch(() => {
+        window.location.href = '../index
