@@ -1,23 +1,264 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vizalok Music • Library</title>
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/tailwind.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a0033 50%, #0d0d1f 100%);
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      animation: gradientShift 15s ease infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(0, 245, 255, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(0, 245, 255, 0.8); }
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    .sidebar {
+      animation: slideInLeft 0.8s ease-out;
+    }
+
+    .main-content {
+      animation: slideInRight 0.8s ease-out;
+    }
+
+    .page-title {
+      animation: fadeInUp 0.8s ease-out 0.2s;
+      animation-fill-mode: both;
+    }
+
+    .beat-card {
+      animation: fadeInUp 0.6s ease-out;
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.8), rgba(30, 10, 50, 0.8));
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .beat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .beat-card:hover::before {
+      left: 100%;
+    }
+
+    .beat-card:hover {
+      border-color: rgba(0, 245, 255, 0.6);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.3), inset 0 0 30px rgba(0, 245, 255, 0.05);
+      transform: translateY(-8px) scale(1.02);
+    }
+
+    .play-button {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #00f5ff, #8b5cf6);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+    }
+
+    .play-button:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 0 40px rgba(0, 245, 255, 0.8);
+    }
+
+    .play-button:active {
+      transform: scale(0.95);
+    }
+
+    .play-button.playing {
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    .nav-item {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 4px;
+      height: 0%;
+      background: linear-gradient(180deg, #00f5ff, #8b5cf6);
+      border-radius: 2px;
+      transition: height 0.4s ease;
+    }
+
+    .nav-item.active::before {
+      height: 100%;
+    }
+
+    .nav-item:hover {
+      background: rgba(0, 245, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .search-input {
+      transition: all 0.3s ease;
+      border: 2px solid rgba(0, 245, 255, 0.2);
+    }
+
+    .search-input:focus {
+      border-color: #00f5ff;
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+      background: rgba(20, 20, 40, 0.9);
+    }
+
+    .logo-img {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome-emoji {
+      animation: spin 2s linear infinite;
+      display: inline-block;
+    }
+
+    .grid-item {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .grid-item:nth-child(1) { animation-delay: 0.1s; }
+    .grid-item:nth-child(2) { animation-delay: 0.2s; }
+    .grid-item:nth-child(3) { animation-delay: 0.3s; }
+    .grid-item:nth-child(4) { animation-delay: 0.4s; }
+    .grid-item:nth-child(5) { animation-delay: 0.5s; }
+    .grid-item:nth-child(6) { animation-delay: 0.6s; }
+
+    .duration-display {
+      font-size: 0.85rem;
+      color: #00f5ff;
+      font-weight: 600;
+    }
+
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 245, 255, 0.2);
+      border-top: 3px solid #00f5ff;
+      border-radius: 50%;
+      animation: spin-slow 1s linear infinite;
+    }
+
+    .no-beats {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.6;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 245, 255, 0.3);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 245, 255, 0.6);
+    }
+  </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen overflow-hidden">
   <div class="flex h-screen w-screen">
 
     <!-- Sidebar -->
-    <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
+    <div class="sidebar w-72 bg-gradient-to-b from-zinc-900 via-zinc-900 to-black border-r border-cyan-500/20 p-6 flex flex-col">
       <div class="flex items-center gap-3 mb-12">
-        <img src="../logo.png" alt="Vizalok" width="65">
-        <h1 class="text-3xl font-black tracking-tight">VIZALOK</h1>
+        <img src="../logo.png" alt="Vizalok" width="65" class="logo-img">
+        <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">VIZALOK</h1>
       </div>
 
       <div class="space-y-2 flex-1">
@@ -25,53 +266,62 @@
           <i class="fa-solid fa-house"></i>
           <span>Home</span>
         </div>
-        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer transition-all">
           <i class="fa-solid fa-store"></i>
           <span>Store</span>
         </div>
-        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer transition-all">
           <i class="fa-solid fa-user"></i>
           <span>Profile</span>
         </div>
-        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer transition-all">
           <i class="fa-solid fa-gear"></i>
           <span>Settings</span>
         </div>
-        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+        <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer transition-all">
           <i class="fa-solid fa-circle-question"></i>
           <span>Help</span>
         </div>
       </div>
+
+      <div class="border-t border-zinc-700 pt-4 mt-4">
+        <div class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer transition-all">
+          <i class="fa-solid fa-sign-out"></i>
+          <span>Logout</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Content - Full Width -->
-    <div class="flex-1 p-10 overflow-y-auto">
+    <!-- Main Content -->
+    <div class="main-content flex-1 p-10 overflow-y-auto">
       <!-- Top Bar -->
-      <div class="flex justify-between items-center mb-12">
-        <h1 class="text-4xl font-bold tracking-tight">Vizalok Music</h1>
+      <div class="flex justify-between items-center mb-12 page-title gap-8">
+        <h1 class="text-5xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Vizalok Music</h1>
         
         <div class="flex items-center gap-6">
-          <input type="text" placeholder="Search songs, artists, or tracks..." 
-                 class="bg-zinc-900 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none transition-all">
-          <div class="text-2xl cursor-pointer">🛎️</div>
-          <div class="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center font-bold cursor-pointer">B</div>
+          <input type="text" id="searchInput" placeholder="Search songs, artists, or tracks..." 
+                 class="search-input bg-zinc-900/50 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none">
+          <div class="text-3xl cursor-pointer hover:scale-110 transition-transform">🔔</div>
+          <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:scale-105 transition-transform shadow-lg shadow-purple-500/50">V</div>
         </div>
       </div>
 
       <!-- Welcome -->
-      <div class="mb-12">
-        <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-        <p class="text-zinc-400">Here's what's trending in your library</p>
+      <div class="mb-12 page-title" style="animation-delay: 0.3s;">
+        <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400">Listener</span> <span class="welcome-emoji">👋</span></h2>
+        <p class="text-zinc-400 text-lg">Here's what's trending in your library</p>
       </div>
 
       <!-- Library Grid -->
-      <div>
-        <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
+      <div class="page-title" style="animation-delay: 0.4s;">
+        <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3 text-cyan-400">
           <i class="fa-solid fa-music"></i> Your Library
         </h3>
         
         <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          <!-- Beats populated by JS -->
+          <div class="col-span-full flex justify-center items-center py-12">
+            <div class="loader"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -80,20 +330,123 @@
   <audio id="globalAudio" preload="metadata"></audio>
 
   <script>
-    // Firebase Setup
-    const firebaseConfig = {
-      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
-      authDomain: "vizalok-music.firebaseapp.com",
-      projectId: "vizalok-music",
-      storageBucket: "vizalok-music.firebasestorage.app",
-      messagingSenderId: "431775929269",
-      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Your sample beats
+    // Sample beats array with all available tracks
     const beats = [
-      { name: "Vizalok - Diy", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav" },
-      { name: "Vizalok - La Themed", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main
+      { 
+        name: "Vizalok - Diy", 
+        url: "beats/Vizalok%20-%20Diy.wav",
+        artist: "Vizalok",
+        duration: "3:45"
+      },
+      { 
+        name: "Vizalok - La Themed", 
+        url: "beats/Vizalok%20-%20La%20Themed.wav",
+        artist: "Vizalok",
+        duration: "4:12"
+      },
+      { 
+        name: "knoxzic - Cookin", 
+        url: "beats/knoxzic%20-%20Cookin.wav",
+        artist: "knoxzic",
+        duration: "3:30"
+      }
+    ];
+
+    let currentlyPlaying = null;
+    const audio = document.getElementById('globalAudio');
+    const beatsGrid = document.getElementById('beatsGrid');
+    const searchInput = document.getElementById('searchInput');
+    let filteredBeats = [...beats];
+
+    // Set display name
+    document.getElementById('displayName').textContent = 'User';
+
+    // Render beats
+    function renderBeats(beatsToRender = beats) {
+      beatsGrid.innerHTML = '';
+
+      if (beatsToRender.length === 0) {
+        beatsGrid.innerHTML = '<div class="col-span-full no-beats"><p class="text-2xl">No beats found</p></div>';
+        return;
+      }
+
+      beatsToRender.forEach((beat, index) => {
+        const beatCard = document.createElement('div');
+        beatCard.className = 'grid-item beat-card';
+        beatCard.innerHTML = `
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-white leading-tight mb-1">${beat.name}</h4>
+              <p class="text-sm text-zinc-400">${beat.artist}</p>
+            </div>
+            <button class="play-button" data-index="${index}">
+              <i class="fa-solid fa-play"></i>
+            </button>
+          </div>
+          <div class="flex justify-between items-center text-xs text-zinc-500">
+            <span class="duration-display">${beat.duration}</span>
+            <span>♫ Beat</span>
+          </div>
+        `;
+
+        const playBtn = beatCard.querySelector('.play-button');
+        playBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          togglePlayBeat(beat, playBtn, index);
+        });
+
+        beatsGrid.appendChild(beatCard);
+      });
+    }
+
+    // Toggle play beat
+    function togglePlayBeat(beat, button, index) {
+      if (currentlyPlaying === index && !audio.paused) {
+        audio.pause();
+        button.classList.remove('playing');
+        button.innerHTML = '<i class="fa-solid fa-play"></i>';
+        currentlyPlaying = null;
+      } else {
+        // Stop previous
+        if (currentlyPlaying !== null) {
+          const prevButtons = beatsGrid.querySelectorAll('.play-button');
+          prevButtons.forEach(btn => {
+            btn.classList.remove('playing');
+            btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+          });
+        }
+
+        // Play new
+        audio.src = beat.url;
+        audio.play().catch(err => console.log('Playback error:', err));
+        button.classList.add('playing');
+        button.innerHTML = '<i class="fa-solid fa-pause"></i>';
+        currentlyPlaying = index;
+      }
+    }
+
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      filteredBeats = beats.filter(beat => 
+        beat.name.toLowerCase().includes(query) || 
+        beat.artist.toLowerCase().includes(query)
+      );
+      renderBeats(filteredBeats);
+    });
+
+    // Audio event listeners
+    audio.addEventListener('ended', () => {
+      const allButtons = beatsGrid.querySelectorAll('.play-button');
+      allButtons.forEach(btn => {
+        btn.classList.remove('playing');
+        btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+      });
+      currentlyPlaying = null;
+    });
+
+    // Initialize
+    renderBeats();
+  </script>
+</body>
+</html>
