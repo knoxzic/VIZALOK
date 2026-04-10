@@ -33,16 +33,16 @@
     <!-- Welcome -->
     <div class="mb-12">
       <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-      <p class="text-zinc-400">Your Library • Sample Beats (Auto-loop enabled)</p>
+      <p class="text-zinc-400">Your Library • Sample Beats</p>
     </div>
 
-    <!-- Beats Grid -->
+    <!-- Sample Beats Library -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-music"></i> Sample Beats
+        <i class="fa-solid fa-music"></i> Your Library
       </h3>
       <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Populated by JS -->
+        <!-- Beats populated by JS -->
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
   <script>
     const auth = firebase.auth();
 
-    // Username
+    // Display username
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName || user.email?.split('@')[0] || "Listener";
@@ -81,7 +81,7 @@
     setInterval(fetchXRPPrice, 30000);
     fetchXRPPrice();
 
-    // YOUR ACTUAL BEATS (with correct raw GitHub URLs)
+    // YOUR BEATS (with correct raw URLs and auto-loop)
     const sampleBeats = [
       {
         title: "Diy",
@@ -102,4 +102,35 @@
 
     // Render beats with LOOP enabled
     function renderBeats() {
-      const grid =
+      const grid = document.getElementById('beatsGrid');
+      grid.innerHTML = '';
+
+      sampleBeats.forEach(beat => {
+        const card = document.createElement('div');
+        card.className = "bg-zinc-900 border border-cyan-400/30 rounded-3xl p-6 hover:border-cyan-400 transition-all duration-300";
+        
+        card.innerHTML = `
+          <div class="flex items-center gap-4 mb-5">
+            <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
+            <div class="flex-1 min-w-0">
+              <h4 class="font-semibold text-lg truncate">${beat.title}</h4>
+              <p class="text-zinc-400 text-sm">${beat.artist}</p>
+            </div>
+          </div>
+          
+          <audio controls loop class="w-full accent-cyan-400" preload="metadata">
+            <source src="${beat.url}" type="audio/wav">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Initialize
+    window.addEventListener('load', () => {
+      renderBeats();
+    });
+  </script>
+</body>
+</html>
