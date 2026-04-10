@@ -30,41 +30,19 @@
       </div>
     </div>
 
-    <!-- Welcome with Real Username -->
+    <!-- Welcome -->
     <div class="mb-12">
       <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-      <p class="text-zinc-400">Your Library • Content stored on Storj decentralized network</p>
-      
-      <!-- Video Player -->
-      <div class="bg-black rounded-3xl overflow-hidden border border-cyan-400/30 shadow-2xl mt-8">
-        <video id="featuredVideo" 
-               controls 
-               class="w-full aspect-video"
-               poster="../poster.jpg">
-          <source id="videoSource" 
-                  src="YOUR_VIDEO_RAW_URL_HERE" 
-                  type="video/mp4">
-        </video>
-      </div>
-      
-      <div class="mt-4 flex justify-between items-center text-sm">
-        <p class="text-zinc-400">Featured: Vizalok Music Welcome Video</p>
-        <button onclick="document.getElementById('featuredVideo').play()" 
-                class="text-cyan-400 hover:text-white flex items-center gap-2 font-medium">
-          <i class="fa-solid fa-play"></i> Play Now
-        </button>
-      </div>
+      <p class="text-zinc-400">Your Library • Sample Beats (Auto-loop enabled)</p>
     </div>
 
-    <!-- Library -->
+    <!-- Beats Grid -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-music"></i> Your Library
+        <i class="fa-solid fa-music"></i> Sample Beats
       </h3>
-      <div id="libraryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        <div class="col-span-full text-center py-16 text-zinc-500 border border-dashed border-zinc-700 rounded-3xl">
-          Your purchased music and videos will appear here soon.
-        </div>
+      <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Populated by JS -->
       </div>
     </div>
   </div>
@@ -72,6 +50,7 @@
   <script>
     const auth = firebase.auth();
 
+    // Username
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName || user.email?.split('@')[0] || "Listener";
@@ -92,6 +71,7 @@
         const data = await res.json();
         const price = data.ripple.usd;
         const change = data.ripple.usd_24h_change.toFixed(2);
+        
         document.getElementById('xrp-price').textContent = '$' + price.toLocaleString();
         const changeEl = document.getElementById('xrp-change');
         changeEl.textContent = change + '%';
@@ -101,13 +81,25 @@
     setInterval(fetchXRPPrice, 30000);
     fetchXRPPrice();
 
-    // Video load error feedback
-    window.addEventListener('load', () => {
-      const video = document.getElementById('featuredVideo');
-      video.addEventListener('error', () => {
-        console.error("Video failed to load. Check the source URL.");
-      });
-    });
-  </script>
-</body>
-</html>
+    // YOUR ACTUAL BEATS (with correct raw GitHub URLs)
+    const sampleBeats = [
+      {
+        title: "Diy",
+        artist: "Vizalok",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
+      },
+      {
+        title: "La Themed",
+        artist: "Vizalok",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
+      },
+      {
+        title: "Cookin",
+        artist: "knoxzic",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
+      }
+    ];
+
+    // Render beats with LOOP enabled
+    function renderBeats() {
+      const grid =
