@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,7 +6,7 @@
   <title>Vizalok Music • Library</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- Firebase Compat Version -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
@@ -14,64 +14,58 @@
   <div class="max-w-screen-2xl mx-auto flex min-h-screen">
 
     <!-- Sidebar -->
-    <div class="w-72 bg-zinc-900 border-r border-cyan-500/20 p-6 flex flex-col">
+    <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
       <div class="flex items-center gap-3 mb-12">
-        <img src="../logo.png" alt="Vizalok" width="55">
-        <h1 class="text-3xl font-black tracking-tight text-cyan-400">VIZALOK</h1>
+        <img src="../logo.png" alt="Vizalok" width="60">
+        <h1 class="text-3xl font-black tracking-tight">VIZALOK</h1>
       </div>
 
-      <div class="space-y-2 flex-1">
+      <div class="space-y-1 flex-1">
         <div class="nav-item active flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400">
-          <i class="fa-solid fa-house text-xl"></i>
-          <span class="font-medium">Home</span>
+          <i class="fa-solid fa-house"></i>
+          <span>Home</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-store text-xl"></i>
-          <span class="font-medium">Store</span>
+          <i class="fa-solid fa-store"></i>
+          <span>Store</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-user text-xl"></i>
-          <span class="font-medium">Profile</span>
+          <i class="fa-solid fa-user"></i>
+          <span>Profile</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-gear text-xl"></i>
-          <span class="font-medium">Settings</span>
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-circle-question text-xl"></i>
-          <span class="font-medium">Help</span>
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Help</span>
         </div>
       </div>
+
+      <button onclick="logout()" 
+              class="mt-auto flex items-center gap-3 px-5 py-4 text-red-400 hover:bg-red-500/10 rounded-2xl w-full">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </button>
     </div>
 
     <!-- Main Content -->
     <div class="flex-1 p-10">
-      <!-- Top Bar -->
-      <div class="flex justify-between items-center mb-12">
-        <h1 class="text-4xl font-bold text-white">Vizalok Music</h1>
-        
-        <div class="flex items-center gap-6">
-          <button onclick="logout()" 
-                  class="px-6 py-3 bg-zinc-800 hover:bg-red-600/20 text-red-400 rounded-2xl flex items-center gap-2 transition">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-          </button>
-        </div>
-      </div>
-
       <!-- Welcome -->
       <div class="mb-12">
-        <h2 class="text-3xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-        <p class="text-zinc-400">Your personal music library</p>
+        <h2 class="text-4xl font-bold">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
+        <p class="text-zinc-400 mt-2">Your personal music library</p>
       </div>
 
-      <!-- Library Grid -->
+      <!-- Library Section -->
       <div>
-        <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+        <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
           <i class="fa-solid fa-music"></i> Your Library
         </h3>
-        
-        <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <!-- Populated by JS -->
+
+        <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Populated by JavaScript -->
         </div>
       </div>
     </div>
@@ -93,13 +87,23 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    // Your beats from the repo
     const beats = [
-      { name: "Vizalok - Diy", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav" },
-      { name: "Vizalok - La Themed", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav" },
-      { name: "knoxzic - Cookin", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav" }
+      {
+        name: "Vizalok - Diy",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav"
+      },
+      {
+        name: "Vizalok - La Themed",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav"
+      },
+      {
+        name: "knoxzic - Cookin",
+        url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav"
+      }
     ];
 
-    // Auth + Display Name
+    // Auth Check
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = 'index.html';
@@ -110,27 +114,28 @@
       }
     });
 
-    // Render beats
+    // Render Library Grid
     function renderBeats() {
       const grid = document.getElementById('beatsGrid');
       grid.innerHTML = '';
 
       beats.forEach(beat => {
-        const cardHTML = `
-          <div class="bg-zinc-900 border border-cyan-400/30 rounded-3xl p-6 hover:border-cyan-400 transition-all">
-            <div class="flex items-center gap-4 mb-5">
+        const card = `
+          <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 hover:border-cyan-400 transition-all">
+            <div class="flex items-center gap-4 mb-6">
               <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
-              <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-lg truncate">${beat.name}</h4>
+              <div class="flex-1">
+                <h4 class="font-semibold text-lg">${beat.name}</h4>
                 <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
               </div>
             </div>
-            <audio controls class="w-full accent-cyan-400" style="height: 42px;">
+            
+            <audio controls class="w-full accent-cyan-400" style="height: 48px;">
               <source src="${beat.url}" type="audio/wav">
             </audio>
           </div>
         `;
-        grid.innerHTML += cardHTML;
+        grid.innerHTML += card;
       });
     }
 
