@@ -3,58 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vizalok Music</title>
+  <title>Vizalok Music • Library</title>
   <link rel="stylesheet" href="style.css">
   
-  <!-- GSAP for smooth animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  
-  <!-- Firebase (compat version) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 </head>
-<body class="bg-[#0a0a0f] text-white overflow-hidden">
-  <div class="dashboard flex h-screen">
+<body class="bg-zinc-950 text-white min-h-screen">
+  <div class="flex h-screen">
 
     <!-- Sidebar -->
-    <div class="w-72 bg-[#111827] border-r border-zinc-800 p-6 flex flex-col">
+    <div class="w-72 bg-zinc-900 border-r border-zinc-800 p-6 flex flex-col">
       <div class="flex items-center gap-3 mb-12">
-        <img src="../logo.png" alt="Vizalok" width="65">
-        <h1 class="text-3xl font-black tracking-[-1px]">VIZALOK</h1>
+        <img src="../logo.png" alt="Vizalok" width="60">
+        <h1 class="text-3xl font-black tracking-tight">VIZALOK</h1>
       </div>
 
-      <div class="space-y-1 flex-1">
+      <div class="space-y-2 flex-1">
         <div class="nav-item active flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400">
-          <i class="fa-solid fa-house text-xl"></i>
+          <i class="fa-solid fa-house"></i>
           <span>Home</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-store text-xl"></i>
+          <i class="fa-solid fa-store"></i>
           <span>Store</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-user text-xl"></i>
+          <i class="fa-solid fa-user"></i>
           <span>Profile</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-gear text-xl"></i>
+          <i class="fa-solid fa-gear"></i>
           <span>Settings</span>
         </div>
         <div class="nav-item flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
-          <i class="fa-solid fa-circle-question text-xl"></i>
+          <i class="fa-solid fa-circle-question"></i>
           <span>Help</span>
         </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-8 overflow-y-auto">
-      <div class="top-bar flex justify-between items-center mb-10">
-        <h1 class="text-4xl font-bold tracking-tight">Vizalok Music</h1>
+    <div class="flex-1 p-10 overflow-y-auto">
+      <!-- Top Bar -->
+      <div class="flex justify-between items-center mb-12">
+        <h1 class="text-4xl font-bold">Vizalok Music</h1>
         
         <div class="flex items-center gap-6">
-          <input type="text" placeholder="Search songs, artists, or tracks..." 
-                 class="bg-zinc-900 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none transition-all">
+          <input type="text" placeholder="Search songs, artists..." 
+                 class="bg-zinc-900 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none">
           <div class="text-2xl cursor-pointer">🛎️</div>
           <div class="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center font-bold cursor-pointer">B</div>
         </div>
@@ -62,31 +60,8 @@
 
       <!-- Welcome -->
       <div class="mb-12">
-        <h2 id="welcome-text" class="text-5xl font-bold mb-3">Welcome back</h2>
-        <p class="text-zinc-400 text-xl">Here's what's trending in your library</p>
+        <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
+        <p class="text-zinc-400">Here's what's trending in your library</p>
       </div>
 
-      <!-- Trending Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="trendingGrid">
-        <!-- Cards populated by JS with GSAP animation -->
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Firebase Setup
-    const firebaseConfig = {
-      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
-      authDomain: "vizalok-music.firebaseapp.com",
-      projectId: "vizalok-music",
-      storageBucket: "vizalok-music.firebasestorage.app",
-      messagingSenderId: "431775929269",
-      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Sample trending tracks
-    const tracks = [
-      { title: "Midnight Drive", artist
+     
