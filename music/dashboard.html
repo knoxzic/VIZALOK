@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -28,36 +29,18 @@
     }
 
     @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes pulse-glow {
@@ -73,11 +56,6 @@
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
-    }
-
-    @keyframes shimmer {
-      0% { background-position: -1000px 0; }
-      100% { background-position: 1000px 0; }
     }
 
     .sidebar {
@@ -196,7 +174,7 @@
     }
 
     .welcome-emoji {
-      animation: spin 2s linear infinite;
+      animation: spin-slow 2s linear infinite;
       display: inline-block;
     }
 
@@ -256,11 +234,6 @@
 
     <!-- Sidebar -->
     <div class="sidebar w-72 bg-gradient-to-b from-zinc-900 via-zinc-900 to-black border-r border-cyan-500/20 p-6 flex flex-col">
-      <div class="flex items-center gap-3 mb-12">
-        <img src="../logo.png" alt="Vizalok" width="65" class="logo-img">
-        <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">VIZALOK</h1>
-      </div>
-
       <div class="space-y-2 flex-1">
         <div class="nav-item active flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400">
           <i class="fa-solid fa-house"></i>
@@ -296,27 +269,36 @@
     <div class="main-content flex-1 p-10 overflow-y-auto">
       <!-- Top Bar -->
       <div class="flex justify-between items-center mb-12 page-title gap-8">
-        <h1 class="text-5xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Vizalok Music</h1>
+        <h1 class="text-5xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">VIZALOK | MUSIC</h1>
         
         <div class="flex items-center gap-6">
-          <input type="text" id="searchInput" placeholder="Search songs, artists, or tracks..." 
-                 class="search-input bg-zinc-900/50 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none">
           <div class="text-3xl cursor-pointer hover:scale-110 transition-transform">🔔</div>
           <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-full flex items-center justify-center font-bold cursor-pointer hover:scale-105 transition-transform shadow-lg shadow-purple-500/50">V</div>
         </div>
       </div>
 
+      <!-- Logo (Far Right) -->
+      <div class="flex justify-end items-center mb-12 page-title pr-8" style="animation-delay: 0.3s;">
+        <img src="../logo.png" alt="Vizalok" width="150" class="logo-img">
+      </div>
+
       <!-- Welcome -->
-      <div class="mb-12 page-title" style="animation-delay: 0.3s;">
+      <div class="mb-12 page-title" style="animation-delay: 0.4s;">
         <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400">Listener</span> <span class="welcome-emoji">👋</span></h2>
         <p class="text-zinc-400 text-lg">Here's what's trending in your library</p>
       </div>
 
       <!-- Library Grid -->
-      <div class="page-title" style="animation-delay: 0.4s;">
+      <div class="page-title" style="animation-delay: 0.5s;">
         <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3 text-cyan-400">
           <i class="fa-solid fa-music"></i> Your Library
         </h3>
+        
+        <!-- Search Bar -->
+        <div class="mb-8">
+          <input type="text" id="searchInput" placeholder="Search songs, artists, or tracks..." 
+                 class="search-input bg-zinc-900/50 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-full outline-none">
+        </div>
         
         <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           <div class="col-span-full flex justify-center items-center py-12">
@@ -330,7 +312,6 @@
   <audio id="globalAudio" preload="metadata"></audio>
 
   <script>
-    // Sample beats array with all available tracks
     const beats = [
       { 
         name: "Vizalok - Diy", 
@@ -358,10 +339,8 @@
     const searchInput = document.getElementById('searchInput');
     let filteredBeats = [...beats];
 
-    // Set display name
     document.getElementById('displayName').textContent = 'User';
 
-    // Render beats
     function renderBeats(beatsToRender = beats) {
       beatsGrid.innerHTML = '';
 
@@ -399,7 +378,6 @@
       });
     }
 
-    // Toggle play beat
     function togglePlayBeat(beat, button, index) {
       if (currentlyPlaying === index && !audio.paused) {
         audio.pause();
@@ -407,7 +385,6 @@
         button.innerHTML = '<i class="fa-solid fa-play"></i>';
         currentlyPlaying = null;
       } else {
-        // Stop previous
         if (currentlyPlaying !== null) {
           const prevButtons = beatsGrid.querySelectorAll('.play-button');
           prevButtons.forEach(btn => {
@@ -416,7 +393,6 @@
           });
         }
 
-        // Play new
         audio.src = beat.url;
         audio.play().catch(err => console.log('Playback error:', err));
         button.classList.add('playing');
@@ -425,7 +401,6 @@
       }
     }
 
-    // Search functionality
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
       filteredBeats = beats.filter(beat => 
@@ -435,17 +410,26 @@
       renderBeats(filteredBeats);
     });
 
-    // Audio event listeners
     audio.addEventListener('ended', () => {
-      const allButtons = beatsGrid.querySelectorAll('.play-button');
-      allButtons.forEach(btn => {
-        btn.classList.remove('playing');
-        btn.innerHTML = '<i class="fa-solid fa-play"></i>';
-      });
-      currentlyPlaying = null;
+      // Play next track in playlist
+      const nextIndex = currentlyPlaying + 1;
+      
+      if (nextIndex < filteredBeats.length) {
+        // Play next track
+        const nextBeat = filteredBeats[nextIndex];
+        const nextButton = beatsGrid.querySelectorAll('.play-button')[nextIndex];
+        togglePlayBeat(nextBeat, nextButton, nextIndex);
+      } else {
+        // Playlist ended - clear playing state
+        const allButtons = beatsGrid.querySelectorAll('.play-button');
+        allButtons.forEach(btn => {
+          btn.classList.remove('playing');
+          btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        });
+        currentlyPlaying = null;
+      }
     });
 
-    // Initialize
     renderBeats();
   </script>
 </body>
