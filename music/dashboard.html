@@ -33,23 +33,23 @@
     <!-- Welcome -->
     <div class="mb-12">
       <h2 class="text-3xl font-bold mb-4">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
-      <p class="text-zinc-400 mb-6">Your Library • Content stored securely on Storj</p>
+      <p class="text-zinc-400 mb-6">Your Library • Content stored on Storj decentralized network</p>
       
       <!-- Featured Video Player -->
       <div class="bg-black rounded-3xl overflow-hidden border border-cyan-400/30 shadow-2xl relative">
         <video id="featuredVideo" 
                controls 
                class="w-full aspect-video"
-               poster="../poster.jpg">
+               poster="../poster.jpg">   <!-- Add a poster.jpg in your music folder for a nice thumbnail -->
           <source id="videoSource" 
-                  src="https://link.storjshare.io/raw/juqu4s5lmfg4/juqu4s5lmfg4" 
-                  type="video/mp4">
+                  src="https://link.storjshare.io/raw/jul2zyrmnpwrzchbjkzxpuyenpxq/vizalokvideos/vizalok-welcomevideo.mov" 
+                  type="video/quicktime">   <!-- .mov files usually use quicktime -->
           Your browser does not support the video tag.
         </video>
       </div>
       
       <div class="mt-4 flex justify-between items-center text-sm">
-        <p class="text-zinc-400">Featured: Welcome to the Vizalok Music Universe</p>
+        <p class="text-zinc-400">Featured: Vizalok Music Welcome Video</p>
         <button onclick="document.getElementById('featuredVideo').play()" 
                 class="text-cyan-400 hover:text-white flex items-center gap-2 font-medium">
           <i class="fa-solid fa-play"></i> Play Now
@@ -57,25 +57,7 @@
       </div>
     </div>
 
-    <!-- Library Section -->
+    <!-- Library Grid -->
     <div>
       <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3">
-        <i class="fa-solid fa-music"></i> Your Library
-      </h3>
-      <div id="libraryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        <!-- Placeholder for now - we'll expand this soon -->
-        <div class="col-span-full text-center py-16 text-zinc-500 border border-dashed border-zinc-700 rounded-3xl">
-          Your purchased & redeemed music and videos will appear here<br>
-          <span class="text-xs block mt-3 opacity-75">Powered by Storj decentralized storage</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Firebase Auth (keeps your login working)
-    const auth = firebase.auth();
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById('displayName').textContent = user.displayName
+        <
