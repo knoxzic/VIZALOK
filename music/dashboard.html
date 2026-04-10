@@ -52,8 +52,8 @@
         
         <div class="flex items-center gap-6">
           <input type="text" placeholder="Search songs, artists..." 
-                 class="bg-zinc-900 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none">
-          <div class="text-2xl cursor-pointer">🛎️</div>
+                 class="bg-zinc-900 border border-zinc-700 focus:border-cyan-400 rounded-full px-6 py-3 w-96 outline-none transition-all">
+          <div class="text-2xl cursor:pointer">🛎️</div>
           <div class="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center font-bold cursor-pointer">B</div>
         </div>
       </div>
@@ -64,4 +64,85 @@
         <p class="text-zinc-400">Here's what's trending in your library</p>
       </div>
 
+      <!-- Library Grid -->
+      <div>
+        <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
+          <i class="fa-solid fa-music"></i> Your Library
+        </h3>
+        
+        <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Beats populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="globalAudio" preload="metadata"></audio>
+
+  <script>
+    // Firebase Setup
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
+      authDomain: "vizalok-music.firebaseapp.com",
+      projectId: "vizalok-music",
+      storageBucket: "vizalok-music.firebasestorage.app",
+      messagingSenderId: "431775929269",
+      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Your beats from the repo
+    const beats = [
+      { name: "Vizalok - Diy", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20Diy.wav" },
+      { name: "Vizalok - La Themed", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/Vizalok%20-%20La%20Themed.wav" },
+      { name: "knoxzic - Cookin", url: "https://raw.githubusercontent.com/knoxzic/vizalok/main/music/beats/knoxzic%20-%20Cookin.wav" }
+    ];
+
+    // Auth Check
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = 'index.html';
+      } else {
+        const name = user.displayName || user.email?.split('@')[0] || "Listener";
+        document.getElementById('displayName').textContent = name;
+        renderBeats();
+      }
+    });
+
+    // Render Library Grid
+    function renderBeats() {
+      const grid = document.getElementById('beatsGrid');
+      grid.innerHTML = '';
+
+      beats.forEach(beat => {
+        const cardHTML = `
+          <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 hover:border-cyan-400 transition-all">
+            <div class="flex items-center gap-4 mb-6">
+              <i class="fa-solid fa-music text-4xl text-cyan-400"></i>
+              <div class="flex-1">
+                <h4 class="font-semibold text-lg">${beat.name}</h4>
+                <p class="text-zinc-400 text-sm">Vizalok Sample Beat</p>
+              </div>
+            </div>
+            
+            <audio controls class="w-full accent-cyan-400" style="height: 48px;">
+              <source src="${beat.url}" type="audio/wav">
+            </audio>
+          </div>
+        `;
+        grid.innerHTML += cardHTML;
+      });
+    }
+
+    // Logout
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+  </script>
+</body>
+</html>
      
