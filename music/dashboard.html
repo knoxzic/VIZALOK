@@ -3,100 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Library - Vizalok Music</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Vizalok Music • Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Firebase SDK - Compat version (same as login) -->
+  <!-- Firebase Compat Version (matches your login) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-
-  <style>
-    .container {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-      text-align: center;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 40px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(0, 245, 255, 0.2);
-    }
-    .welcome {
-      font-size: 2.2rem;
-      color: #00f5ff;
-    }
-    .main-card {
-      background: rgba(30, 30, 60, 0.9);
-      border-radius: 20px;
-      padding: 60px 40px;
-      border: 1px solid rgba(0, 245, 255, 0.25);
-    }
-    .logout-btn {
-      padding: 14px 32px;
-      background: #ff4444;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-  </style>
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <h1 class="welcome" id="welcome-text">Welcome</h1>
-        <p id="user-email" style="color:#aaa; margin-top:8px;"></p>
+<body class="bg-zinc-950 text-white min-h-screen">
+  <div class="max-w-screen-2xl mx-auto">
+    
+    <!-- Navbar -->
+    <div class="flex justify-between items-center px-8 py-6 border-b border-cyan-500/20">
+      <div class="flex items-center gap-4">
+        <img src="../logo.png" alt="Vizalok" width="52">
+        <h1 class="text-4xl font-black tracking-[-2px] text-cyan-400">VIZALOK MUSIC</h1>
       </div>
-      <button onclick="logout()" class="logout-btn">Logout</button>
+      
+      <div class="flex items-center gap-6">
+        <button onclick="logout()" 
+                class="px-6 py-3 bg-zinc-800 hover:bg-red-600/20 text-red-400 rounded-2xl flex items-center gap-2 transition-all">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
     </div>
 
-    <div class="main-card">
-      <h2>Your Music Library</h2>
-      <p style="color:#ccc; margin: 30px 0; line-height:1.6;">
-        Welcome to your personal dashboard.<br>
-        Your invested tracks, royalties, and portfolio will appear here soon.
-      </p>
+    <div class="flex">
+      <!-- Sidebar -->
+      <div class="w-72 bg-zinc-900 min-h-[calc(100vh-88px)] p-6 border-r border-cyan-500/20">
+        <div class="space-y-2">
+          <div onclick="alert('Home')" class="flex items-center gap-3 px-5 py-4 rounded-2xl bg-cyan-500/10 text-cyan-400 cursor-pointer">
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="font-medium">Home</span>
+          </div>
+          <div onclick="alert('Store - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+            <i class="fa-solid fa-store text-xl"></i>
+            <span class="font-medium">Store</span>
+          </div>
+          <div onclick="alert('Profile - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+            <i class="fa-solid fa-user text-xl"></i>
+            <span class="font-medium">Profile</span>
+          </div>
+          <div onclick="alert('Settings - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+            <i class="fa-solid fa-gear text-xl"></i>
+            <span class="font-medium">Settings</span>
+          </div>
+          <div onclick="alert('Help - Coming Soon')" class="flex items-center gap-3 px-5 py-4 rounded-2xl hover:bg-zinc-800 cursor-pointer">
+            <i class="fa-solid fa-circle-question text-xl"></i>
+            <span class="font-medium">Help</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 p-10">
+        <!-- Welcome -->
+        <div class="mb-12">
+          <h2 class="text-4xl font-bold mb-2">Welcome back, <span id="displayName" class="text-cyan-400"></span> 👋</h2>
+          <p class="text-zinc-400 text-lg">Your personal music library</p>
+        </div>
+
+        <!-- Library Grid -->
+        <div>
+          <h3 class="text-2xl font-semibold mb-8 flex items-center gap-3">
+            <i class="fa-solid fa-music"></i> Your Library
+          </h3>
+          
+          <div id="beatsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Beats populated by JS -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <audio id="globalAudio" preload="metadata"></audio>
+
   <script>
-    // Initialize Firebase - Same as login page
+    // Firebase Setup
     const firebaseConfig = {
       apiKey: "AIzaSyBAnf2FK2tKySefk1m0WP5DdnQo9iBqAeM",
       authDomain: "vizalok-music.firebaseapp.com",
       projectId: "vizalok-music",
       storageBucket: "vizalok-music.firebasestorage.app",
       messagingSenderId: "431775929269",
-      appId: "1:431775929269:web:3da6230e3c4ab88b43bffc"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Check auth state
-    auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = 'index.html';
-      } else {
-        const displayName = user.displayName || "User";
-        document.getElementById('welcome-text').textContent = `Welcome, ${displayName}!`;
-        document.getElementById('user-email').textContent = user.email;
-      }
-    });
-
-    function logout() {
-      if (confirm("Are you sure you want to logout?")) {
-        auth.signOut().then(() => {
-          window.location.href = 'index.html';
-        });
-      }
-    }
-  </script>
-</body>
-</html>
+      appId: "1:431775929269:web:3da6230e3c4ab88b43b
