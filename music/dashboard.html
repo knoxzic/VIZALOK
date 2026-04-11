@@ -32,9 +32,10 @@
       height: 100vh;
       object-fit: cover;
       z-index: -2;
-      opacity: 0.5;
-      filter: brightness(0.6);
+      opacity: 0.7;
+      filter: brightness(0.8);
       pointer-events: none;
+      transition: opacity 0.5s ease;
     }
     .background-overlay {
       position: fixed;
@@ -289,7 +290,7 @@
     }
     .library-head {
       display: grid;
-      grid-template-columns: 2.6fr 1fr 0.78fr 72px;
+      grid-template-columns: 2.6fr 1fr 0.78fr 0.78fr 72px 72px;
       gap: 12px;
       padding: 14px 20px;
       border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -301,7 +302,7 @@
     }
     .track-row {
       display: grid;
-      grid-template-columns: 2.6fr 1fr 0.78fr 72px;
+      grid-template-columns: 2.6fr 1fr 0.78fr 0.78fr 72px 72px;
       gap: 12px;
       align-items: center;
       padding: 10px 20px;
@@ -343,14 +344,40 @@
       font-weight: 700;
       color: #06b6d4;
     }
-    .track-duration {
+    .track-rating {
       text-align: right;
       font-size: 0.85rem;
       color: rgba(226,232,240,0.72);
     }
-    .track-play {
+    .track-profit {
+      text-align: right;
+      font-size: 0.85rem;
+    }
+    .track-profit.positive {
+      color: #22c55e;
+    }
+    .track-profit.negative {
+      color: #ef4444;
+    }
+    .track-cashout {
       display: flex;
       justify-content: flex-end;
+    }
+    .track-cashout button {
+      width: 72px;
+      height: 44px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 16px 34px rgba(34,197,94,0.2);
+    }
+    .track-cashout button:hover {
+      transform: translateY(-2px);
     }
     .track-play button {
       width: 44px;
@@ -516,12 +543,12 @@
     }
     .floating-logo {
       position: fixed;
-      bottom: 120px;
-      left: 20px;
-      width: 80px;
-      height: 80px;
+      bottom: 140px;
+      left: 300px;
+      width: 120px;
+      height: 120px;
       z-index: 10;
-      opacity: 0.8;
+      opacity: 0.9;
       animation: logoFloat 3s ease-in-out infinite;
       pointer-events: none;
     }
@@ -533,7 +560,7 @@
       .sidebar { width: 250px; min-width: 250px; }
       .player-bar { left: 250px; padding: 18px 24px; }
       .trending-row { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
-      .library-head, .track-row { grid-template-columns: 2.3fr 1fr 0.8fr 72px; }
+      .library-head, .track-row { grid-template-columns: 2.3fr 1fr 0.8fr 0.8fr 72px 72px; }
     }
     @media (max-width: 900px) {
       .sidebar { position: fixed; inset: 0 auto 0 0; width: 100%; min-width: auto; z-index: 30; transform: translateX(-100%); transition: transform 0.3s ease; }
@@ -543,14 +570,15 @@
       .player-inner { grid-template-columns: 1fr; }
       .player-right { justify-content: flex-start; }
       .trending-row { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
-      .library-head, .track-row { grid-template-columns: 1.8fr 1fr 0.8fr 64px; }
+      .library-head, .track-row { grid-template-columns: 1.8fr 1fr 0.8fr 0.8fr 64px 64px; }
       .sidebar-header { padding: 24px 20px 18px; }
       .nav-item { padding: 12px 20px; }
       .page-inner { padding: 24px 20px 0; }
+      .floating-logo { left: 20px; }
     }
     @media (max-width: 640px) {
       .trending-row { grid-template-columns: minmax(220px, 1fr); }
-      .library-head, .track-row { grid-template-columns: 1.6fr 1fr 0.8fr 56px; }
+      .library-head, .track-row { grid-template-columns: 1.6fr 1fr 0.8fr 0.8fr 56px 56px; }
       .player-inner { gap: 12px; }
       .player-right { width: 100%; justify-content: space-between; }
       .volume-group { min-width: auto; width: 100%; }
@@ -611,7 +639,9 @@
             <div class="library-head">
               <span>Track</span>
               <span class="text-right">Share Value</span>
-              <span class="text-right">Duration</span>
+              <span class="text-right">Rating</span>
+              <span class="text-right">Fan Profit</span>
+              <span class="text-right">Cash Out</span>
               <span class="text-right">Play</span>
             </div>
             <div id="beatsGrid" class="space-y-2"></div>
@@ -680,8 +710,6 @@
       { name: "knoxzic - Road Dogs", url: "beats/knoxzic-%20Road%20DogS.mp3", artist: "knoxzic", duration: "3:53", genre: "Hip-Hop", type: "audio/mpeg" }
     ];
 
-    const trendingIndexes = [3, 4, 1, 8, 12];
-    const trendingRow = document.getElementById('trendingRow');
     const beatsGrid = document.getElementById('beatsGrid');
     const searchInput = document.getElementById('searchInput');
     const playerTrackName = document.getElementById('playerTrackName');
@@ -702,52 +730,43 @@
     let currentIndex = null;
     let isShuffle = false;
     let repeatMode = 0;
-    let trendingBeats = [];
 
     function initBeatData() {
       beats.forEach((beat, index) => {
         const baseValue = 12 + Math.floor(Math.random() * 88);
         beat.fanshareValue = baseValue + Math.random();
         beat.fanshare = formatShare(beat.fanshareValue);
+        beat.rating = Math.floor(Math.random() * 5) + 1;
+        beat.change = 0;
         beat.id = index;
       });
-      trendingBeats = trendingIndexes.map(i => beats[i]).filter(Boolean);
     }
 
     function formatShare(value) {
       return `$${value.toFixed(2)}`;
     }
 
-    function updateTrendingValues() {
-      trendingBeats.forEach((beat) => {
-        const increment = Math.max(0.02, Math.random() * 0.35);
-        beat.fanshareValue = +(beat.fanshareValue + increment).toFixed(2);
-        beat.fanshare = formatShare(beat.fanshareValue);
-      });
-      renderTrending();
+    function formatChange(change) {
+      const sign = change >= 0 ? '+' : '';
+      return `${sign}$${change.toFixed(2)}`;
     }
 
-    function renderTrending() {
-      trendingRow.innerHTML = '';
-      trendingBeats.forEach((beat) => {
-        const card = document.createElement('article');
-        card.className = 'trending-card';
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="trending-art">${beat.artist.slice(0,1).toUpperCase()}</div>
-            <span class="trending-label">Purchased</span>
-          </div>
-          <div>
-            <div class="trending-name">${beat.name}</div>
-            <div class="trending-artist">${beat.artist}</div>
-          </div>
-          <div class="trending-value">
-            <span class="trending-price">${beat.fanshare}</span>
-            <span class="trending-boost"><i class="fa-solid fa-arrow-up-right-from-square"></i> +${(Math.random() * 2 + 0.8).toFixed(1)}%</span>
-          </div>
-        `;
-        trendingRow.appendChild(card);
+    function cashOut(id) {
+      const beat = beats.find(b => b.id === id);
+      if (beat) {
+        alert(`Cashed out ${beat.fanshare}!`);
+      }
+    }
+
+    function updateTrendingValues() {
+      beats.forEach((beat) => {
+        beat.previousValue = beat.fanshareValue;
+        const increment = Math.max(0.02, Math.random() * 0.35) * (Math.random() > 0.3 ? 1 : -1);
+        beat.fanshareValue = Math.max(0, +(beat.fanshareValue + increment).toFixed(2));
+        beat.change = beat.fanshareValue - beat.previousValue;
+        beat.fanshare = formatShare(beat.fanshareValue);
       });
+      renderBeats();
     }
 
     function renderBeats(beatsList = filteredBeats) {
@@ -761,10 +780,12 @@
             <div class="track-artist">${beat.artist}</div>
           </div>
           <div class="track-share" title="Share value updates live">${beat.fanshare || '$0.00'}</div>
-          <div class="track-duration">${beat.duration}</div>
+          <div class="track-rating">${beat.rating}/5</div>
+          <div class="track-profit ${beat.change >= 0 ? 'positive' : 'negative'}" title="Change in value">${formatChange(beat.change || 0)}</div>
+          <div class="track-cashout"><button onclick="cashOut(${beat.id})">Cash Out</button></div>
           <div class="track-play"><button data-index="${index}" aria-label="Play ${beat.name}"><i class="fa-solid fa-play"></i></button></div>
         `;
-        const button = row.querySelector('button');
+        const button = row.querySelector('.track-play button');
         button.addEventListener('click', () => togglePlay(index));
         beatsGrid.appendChild(row);
       });
@@ -911,20 +932,25 @@
     });
 
     initBeatData();
-    renderTrending();
     renderBeats();
     setInterval(updateTrendingValues, 3000);
 
     // Background video cycling
     const backgroundVideo = document.querySelector('.background-video');
-    const videoSources = ['../musicvid.mp4', '../musicvid2.mp4'];
+    const videoSources = ['../musicvid2.mp4', '../musicvid4.mp4'];
     let currentVideoIndex = 0;
 
     function switchVideo() {
-      currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
-      backgroundVideo.src = videoSources[currentVideoIndex];
-      backgroundVideo.load();
-      backgroundVideo.play();
+      backgroundVideo.style.opacity = '0';
+      setTimeout(() => {
+        currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
+        backgroundVideo.src = videoSources[currentVideoIndex];
+        backgroundVideo.load();
+        backgroundVideo.play();
+        setTimeout(() => {
+          backgroundVideo.style.opacity = '0.7';
+        }, 200);
+      }, 500);
     }
 
     // Switch video every 30 seconds
