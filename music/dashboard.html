@@ -344,7 +344,7 @@
       font-weight: 700;
       color: #06b6d4;
     }
-    .track-rating {
+    .track-views {
       text-align: right;
       font-size: 0.85rem;
       color: rgba(226,232,240,0.72);
@@ -543,14 +543,15 @@
     }
     .floating-logo {
       position: fixed;
-      bottom: 140px;
-      left: 300px;
-      width: 120px;
-      height: 120px;
-      z-index: 10;
-      opacity: 0.9;
+      left: 32px;
+      bottom: 110px;
+      width: 100px;
+      height: 100px;
+      z-index: 100;
+      opacity: 0.95;
       animation: logoFloat 3s ease-in-out infinite;
       pointer-events: none;
+      transition: left 0.3s, bottom 0.3s, width 0.3s, height 0.3s;
     }
     @keyframes logoFloat {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -574,7 +575,12 @@
       .sidebar-header { padding: 24px 20px 18px; }
       .nav-item { padding: 12px 20px; }
       .page-inner { padding: 24px 20px 0; }
-      .floating-logo { left: 20px; }
+      .floating-logo {
+        left: 16px;
+        bottom: 90px;
+        width: 80px;
+        height: 80px;
+      }
     }
     @media (max-width: 640px) {
       .trending-row { grid-template-columns: minmax(220px, 1fr); }
@@ -582,6 +588,12 @@
       .player-inner { gap: 12px; }
       .player-right { width: 100%; justify-content: space-between; }
       .volume-group { min-width: auto; width: 100%; }
+      .floating-logo {
+        left: 8px;
+        bottom: 80px;
+        width: 64px;
+        height: 64px;
+      }
     }
   </style>
 </head>
@@ -639,7 +651,7 @@
             <div class="library-head">
               <span>Track</span>
               <span class="text-right">Share Value</span>
-              <span class="text-right">Rating</span>
+              <span class="text-right">View Count</span>
               <span class="text-right">Fan Profit</span>
               <span class="text-right">Cash Out</span>
               <span class="text-right">Play</span>
@@ -736,7 +748,7 @@
         const baseValue = 12 + Math.floor(Math.random() * 88);
         beat.fanshareValue = baseValue + Math.random();
         beat.fanshare = formatShare(beat.fanshareValue);
-        beat.rating = Math.floor(Math.random() * 5) + 1;
+        beat.views = Math.floor(Math.random() * 22000) + 1200;
         beat.change = 0;
         beat.id = index;
       });
@@ -780,7 +792,7 @@
             <div class="track-artist">${beat.artist}</div>
           </div>
           <div class="track-share" title="Share value updates live">${beat.fanshare || '$0.00'}</div>
-          <div class="track-rating">${beat.rating}/5</div>
+          <div class="track-views">${beat.views.toLocaleString()}</div>
           <div class="track-profit ${beat.change >= 0 ? 'positive' : 'negative'}" title="Change in value">${formatChange(beat.change || 0)}</div>
           <div class="track-cashout"><button onclick="cashOut(${beat.id})">Cash Out</button></div>
           <div class="track-play"><button data-index="${index}" aria-label="Play ${beat.name}"><i class="fa-solid fa-play"></i></button></div>
@@ -814,6 +826,12 @@
       if (currentIndex !== index) {
         currentIndex = index;
       }
+      // Increment view count in real-time when played
+      beat.views = (beat.views || 0) + 1;
+      // Also update the original beats array if filtered
+      const orig = beats.find(b => b.id === beat.id);
+      if (orig) orig.views = beat.views;
+      renderBeats(filteredBeats);
       playBeat(beat);
     }
 
