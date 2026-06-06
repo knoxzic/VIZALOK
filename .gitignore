@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+*.log
+.DS_Store
+.env
+nash-services/node_modules/
+nash-services/.env
+
+# Build outputs
+dist/
+build/
+
+# Large media (videos from attachments - add selectively)
+*.mp4
+Musicvid*.mp4
+musicvid*.mp4
+
+# Ignore temp
+nash/

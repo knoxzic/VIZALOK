@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nash Services | Trash Removal + Eviction Support</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK (Compat for vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand">
+                <img src="logo.png" alt="Nash Services Logo" class="brand-logo">
+                <div>
+                    <span class="brand-name">Nash Services</span>
+                    <span class="brand-tag">Trash Removal + Eviction Support</span>
+                </div>
+            </div>
+            <nav class="topnav">
+                <a href="#hero">Home</a>
+                <a href="#services">Services</a>
+                <a href="#intake">Intake</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a class="button button-outline" href="admin.html">Admin Portal</a>
+            </nav>
+        </header>
+
+        <section id="hero" class="hero-section">
+            <div class="hero-video-wrap">
+                <video id="bgVideo" autoplay muted loop playsinline class="hero-video">
+                    <source src="xai-video-81b2c3b4-f28a-48aa-9388-f0b553a80490.mp4" type="video/mp4">
+                    <source src="xai-video-99b45a20-0d50-4a6d-ad8c-a8a3531c2487.mp4" type="video/mp4">
+                </video>
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-content">
+                <span class="eyebrow">Nash Services</span>
+                <h1>Professional Removal and Cleanup with Precision</h1>
+                <p>Reliable property recovery, debris removal, and cleanup solutions designed for landlords, property managers, and commercial properties.</p>
+                <div class="hero-actions">
+                    <a href="#intake" class="button button-primary">Start Intake</a>
+                    <a href="#services" class="button button-secondary">Explore Services</a>
+                </div>
+                <div class="hero-highlights">
+                    <div>
+                        <strong>24/7 Response</strong>
+                        <span>Rapid dispatch for emergency eviction support.</span>
+                    </div>
+                    <div>
+                        <strong>Full Property Cleanouts</strong>
+                        <span>Comprehensive removal, hauling, and debris disposal.</span>
+                    </div>
+                    <div>
+                        <strong>Trusted and Secure</strong>
+                        <span>Professional crews, respectful handling, and reliable results.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main>
+            <section id="services" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Services</span>
+                    <h2>Complete Trash + Eviction Removal Packages</h2>
+                    <p>Choose a service package built for fast, clean, and secure property recovery.</p>
+                </div>
+                <div class="card-grid">
+                    <article class="service-card highlight-card">
+                        <div class="service-badge">Best Value</div>
+                        <h3>Eviction Cleanup</h3>
+                        <p>Fast, full cleanup for vacated spaces after evictions with odor neutralization and debris removal.</p>
+                        <div class="service-price">From <strong>$524</strong></div>
+                        <button class="button button-primary" onclick="selectService('Eviction Cleanup')">Select</button>
+                    </article>
+                    <article class="service-card">
+                        <h3>Trash Removal</h3>
+                        <p>Scheduled residential and commercial trash hauling with safe disposal and recycling options.</p>
+                        <div class="service-price">From <strong>$156</strong></div>
+                        <button class="button button-secondary" onclick="selectService('Trash Removal')">Select</button>
+                    </article>
+                    <article class="service-card">
+                        <h3>Bulk Debris Haulaway</h3>
+                        <p>Large-item pickup for furniture, appliances, yard waste, construction debris and more.</p>
+                        <div class="service-price">From <strong>$261</strong></div>
+                        <button class="button button-secondary" onclick="selectService('Bulk Debris Haulaway')">Select</button>
+                    </article>
+                    <article class="service-card">
+                        <h3>Property Recovery</h3>
+                        <p>Complete property clearance for foreclosure, landlord transition, or estate preparation.</p>
+                        <div class="service-price">From <strong>$734</strong></div>
+                        <button class="button button-secondary" onclick="selectService('Property Recovery')">Select</button>
+                    </article>
+                    <article class="service-card">
+                        <h3>Emergency Response</h3>
+                        <p>Rapid dispatch team for same-day priority removal and site stabilization.</p>
+                        <div class="service-price">From <strong>$366</strong></div>
+                        <button class="button button-secondary" onclick="selectService('Emergency Response')">Select</button>
+                    </article>
+                    <article class="service-card">
+                        <h3>Secure Disposal</h3>
+                        <p>Responsible disposal services for sensitive waste, non-hazardous bio-waste, and regulated debris.</p>
+                        <div class="service-price">From <strong>$188</strong></div>
+                        <button class="button button-secondary" onclick="selectService('Secure Disposal')">Select</button>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-block feature-strip">
+                <div class="feature-card">
+                    <span>Responsive crews</span>
+                    <p>On-demand scheduling and daily status updates from your dedicated project lead.</p>
+                </div>
+                <div class="feature-card">
+                    <span>Damage prevention</span>
+                    <p>Careful, insured handling protects interiors, flooring, and property systems.</p>
+                </div>
+                <div class="feature-card">
+                    <span>Clean finish</span>
+                    <p>Post-removal sweep, sanitization options, and final site inspection included.</p>
+                </div>
+            </section>
+
+            <section id="intake" class="section-block intake-block">
+                <div class="section-header">
+                    <span class="eyebrow">Intake Form</span>
+                    <h2>Submit Your Request</h2>
+                    <p>Provide details below and our operations team will contact you within minutes.</p>
+                </div>
+                <div class="intake-grid">
+                    <div class="intake-panel glass-panel">
+                        <h3>Start your intake</h3>
+                        <p>Complete the form for trash pickup, eviction cleanup, or property recovery.</p>
+                        <div class="input-row">
+                            <label for="client-name">Full Name</label>
+                            <input id="client-name" type="text" placeholder="Alex Nash">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-email">Email Address</label>
+                            <input id="client-email" type="email" placeholder="alex@nashservices.com">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-phone">Phone Number</label>
+                            <input id="client-phone" type="tel" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-address">Property Address</label>
+                            <input id="client-address" type="text" placeholder="123 Main St, City, State">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-service">Service Needed</label>
+                            <select id="client-service">
+                                <option>Eviction Cleanup</option>
+                                <option>Trash Removal</option>
+                                <option>Bulk Debris Haulaway</option>
+                                <option>Emergency Response</option>
+                                <option>Secure Disposal</option>
+                            </select>
+                        </div>
+                        <div class="input-row">
+                            <label for="service-datetime">Date & Time of Service Needed</label>
+                            <input id="service-datetime" type="datetime-local">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-details">Details & Notes</label>
+                            <textarea id="client-details" rows="4" placeholder="Describe the property condition, access notes, or timing preference."></textarea>
+                        </div>
+                        <button class="button button-primary" onclick="submitIntakeForm()">Send Request</button>
+                        <p class="disclaimer">Nash Services is a template mockup. Submissions are saved locally for demo purposes.</p>
+                    </div>
+                    <div class="intake-summary glass-panel">
+                        <h3>Why Nash Services</h3>
+                        <ul>
+                            <li>Transparent pricing and upfront estimates.</li>
+                            <li>Local teams trained in property clearance.</li>
+                            <li>Premium customer experience with tracking and updates.</li>
+                            <li>Customized quotes for eviction and cleanup projects.</li>
+                        </ul>
+                        <div class="summary-stat">
+                            <strong>250+</strong>
+                            <span>Successful cleanouts completed this year</span>
+                        </div>
+                        <div class="summary-stat">
+                            <strong>98%</strong>
+                            <span>Client satisfaction score from property managers</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Us Section -->
+            <section id="about" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Our Heritage</span>
+                    <h2>About Nash Services</h2>
+                    <p>Founded in 2009, Nash Services has built a reputation for reliable property recovery and professional debris management across the region. Our team combines deep industry knowledge with a commitment to respectful service for landlords and property professionals.</p>
+                </div>
+                <div class="card-grid">
+                    <div class="service-card">
+                        <div class="service-badge">15+ Years</div>
+                        <h3>Expertise You Can Trust</h3>
+                        <p>Our certified crews handle everything from standard trash removal to complex eviction cleanouts with precision and care. We focus on minimizing disruption while delivering complete results every time.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-badge">Licensed &amp; Insured</div>
+                        <h3>Fully Compliant Operations</h3>
+                        <p>All operations meet or exceed local regulations. We maintain full insurance coverage and follow eco-friendly disposal practices to reduce environmental impact of every job.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations / Testimonials -->
+            <section id="recommendations" class="section-block" style="background: rgba(15, 12, 28, 0.6);">
+                <div class="section-header">
+                    <span class="eyebrow">Client Voices</span>
+                    <h2>Recommendations &amp; Testimonials</h2>
+                    <p>Property managers and landlords trust Nash Services for fast, professional results. Here are recent experiences with our eviction support, trash removal, and full property recovery services.</p>
+                </div>
+                <div class="card-grid">
+                    <div class="feature-card">
+                        <span style="color: var(--gold);">★★★★★</span>
+                        <p>"The eviction cleanup was completed in under 6 hours. The team was respectful, thorough, and left the property spotless. Saved us weeks of headache. Highly recommend their services."</p>
+                        <strong>— Sarah K., Property Manager</strong>
+                    </div>
+                    <div class="feature-card">
+                        <span style="color: var(--gold);">★★★★☆</span>
+                        <p>"Bulk debris haulaway handled our renovation waste perfectly. Fair pricing (now updated) and on-time service. Their secure disposal option is a game-changer for regulated materials."</p>
+                        <strong>— Michael Torres, Contractor</strong>
+                    </div>
+                    <div class="feature-card">
+                        <span style="color: var(--gold);">★★★★★</span>
+                        <p>"After a difficult tenant situation, Nash Services managed the full property recovery with professionalism. The intake form was easy and the follow-up communication excellent."</p>
+                        <strong>— Linda Chen, Real Estate Investor</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Us Section -->
+            <section id="contact" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Get In Touch</span>
+                    <h2>Contact Nash Services</h2>
+                    <p>Ready for a quote or emergency response? Our team responds within 2 hours for urgent matters.</p>
+                </div>
+                <div class="intake-grid" style="grid-template-columns: 1fr 1fr; gap: 3rem; max-width: 1100px; margin: 0 auto;">
+                    <div class="glass-panel">
+                        <h3 style="margin-top: 0;">Reach Out Directly</h3>
+                        <p><strong>Phone:</strong> (555) 867-5309<br>
+                           <strong>Emergency:</strong> (555) 555-0199<br>
+                           <strong>Email:</strong> dispatch@nashservices.com</p>
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: var(--purple-soft); border-radius: 16px; border-left: 4px solid var(--purple);">
+                            <strong>24/7 Dispatch Available</strong><br>
+                            <span style="color: var(--muted);">For urgent eviction support and immediate cleanup needs.</span>
+                        </div>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="margin-top: 0;">Service Areas</h3>
+                        <ul style="color: var(--muted); line-height: 1.8;">
+                            <li>Greater Metro Area &amp; surrounding counties</li>
+                            <li>Commercial &amp; residential properties</li>
+                            <li>Specialized in multi-unit housing complexes</li>
+                            <li>Rapid response within 75 miles</li>
+                        </ul>
+                        <a href="#intake" class="button button-primary" style="margin-top: 2rem; display: inline-flex;">Start Your Intake Now</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- AI Widget (xAI Grok Backend Integration) -->
+    <div class="ai-widget">
+        <div class="ai-button" onclick="toggleAIChat()" title="AI Service Assistant">🤖</div>
+        <div id="ai-chat" class="ai-chat">
+            <div class="ai-chat-header">
+                <strong>Nash AI Assistant</strong>
+                <span onclick="toggleAIChat()" style="cursor:pointer; font-size:1.2rem;">×</span>
+            </div>
+            <div id="ai-chat-body" class="ai-chat-body">
+                <div class="ai-message bot">Hi! I'm powered by xAI Grok. Ask me about our services, get personalized recommendations, or describe your property needs for AI suggestions (real-time backend calls).</div>
+            </div>
+            <div class="ai-chat-input">
+                <input id="ai-input" type="text" placeholder="E.g., Recommend cleanup for a 3-bedroom eviction..." onkeypress="if(event.key === 'Enter') sendAIQuery()">
+                <button onclick="sendAIQuery()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Auth Modal -->
+    <div id="auth-modal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab(0)">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab(1)">Create Account</div>
+            </div>
+            <div id="login-form" class="auth-form">
+                <h3>Client Login</h3>
+                <input type="email" id="client-email-login" placeholder="Email" required>
+                <input type="password" id="client-password-login" placeholder="Password" required>
+                <button onclick="clientLogin()">Login</button>
+            </div>
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <h3>Create Account</h3>
+                <input type="text" id="client-name-signup" placeholder="Full Name" required>
+                <input type="email" id="client-email-signup" placeholder="Email" required>
+                <input type="password" id="client-password-signup" placeholder="Password (min 6 chars)" required>
+                <button onclick="clientSignup()">Create Account</button>
+            </div>
+            <div class="auth-switch">
+                <span onclick="toggleAuthModal()">Close</span>
+            </div>
+            <div id="auth-message" style="margin-top: 1rem; text-align: center; min-height: 1.2em; color: var(--muted); font-size: 0.85rem;"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
