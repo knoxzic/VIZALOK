@@ -2,9 +2,9 @@
 
 :root {
     color-scheme: dark;
-    --bg: #050507;
-    --panel: rgba(15, 12, 28, 0.95);
-    --panel-soft: rgba(22, 18, 38, 0.96);
+    --bg: transparent; /* allow fixed video background to show through */
+    --panel: rgba(15, 12, 28, 0.78);
+    --panel-soft: rgba(22, 18, 38, 0.82);
     --border: rgba(139, 92, 246, 0.15);
     --text: #f1edff;
     --muted: #b8a9e0;
@@ -25,7 +25,7 @@ body {
     font-family: 'Inter', sans-serif;
     background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.12), transparent 30%),
                 radial-gradient(circle at bottom right, rgba(226, 185, 48, 0.09), transparent 25%),
-                var(--bg);
+                var(--bg); /* transparent base so fixed video shows */
     color: var(--text);
     scroll-behavior: smooth;
 }
@@ -41,7 +41,7 @@ body {
     justify-content: space-between;
     padding: 1.15rem 2rem;
     gap: 1rem;
-    background: rgba(10, 8, 25, 0.92);
+    background: rgba(10, 8, 25, 0.82);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(16px);
     position: sticky;
@@ -50,7 +50,7 @@ body {
 }
 
 .admin-topbar {
-    background: rgba(12, 10, 32, 0.98);
+    background: rgba(12, 10, 32, 0.85);
 }
 
 .brand {
@@ -141,12 +141,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    /* No overflow hidden needed anymore since video is page-wide fixed */
 }
 
 .hero-video-wrap {
-    position: absolute;
-    inset: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
     overflow: hidden;
 }
 
@@ -154,13 +158,18 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.7) brightness(0.65);
+    filter: saturate(0.75) brightness(0.7);
 }
 
 .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(30, 15, 60, 0.55), rgba(8, 8, 24, 0.92));
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(30, 15, 60, 0.35), rgba(8, 8, 24, 0.62));
+    pointer-events: none;
 }
 
 .hero-content,
@@ -728,7 +737,7 @@ body {
 
 /* Enhanced Glassmorphic HUD for Admin Revamp */
 .glass-panel, .metric-card, .list-item {
-    background: rgba(15, 12, 28, 0.85);
+    background: rgba(15, 12, 28, 0.72);
     backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid rgba(139, 92, 246, 0.25);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),

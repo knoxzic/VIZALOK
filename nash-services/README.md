@@ -1,26 +1,34 @@
-# Nash Services
+# Nash_Services-
+Template of Nash Services
 
-Full professional services website for trash removal, eviction cleanup, property recovery. 
+## Local Live Preview
 
-**Features:**
-- Modern dark UI with purple/gold theme, glassmorphism, animations
-- Hero with cycling background videos (xAI generated)
-- Interactive services, intake form with Firebase real-time sync
-- Admin portal with live dashboard, filters (paid/unpaid), metrics
-- xAI Grok AI chat widget (proxied securely via server.js using .env key)
-- Client auth modal with Firebase Auth
-- Responsive, fully functional demo (localStorage + Firestore fallback)
+Use the VS Code task or the npm preview command to start a preview server.
 
-**Preview:**
+1. Open the Command Palette and run: `Tasks: Run Task`
+2. Select `Start Nash Services Preview`
+3. Open your browser to `http://127.0.0.1:8080`
+
+If port `8080` is already in use, the server will automatically try `8081`.
+
+Alternatively, from the workspace root run:
+
 ```bash
-cd nash-services
-npm install
+node server.js
+```
+
+or:
+
+```bash
 npm run preview
 ```
-Open http://127.0.0.1:8080
 
-Admin login: admin999 / nash1998
+Then open:
 
-All attached files integrated. Logo from root used. Videos referenced (add full files if needed). Server supports /api/ai-recommend for Grok responses.
+`http://127.0.0.1:8080`
 
-Part of VIZALOK ecosystem.
+If the server falls back, use:
+
+`http://127.0.0.1:8081`
+
+

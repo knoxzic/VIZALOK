@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 8080;
 const ROOT = process.cwd();
-const XAI_API_KEY = process.env.XAI_API_KEY || 'demo-key';
+const XAI_API_KEY = process.env.XAI_API_KEY;
 
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -37,8 +37,8 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const { prompt, context = 'Nash Services trash removal and eviction support' } = JSON.parse(body);
-        if (!XAI_API_KEY || XAI_API_KEY === 'demo-key') {
-          throw new Error('API key not configured - using mock');
+        if (!XAI_API_KEY) {
+          throw new Error('API key not configured');
         }
 
         const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
@@ -89,9 +89,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static file serving 
+  // Static file serving for the rest of the site (preserves all previous features: colors, login, Firebase, sections, etc.)
   let requestPath = url;
-  if (requestPath === '/' || requestPath === '/nash-services') {
+  if (requestPath === '/') {
     requestPath = '/index.html';
   }
 
@@ -105,17 +105,8 @@ const server = http.createServer(async (req, res) => {
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      // Try index.html for SPA like paths
-      const indexPath = path.join(ROOT, 'index.html');
-      fs.readFile(indexPath, (err2, data) => {
-        if (err2) {
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.end('File not found');
-          return;
-        }
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(data);
-      });
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('File not found');
       return;
     }
 
@@ -129,7 +120,6 @@ const server = http.createServer(async (req, res) => {
 function startServer(port) {
   server.listen(port, () => {
     console.log(`Nash Services preview available at http://127.0.0.1:${port}`);
-    console.log('Use npm run preview or the VS Code task. Videos and AI proxy included.');
   }).on('error', (err) => {
     if (err.code === 'EADDRINUSE' && port === DEFAULT_PORT) {
       const fallbackPort = DEFAULT_PORT + 1;

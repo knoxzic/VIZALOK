@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nash Services Admin Portal</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase SDK (Compat for vanilla JS) -->
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK modular (v10+) - using provided config for modern API. Loaded early -->
+    <script type="module" src="script.js"></script>
 </head>
 <body>
     <header class="topbar admin-topbar">
         <div class="brand">
-            <img src="logo.png" alt="Nash Services Logo" class="brand-logo">
+            <img src="Logo.png" alt="Nash Services Logo" class="brand-logo">
             <div>
                 <span class="brand-name">Nash Services</span>
                 <span class="brand-tag">Admin Portal</span>
@@ -21,7 +19,7 @@
         </div>
         <nav class="topnav">
             <a href="index.html">Landing Page</a>
-            <button class="button button-primary" onclick="clearAllData()">Reset Demo</button>
+            <button class="button button-primary" onclick="clearAllData()">Clear All Submissions</button>
             <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
         </nav>
     </header>
@@ -30,7 +28,7 @@
     <div id="login-screen" class="login-screen">
         <div class="login-container">
             <div style="margin-bottom: 2rem;">
-                <img src="../logo.png" alt="Nash Services Logo" class="brand-logo" style="width: 72px; height: 72px; margin: 0 auto 1rem;">
+                <img src="Logo.png" alt="Nash Services Logo" class="brand-logo" style="width: 72px; height: 72px; margin: 0 auto 1rem;">
             </div>
             <h2>Admin Portal</h2>
             <p class="tagline">Secure access for operations and intake management</p>
@@ -46,7 +44,7 @@
         <section class="section-header admin-header">
             <span class="eyebrow">Admin Dashboard</span>
             <h1>Manage Submissions, Services, and Intake Requests</h1>
-            <p>Use the mock portal to preview how Nash Services can track customer intake and service packages.</p>
+            <p>Live admin dashboard. Real client requests from the website appear here instantly via Firebase.</p>
         </section>
 
         <div class="admin-hud">
@@ -71,8 +69,8 @@
         <section class="admin-block">
             <div class="panel glass-panel admin-panel">
                 <div class="panel-header">
-                    <h2>Active Services</h2>
-                    <button class="button button-secondary" onclick="addMockService()">Add Service</button>
+                    <h2>Services Offered (Reference)</h2>
+                    <button class="button button-secondary" onclick="saveServicePackageFromAdmin()">Add Custom Package</button>
                 </div>
                 <div id="service-list" class="list-box"></div>
             </div>
@@ -112,13 +110,12 @@
                 <ul class="admin-notes">
                     <li>Track each intake request from lead to cleared property.</li>
                     <li>Remove or complete stale requests with one click.</li>
-                    <li>Mock your dispatch workflow before building a real backend.</li>
+                    <li>Review real-time submissions from the public website.</li>
                 </ul>
             </div>
         </section>
     </main>
 
     <div id="toast" class="toast hidden"></div>
-    <script src="script.js"></script>
 </body>
 </html>
