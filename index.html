@@ -24,7 +24,7 @@
       box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
     }
 
-    /* Full-page video background - updated Drive link, covers entire viewport, autoplay + loop */
+    /* Full-page YouTube video background - covers entire viewport, autoplay + loop */
     .video-bg {
       position: fixed;
       top: 0;
@@ -34,13 +34,19 @@
       z-index: -2;
       overflow: hidden;
       pointer-events: none;
-      background: #000; /* fallback */
+      background: #000;
     }
-    .video-bg video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .video-bg iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 aspect ratio */
+      min-height: 100vh;
+      min-width: 177.77777778vh; /* inverted 16:9 to ensure cover */
+      transform: translate(-50%, -50%);
+      border: 0;
+      pointer-events: none;
     }
     .video-overlay {
       position: fixed;
@@ -53,16 +59,16 @@
 </head>
 <body class="bg-zinc-950 text-white min-h-screen overflow-x-hidden">
 
-  <!-- Full page background video - covers entire background, auto-plays muted + loops (using updated Drive direct link) -->
+  <!-- Full page YouTube background video (auto play + loop, covers entire background) -->
   <div class="video-bg">
-    <video 
-      src="https://drive.google.com/uc?export=download&id=1dnBWIzW7-JyUeGdOhzzfRfc45tCotjEm" 
-      autoplay 
-      muted 
-      loop 
-      playsinline 
-      preload="auto">
-    </video>
+    <iframe 
+      src="https://www.youtube.com/embed/k0Z9-5dEcfw?autoplay=1&amp;loop=1&amp;mute=1&amp;playlist=k0Z9-5dEcfw&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0&amp;iv_load_policy=3&amp;fs=0" 
+      title="YouTube video player" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
   </div>
   <div class="video-overlay"></div>
 
@@ -143,44 +149,6 @@
     <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
   </div>
 
-  <script>
-    // Ensure the background video autoplays, loops, and covers (handles browser autoplay restrictions)
-    document.addEventListener('DOMContentLoaded', function() {
-      var vid = document.querySelector('.video-bg video');
-      if (vid) {
-        vid.muted = true; // required for autoplay
-        vid.setAttribute('playsinline', '');
-        
-        function tryPlay() {
-          var p = vid.play();
-          if (p && p.catch) {
-            p.catch(function() {
-              // Autoplay blocked - wait for first user interaction
-              var once = function() {
-                vid.play().catch(function(){});
-                document.body.removeEventListener('click', once);
-                document.body.removeEventListener('touchstart', once);
-              };
-              document.body.addEventListener('click', once, { once: true });
-              document.body.addEventListener('touchstart', once, { once: true });
-            });
-          }
-        }
-        
-        tryPlay();
-        
-        // Force loop if needed
-        vid.addEventListener('ended', function() {
-          vid.currentTime = 0;
-          tryPlay();
-        });
-        
-        // If video loads but doesn't start, retry on visibility
-        document.addEventListener('visibilitychange', function() {
-          if (!document.hidden) tryPlay();
-        });
-      }
-    });
-  </script>
+  <!-- YouTube iframe handles autoplay/loop via URL params (muted required for autoplay policies) -->
 </body>
 </html>
