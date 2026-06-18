@@ -33,7 +33,7 @@ let selectedQuickService = null;
 const videoSources = [
     'xai-video-81b2c3b4-f28a-48aa-9388-f0b553a80490.mp4',
     'xai-video-99b45a20-0d50-4a6d-ad8c-a8a3531c2487.mp4',
-    'grok-video-4522949d-c6e9-4af8-a047-6274d953faee 2.mp4'
+    'grok-video-4522949d-c6e9-4af8-a047-6274d953faee2.mp4'
 ];
 let currentVideoIndex = 0;
 
