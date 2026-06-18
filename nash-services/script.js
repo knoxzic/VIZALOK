@@ -101,6 +101,20 @@ window.addEventListener('DOMContentLoaded', () => {
     } else {
         setupClientAuthUI();
     }
+
+    // Allow closing auth/profile modals by clicking the dark backdrop (fixes "stuck on sign-in screen", easy cancel)
+    const authModal = document.getElementById('auth-modal');
+    if (authModal) {
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) toggleAuthModal();
+        });
+    }
+    const profModal = document.getElementById('profile-modal');
+    if (profModal) {
+        profModal.addEventListener('click', (e) => {
+            if (e.target === profModal) profModal.style.display = 'none';
+        });
+    }
 });
 
 function observeScrollMotion(video) {
@@ -911,6 +925,7 @@ window.saveServicePackage = saveServicePackage;
 window.saveServicePackageFromAdmin = saveServicePackage;
 window.openSignIn = openSignIn;
 window.openSignUp = openSignUp;
+window.toggleAuthModal = toggleAuthModal;
 window.showProfileModal = showProfileModal;
 window.saveProfileAndClose = saveProfileAndClose;
 
