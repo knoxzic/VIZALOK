@@ -28,26 +28,26 @@
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen sleek-bg overflow-hidden">
+<body class="bg-zinc-950 text-white min-h-screen sleek-bg overflow-x-hidden">
 
-  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative z-10">
+  <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
   
-    <!-- Logo + Tagline -->
-    <div class="flex flex-col items-center text-center mb-16 logo-float">
-      <img src="logo.png" alt="VIZALOK Logo" class="w-56 h-56 mb-6 object-contain">
-      <h1 class="text-8xl font-black tracking-[-6px] text-white"
+    <!-- Logo + Tagline (responsive, allows scroll on small screens) -->
+    <div class="flex flex-col items-center text-center mb-8 sm:mb-12 logo-float">
+      <img src="logo.png" alt="VIZALOK Logo" class="w-36 h-36 sm:w-56 sm:h-56 mb-4 sm:mb-6 object-contain">
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black tracking-[-4px] sm:tracking-[-6px] text-white"
           style="text-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 60px rgb(165 243 252 / 0.4);">
         VIZALOK
       </h1>
-      <p class="mt-8 text-2xl text-zinc-300 max-w-md text-center leading-tight">
+      <p class="mt-4 sm:mt-6 text-xl sm:text-2xl text-zinc-300 max-w-md text-center leading-tight">
         From being inspired to inspiring
       </p>
     </div>
 
-    <p class="text-zinc-400 text-2xl mb-12 tracking-wide">Choose Your Platform</p>
+    <p class="text-zinc-400 text-xl sm:text-2xl mb-8 sm:mb-10 tracking-wide text-center">Choose Your Platform</p>
 
-    <!-- Cards -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-6xl w-full">
+    <!-- Cards: fully flexible — 2-col on mobile (vertical scroll easy), scales to 4-col. No overflow clip. -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl w-full mx-auto">
 
       <!-- FIXED Music Card -->
       <div onclick="window.location.href='music/'" 
@@ -62,61 +62,49 @@
         </div>
       </div>
 
-      <!-- Other cards remain the same -->
-      <div onclick="alert('Creators Portal — Coming Soon')" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-8 text-center cursor-pointer">
-        <div class="h-14 flex justify-center mb-6">
-          <i class="fa-solid fa-palette text-5xl text-purple-400"></i>
+      <!-- Creators (now full portal: YT + Twitch hybrid with community feed first, studio, + points for Grok Imagine) -->
+      <div onclick="window.location.href='creators/'" 
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-palette text-4xl sm:text-5xl text-purple-400"></i>
         </div>
-        <h3 class="text-3xl font-bold mb-2">Creators</h3>
-        <p class="text-zinc-400 text-sm mb-8">Upload • Monetize • Grow</p>
-        <div class="text-purple-400 font-medium flex items-center justify-center gap-2 text-sm">
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2">Creators</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8">Upload • Stream • Monetize • Imagine</p>
+        <div class="text-purple-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Creators Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
 
-      <div onclick="alert('Community Portal — Coming Soon')" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-emerald-500/30 rounded-3xl p-8 text-center cursor-pointer">
-        <div class="h-14 flex justify-center mb-6">
-          <i class="fa-solid fa-users text-5xl text-emerald-400"></i>
-        </div>
-        <h3 class="text-3xl font-bold mb-2">Community</h3>
-        <p class="text-zinc-400 text-sm mb-8">Connect • Discover • Build</p>
-        <div class="text-emerald-400 font-medium flex items-center justify-center gap-2 text-sm">
-          Enter Community <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
       <div onclick="alert('Crewmember Login Portal')" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-8 text-center cursor-pointer">
-        <div class="h-14 flex justify-center mb-6">
-          <i class="fa-solid fa-truck text-5xl text-amber-400"></i>
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-truck text-4xl sm:text-5xl text-amber-400"></i>
         </div>
-        <h3 class="text-3xl font-bold mb-2 text-amber-300">Crewmember</h3>
-        <p class="text-zinc-400 text-sm mb-6">Become a Driver in Your Area</p>
-        <p class="text-amber-400 text-xs leading-tight mb-8">
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-amber-300">Crewmember</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-4 sm:mb-6">Become a Driver in Your Area</p>
+        <p class="text-amber-400 text-[10px] sm:text-xs leading-tight mb-6 sm:mb-8">
           Personal car or commercial vehicle • Flexible hours
         </p>
-        <div class="text-amber-400 font-medium flex items-center justify-center gap-2 text-sm">
+        <div class="text-amber-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Crewmember Login <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
 
       <!-- New Nash Services Panel (Full Project from Attachments) -->
       <div onclick="window.location.href='nash-services/'" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-8 text-center cursor-pointer">
-        <div class="h-14 flex justify-center mb-6">
-          <i class="fa-solid fa-building text-5xl text-rose-400"></i>
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-building text-4xl sm:text-5xl text-rose-400"></i>
         </div>
-        <h3 class="text-3xl font-bold mb-2 text-rose-300">Nash Services</h3>
-        <p class="text-zinc-400 text-sm mb-8"># Professional Removal and Cleanup with Precision</p>
-        <div class="text-rose-400 font-medium flex items-center justify-center gap-2 text-sm">
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-rose-300">Nash Services</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8"># Professional Removal and Cleanup with Precision</p>
+        <div class="text-rose-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Full Nash Services Site <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
     </div>
 
-    <div class="mt-20 text-zinc-500 text-xs">VIZALOK • Independent music & creator ecosystem</div>
+    <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
   </div>
 </body>
 </html>
