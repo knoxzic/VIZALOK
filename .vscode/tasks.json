@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Nash Services Preview",
+      "type": "shell",
+      "command": "cd nash-services && npm run preview",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Start VIZALOK Landing",
+      "type": "shell",
+      "command": "echo 'Open index.html directly or serve with live server extension'",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "nash-services-preview",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preview": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "firebase": "^12.14.0",
+    "node-fetch": "^2.7.0"
+  }
+}

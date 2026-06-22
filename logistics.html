@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIZALOK Logistics • Medical Courier &amp; Professional Services</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .sleek-bg { background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f172a 100%); }
+    .logistics-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .logistics-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+    .section-header { position: relative; }
+    .section-header:after { content: ''; position: absolute; bottom: -6px; left: 0; width: 48px; height: 3px; background: linear-gradient(to right, #f59e0b, #d97706); border-radius: 999px; }
+    .nav-active { color: #fcd34d; border-bottom: 2px solid #fcd34d; }
+    .form-input { transition: all 0.2s ease; }
+    .form-input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
+
+    /* YouTube muted looping video bg for Logistics hero only */
+    .logistics-hero {
+      position: relative;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .logistics-hero-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+      border: 0;
+    }
+    .logistics-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(9,9,14,0.72), rgba(10,10,15,0.78), rgba(15,15,25,0.88));
+      z-index: 1;
+    }
+    .logistics-hero-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white sleek-bg min-h-screen">
+
+  <!-- Top Nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
+          <div>
+            <span class="font-bold tracking-tighter text-xl">VIZALOK</span>
+            <span class="text-[10px] text-amber-400 font-medium tracking-[1.5px] ml-0.5">LOGISTICS</span>
+          </div>
+        </a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-4 py-1.5 text-sm font-medium border border-white/20 hover:bg-white/5 rounded-2xl flex items-center gap-2">
+          <i class="fa-solid fa-arrow-left"></i> Back to Main
+        </a>
+        <button onclick="showDriverLogin()" class="px-5 py-1.5 text-sm font-semibold bg-amber-600 hover:bg-amber-500 rounded-2xl flex items-center gap-2 transition-colors">
+          <i class="fa-solid fa-user-tie"></i> Driver Login
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Muted Looping YouTube BG -->
+  <div class="logistics-hero">
+    <iframe 
+      src="https://www.youtube.com/embed/zkTTn1XUxQk?autoplay=1&amp;loop=1&amp;mute=1&amp;playlist=zkTTn1XUxQk&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0&amp;iv_load_policy=3&amp;fs=0" 
+      title="VIZALOK Logistics Background Video" 
+      class="logistics-hero-video"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
+    <div class="logistics-hero-overlay"></div>
+    <div class="logistics-hero-content max-w-5xl mx-auto px-6 pt-8 pb-14 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs tracking-widest mb-4">DMV • CONTRACTOR OPPORTUNITIES • MISSION-DRIVEN</div>
+      <h1 class="text-5xl sm:text-6xl font-black tracking-[-2.5px] mb-4">Become a Driver with Vizalok Logistics</h1>
+      <p class="max-w-2xl mx-auto text-xl text-zinc-200 mb-8">Flexible, purpose-driven medical courier contractor opportunities across the DMV. Deliver with integrity.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#logistics-join" class="px-8 py-3.5 bg-amber-600 hover:bg-amber-500 text-white rounded-2xl font-semibold text-lg flex items-center justify-center gap-2 transition-colors">Become a Driver – Express Interest &amp; Create Profile</a>
+      </div>
+      <p class="mt-6 text-xs text-amber-300/70">Driver sign-ups and profile creation only. No client quote requests.</p>
+    </div>
+  </div>
+
+  <!-- About the Founder -->
+  <div class="max-w-4xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">OUR STORY</div>
+    <h2 class="text-4xl font-bold mb-8 text-center">About the Founder – Booker T. Clark</h2>
+    
+    <div class="prose prose-invert max-w-none text-zinc-300 text-[15.5px] leading-relaxed space-y-6">
+      <p>My name is Booker T. Clark, and Vizalok Logistics was born from both necessity and conviction.</p>
+      <p>For over a decade, I worked in operations, logistics, and team leadership across multiple states. I took pride in showing up, working hard, and leading teams — often exceeding performance targets by wide margins. But in 2026, everything changed.</p>
+      <p>While working as a high-reach forklift operator, I was repeatedly forced to perform unsafe tasks despite raising concerns. I was instructed to place empty pallets on high racks with a disabled camera and to clean wet floors in hazardous conditions. When I refused to ignore the dangers, I was met with retaliation. The result was a serious workplace injury that left me with internal hemorrhoids, a sprained ankle, chronic pain, and lasting effects on my health and mental well-being.</p>
+      <p>Instead of support, I faced termination. I filed a grievance, pursued workers’ compensation, and fought through the system. That experience opened my eyes to how many workers — especially those in physically demanding jobs — are treated unfairly in hostile work environments with little recourse.</p>
+      <p>I refused to let that chapter define me as a victim. Instead, I chose to turn it into purpose.</p>
+      <p><strong>Vizalok Logistics was created as my answer.</strong> I’m building a company that operates with integrity, fairness, and respect — values I believe every worker and every client deserves. Through reliable medical courier services, I’m committed to supporting healthcare systems that care for patients when they need it most. At the same time, I’m creating opportunities for others — especially those who have been overlooked or mistreated in traditional workplaces — to earn a living with dignity through flexible, independent contractor roles.</p>
+      <p>My goal is bigger than deliveries. I want to help change the culture around work. I want to prove that businesses can succeed while treating people right. I want Vizalok Logistics to be a company that gives back — by providing stable opportunities, fair treatment, and a path forward for people who are often left behind.</p>
+      <p>This isn’t just business to me. It’s personal. Every route we run and every contractor we bring on is part of building something better than what I experienced.</p>
+      <p>If you’re someone looking for a real opportunity to build something for yourself as an independent contractor driver, I invite you to express your interest and create your driver profile below.</p>
+      <div class="pt-2 text-amber-300 font-semibold">— Booker T. Clark<br>Founder, Vizalok Logistics</div>
+    </div>
+  </div>
+
+  <!-- Our Mission -->
+  <div class="max-w-3xl mx-auto px-6 pb-16 text-center">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3">WHY WE EXIST</div>
+    <h2 class="text-3xl font-bold mb-5">Our Mission</h2>
+    <p class="text-xl text-zinc-300">Vizalok Logistics exists to deliver critical medical supplies and specimens with the highest standards of reliability, compliance, and respect — while creating meaningful, dignified opportunities for independent contractors who have often been overlooked or mistreated in traditional workplaces.</p>
+  </div>
+
+  <!-- Services -->
+  <div class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">WHAT WE DELIVER</div>
+    <h2 class="text-3xl font-bold mb-8 text-center">Services</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">Medical specimen transport</div>
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">Pharmaceutical &amp; medication delivery</div>
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">Hospital supply &amp; inter-facility transport</div>
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">Temperature-controlled deliveries</div>
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">On-demand &amp; scheduled routes</div>
+      <div class="logistics-card bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-6">HIPAA-compliant chain of custody</div>
+    </div>
+  </div>
+
+  <!-- Why Vizalok Logistics -->
+  <div class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">THE VIZALOK DIFFERENCE</div>
+    <h2 class="text-3xl font-bold mb-8 text-center">Why Vizalok Logistics?</h2>
+    <div class="grid sm:grid-cols-2 gap-4 text-sm">
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>HIPAA compliant &amp; trained drivers</span></div>
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>Background-checked team</span></div>
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>Fully insured (liability, cargo, auto)</span></div>
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>DMV-wide focus with fast local response</span></div>
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>Mission-driven approach (fair treatment + giving back)</span></div>
+      <div class="flex gap-3 bg-zinc-900/60 border border-amber-500/10 rounded-2xl p-5"><span class="text-amber-400 mt-0.5">✓</span><span>Transparent contractor model with real support</span></div>
+    </div>
+  </div>
+
+  <!-- Compliance & Safety -->
+  <div class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">TRUST &amp; COMPLIANCE</div>
+    <h2 class="text-3xl font-bold mb-8 text-center">Compliance &amp; Safety</h2>
+    <div class="grid sm:grid-cols-2 gap-4 text-sm">
+      <div class="bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-5">HIPAA trained</div>
+      <div class="bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-5">Bloodborne Pathogens certified</div>
+      <div class="bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-5">Drug screening &amp; background checks</div>
+      <div class="bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-5">Fully insured operations</div>
+    </div>
+  </div>
+
+  <!-- Coverage Area -->
+  <div class="max-w-6xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">WHERE WE SERVE</div>
+    <h2 class="text-3xl font-bold mb-8 text-center">Coverage Area</h2>
+    <div class="bg-zinc-900/70 border border-amber-500/10 rounded-2xl p-8 text-sm">
+      <p class="mb-4 text-zinc-400">Vizalok Logistics proudly serves the entire DMV region (District of Columbia, Maryland, and Virginia), including all counties and independent cities. Expanding rapidly to meet demand for reliable medical courier services and to recruit new crewmembers and drivers across the region.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+        <!-- DC -->
+        <div>
+          <div class="font-semibold text-amber-300 mb-2">District of Columbia</div>
+          <div class="text-amber-200 text-xs">• Washington, D.C.</div>
+        </div>
+        <!-- MD All Counties -->
+        <div>
+          <div class="font-semibold text-amber-300 mb-2">Maryland (All 23 Counties + Baltimore City)</div>
+          <div class="grid grid-cols-2 gap-x-3 text-xs text-amber-200">
+            <div>• Allegany County</div>
+            <div>• Anne Arundel County</div>
+            <div>• Baltimore County</div>
+            <div>• Baltimore City</div>
+            <div>• Calvert County</div>
+            <div>• Caroline County</div>
+            <div>• Carroll County</div>
+            <div>• Cecil County</div>
+            <div>• Charles County</div>
+            <div>• Dorchester County</div>
+            <div>• Frederick County</div>
+            <div>• Garrett County</div>
+            <div>• Harford County</div>
+            <div>• Howard County</div>
+            <div>• Kent County</div>
+            <div>• Montgomery County</div>
+            <div>• Prince George's County</div>
+            <div>• Queen Anne's County</div>
+            <div>• St. Mary's County</div>
+            <div>• Somerset County</div>
+            <div>• Talbot County</div>
+            <div>• Washington County</div>
+            <div>• Wicomico County</div>
+            <div>• Worcester County</div>
+          </div>
+        </div>
+        <!-- VA All Counties + Cities -->
+        <div>
+          <div class="font-semibold text-amber-300 mb-2">Virginia (All 95 Counties + 38 Independent Cities)</div>
+          <div class="grid grid-cols-2 gap-x-3 text-xs text-amber-200">
+            <div>• Accomack County</div>
+            <div>• Albemarle County</div>
+            <div>• Alleghany County</div>
+            <div>• Amelia County</div>
+            <div>• Amherst County</div>
+            <div>• Appomattox County</div>
+            <div>• Arlington County</div>
+            <div>• Augusta County</div>
+            <div>• Bath County</div>
+            <div>• Bedford County</div>
+            <div>• Bland County</div>
+            <div>• Botetourt County</div>
+            <div>• Brunswick County</div>
+            <div>• Buchanan County</div>
+            <div>• Buckingham County</div>
+            <div>• Campbell County</div>
+            <div>• Caroline County</div>
+            <div>• Carroll County</div>
+            <div>• Charles City County</div>
+            <div>• Charlotte County</div>
+            <div>• Chesterfield County</div>
+            <div>• Clarke County</div>
+            <div>• Craig County</div>
+            <div>• Culpeper County</div>
+            <div>• Cumberland County</div>
+            <div>• Dickenson County</div>
+            <div>• Dinwiddie County</div>
+            <div>• Essex County</div>
+            <div>• Fairfax County</div>
+            <div>• Fauquier County</div>
+            <div>• Floyd County</div>
+            <div>• Fluvanna County</div>
+            <div>• Franklin County</div>
+            <div>• Frederick County</div>
+            <div>• Giles County</div>
+            <div>• Gloucester County</div>
+            <div>• Goochland County</div>
+            <div>• Grayson County</div>
+            <div>• Greene County</div>
+            <div>• Greensville County</div>
+            <div>• Halifax County</div>
+            <div>• Hanover County</div>
+            <div>• Henrico County</div>
+            <div>• Henry County</div>
+            <div>• Highland County</div>
+            <div>• Isle of Wight County</div>
+            <div>• James City County</div>
+            <div>• King and Queen County</div>
+            <div>• King George County</div>
+            <div>• King William County</div>
+            <div>• Lancaster County</div>
+            <div>• Lee County</div>
+            <div>• Loudoun County</div>
+            <div>• Louisa County</div>
+            <div>• Lunenburg County</div>
+            <div>• Madison County</div>
+            <div>• Mathews County</div>
+            <div>• Mecklenburg County</div>
+            <div>• Middlesex County</div>
+            <div>• Montgomery County</div>
+            <div>• Nelson County</div>
+            <div>• New Kent County</div>
+            <div>• Northampton County</div>
+            <div>• Northumberland County</div>
+            <div>• Nottoway County</div>
+            <div>• Orange County</div>
+            <div>• Page County</div>
+            <div>• Patrick County</div>
+            <div>• Pittsylvania County</div>
+            <div>• Powhatan County</div>
+            <div>• Prince Edward County</div>
+            <div>• Prince George County</div>
+            <div>• Prince William County</div>
+            <div>• Pulaski County</div>
+            <div>• Rappahannock County</div>
+            <div>• Richmond County</div>
+            <div>• Roanoke County</div>
+            <div>• Rockbridge County</div>
+            <div>• Rockingham County</div>
+            <div>• Russell County</div>
+            <div>• Scott County</div>
+            <div>• Shenandoah County</div>
+            <div>• Smyth County</div>
+            <div>• Southampton County</div>
+            <div>• Spotsylvania County</div>
+            <div>• Stafford County</div>
+            <div>• Surry County</div>
+            <div>• Sussex County</div>
+            <div>• Tazewell County</div>
+            <div>• Warren County</div>
+            <div>• Washington County</div>
+            <div>• Westmoreland County</div>
+            <div>• Wise County</div>
+            <div>• Wythe County</div>
+            <div>• York County</div>
+          </div>
+          <div class="mt-2 text-amber-300 text-xs font-medium">Independent Cities (all 38):</div>
+          <div class="text-xs text-amber-200">Alexandria, Bristol, Buena Vista, Charlottesville, Chesapeake, Colonial Heights, Covington, Danville, Emporia, Fairfax, Falls Church, Franklin, Fredericksburg, Galax, Hampton, Harrisonburg, Hopewell, Lexington, Lynchburg, Manassas, Manassas Park, Martinsville, Newport News, Norfolk, Norton, Petersburg, Poquoson, Portsmouth, Radford, Richmond, Roanoke, Salem, Staunton, Suffolk, Virginia Beach, Waynesboro, Williamsburg, Winchester</div>
+        </div>
+      </div>
+      <p class="mt-6 text-xs text-zinc-500">Contact us for custom routes or expanded service areas across the DMV to recruit dedicated crewmembers and drivers.</p>
+    </div>
+  </div>
+
+  <!-- Join the Team -->
+  <div id="logistics-join" class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="uppercase text-amber-400 text-xs tracking-[2px] mb-3 text-center">OPPORTUNITIES</div>
+    <h2 class="text-4xl font-bold mb-4 text-center">Drive With Purpose – Join Vizalok Logistics</h2>
+    <p class="max-w-3xl mx-auto text-center text-lg text-zinc-300 mb-10">Become an independent contractor medical courier. Flexible routes, steady work, and the chance to be part of a mission-driven company that treats people right.</p>
+
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Benefits -->
+      <div class="bg-zinc-900/70 border border-amber-500/10 rounded-3xl p-8">
+        <h4 class="font-semibold text-xl mb-5 text-amber-300">Benefits of Joining</h4>
+        <ul class="space-y-3.5 text-sm">
+          <li class="flex gap-3"><span class="text-amber-400">•</span> Flexible schedule – choose routes that fit your life</li>
+          <li class="flex gap-3"><span class="text-amber-400">•</span> Steady, recurring medical courier work</li>
+          <li class="flex gap-3"><span class="text-amber-400">•</span> Fair, transparent pay and support</li>
+          <li class="flex gap-3"><span class="text-amber-400">•</span> Opportunities for growth and leadership</li>
+          <li class="flex gap-3"><span class="text-amber-400">•</span> Be part of a company that values dignity and integrity</li>
+        </ul>
+      </div>
+
+      <div class="space-y-8">
+        <div>
+          <h4 class="font-semibold text-xl mb-4 text-amber-300">Requirements</h4>
+          <ul class="text-sm space-y-2 text-zinc-300">
+            <li>• Clean driving record &amp; valid license</li>
+            <li>• Reliable, insured vehicle (sedan, SUV, or van)</li>
+            <li>• Pass background check &amp; drug screening</li>
+            <li>• Smartphone for route management</li>
+            <li>• Professional, reliable, and compassionate</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-xl mb-4 text-amber-300">How It Works</h4>
+          <ol class="text-sm space-y-2.5 text-zinc-300 list-decimal list-inside">
+            <li>Create your driver profile &amp; express interest using the form below</li>
+            <li>Complete quick screening &amp; onboarding</li>
+            <li>Get assigned routes in your preferred area</li>
+            <li>Start earning with flexible, meaningful work</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interest Form - Expanded for Driver Profile Creation -->
+    <div class="mt-10 bg-zinc-900 border border-amber-500/20 rounded-3xl p-8 max-w-2xl mx-auto">
+      <h4 class="text-xl font-semibold mb-1">Express Your Interest &amp; Create Driver Profile</h4>
+      <p class="text-sm text-zinc-400 mb-6">Fill out this form to create your driver profile and express interest in joining as an independent contractor medical courier. We’ll contact you within 48 hours.</p>
+      <form id="logistics-interest-form" onsubmit="submitLogisticsForm(event)" class="space-y-4">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <input type="text" name="fullName" placeholder="Full Name" required class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+          <input type="email" name="email" placeholder="Email Address" required class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <input type="tel" name="phone" placeholder="Phone Number" required class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+          <input type="text" name="city" placeholder="City / Primary Area (e.g. Largo, MD)" required class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <input type="text" name="address" placeholder="Home / Base Address (optional)" class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+          <input type="number" name="experience" placeholder="Years Driving Experience" min="0" class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <select name="availability" class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50 text-white">
+            <option value="">Availability</option>
+            <option value="Full-time flexible">Full-time flexible</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Evenings / Nights">Evenings / Nights</option>
+            <option value="Weekends primarily">Weekends primarily</option>
+            <option value="Mornings / Daytime">Mornings / Daytime</option>
+          </select>
+          <input type="text" name="vehicle" placeholder="Vehicle Make/Model/Year (e.g. 2022 Honda Odyssey)" class="bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        </div>
+        <div>
+          <textarea name="notes" placeholder="Relevant experience, certifications (e.g. HIPAA), or why join Vizalok? (optional)" rows="3" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50 resize-y"></textarea>
+        </div>
+        <div class="pt-1">
+          <label class="flex items-start gap-2 text-xs text-zinc-400 cursor-pointer">
+            <input type="checkbox" required class="mt-0.5 accent-amber-500"> 
+            <span>I have a valid driver’s license &amp; clean record, reliable insured vehicle, and consent to background check &amp; drug screening. This will create my driver profile.</span>
+          </label>
+        </div>
+        <button type="submit" class="w-full mt-2 py-3 bg-amber-600 hover:bg-amber-500 rounded-2xl font-semibold text-sm transition-colors">Create Driver Profile &amp; Submit Interest</button>
+        <p class="text-[10px] text-center text-zinc-500">Demo only. Profile creation simulated locally. Real system would securely store and email team.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Driver Login Modal -->
+  <div id="driver-login-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4" onclick="if (event.target.id === 'driver-login-modal') closeDriverLogin()">
+    <div class="bg-zinc-900 border border-amber-500/20 rounded-3xl w-full max-w-sm p-8" onclick="event.stopImmediatePropagation()">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h3 class="text-xl font-semibold">Driver Login</h3>
+          <p class="text-[10px] text-amber-400/70 -mt-0.5">Vizalok Logistics Contractor Portal</p>
+        </div>
+        <button onclick="closeDriverLogin()" class="text-2xl leading-none text-zinc-400 hover:text-white">&times;</button>
+      </div>
+      <form id="driver-login-form" onsubmit="handleDriverLogin(event)" class="space-y-4">
+        <input type="email" placeholder="Driver Email" required class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        <input type="password" placeholder="Password" required class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500/50">
+        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 rounded-2xl font-semibold text-sm transition-colors">Log In</button>
+      </form>
+      <div class="mt-5 text-center">
+        <p class="text-xs text-zinc-500 mb-1">Demo login. Create a profile using the form above first for best experience.</p>
+        <a href="#logistics-join" onclick="closeDriverLogin()" class="text-amber-400 hover:text-amber-300 text-xs underline">Don't have a profile? Express Interest Below</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Logistics form handlers for local preview + driver profile creation + login
+    function submitLogisticsForm(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+
+      // Collect profile data via FormData for personalized recap & message
+      const fd = new FormData(form);
+      const profile = {
+        name: fd.get('fullName') || 'New Driver',
+        email: fd.get('email') || '',
+        phone: fd.get('phone') || '',
+        city: fd.get('city') || '',
+        vehicle: fd.get('vehicle') || 'Not specified',
+        experience: fd.get('experience') || 'N/A',
+        availability: fd.get('availability') || 'Flexible'
+      };
+
+      setTimeout(() => {
+        alert(`Driver Profile Created Successfully!\n\nWelcome, ${profile.name}!\n\nYour contractor profile has been created with Vizalok Logistics.\nWe will contact you within 48 hours to complete screening &amp; onboarding.\n\nClick "Driver Login" (top right) or the button below to simulate logging into your new profile.`);
+
+        form.reset();
+        if (btn) btn.disabled = false;
+
+        // Show rich profile success recap in place (profile creation visible)
+        showProfileCreatedSuccess(form.parentElement, profile);
+
+        // Save email for convenient prefill on login
+        if (profile.email) {
+          try { localStorage.setItem('vizalok_last_driver_email', profile.email); } catch(e){}
+        }
+      }, 650);
+    }
+
+    function showProfileCreatedSuccess(container, profile) {
+      // Hide original form
+      const formEl = container.querySelector('form');
+      if (formEl) formEl.style.display = 'none';
+
+      const successHTML = `
+        <div class="bg-emerald-900/20 border border-emerald-500/30 rounded-2xl p-6 text-center">
+          <div class="text-emerald-400 text-3xl mb-2"><i class="fa-solid fa-check-circle"></i></div>
+          <h5 class="font-semibold text-lg mb-1 text-emerald-300">Driver Profile Created!</h5>
+          <p class="text-sm text-zinc-300 mb-4">Thank you, <strong>${profile.name}</strong>. Your profile is now registered with Vizalok Logistics as an independent contractor driver.</p>
+          <div class="bg-zinc-950/60 rounded-xl p-4 text-left text-xs mb-4 space-y-1 font-mono">
+            <div><span class="text-zinc-400 font-sans">Email:</span> <span class="text-white">${profile.email}</span></div>
+            <div><span class="text-zinc-400 font-sans">Phone:</span> <span class="text-white">${profile.phone}</span></div>
+            <div><span class="text-zinc-400 font-sans">Primary Area:</span> <span class="text-white">${profile.city}</span></div>
+            <div><span class="text-zinc-400 font-sans">Vehicle:</span> <span class="text-white">${profile.vehicle}</span></div>
+            <div><span class="text-zinc-400 font-sans">Experience / Avail:</span> <span class="text-white">${profile.experience} yrs • ${profile.availability}</span></div>
+          </div>
+          <button onclick="prefillAndShowLogin('${profile.email || ''}')" 
+            class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 rounded-2xl font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-sign-in-alt"></i> <span>Log In as Driver Now (Demo)</span>
+          </button>
+          <p class="mt-3 text-[10px] text-emerald-400/70">You can also use the <strong>Driver Login</strong> button at the top right of the page.</p>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', successHTML);
+    }
+
+    function prefillAndShowLogin(email) {
+      closeDriverLogin(); // ensure closed
+      setTimeout(() => {
+        const modal = document.getElementById('driver-login-modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        const emailInput = modal.querySelector('input[type="email"]');
+        if (emailInput && email) emailInput.value = email;
+        // focus password next
+        const pw = modal.querySelector('input[type="password"]');
+        if (pw) setTimeout(() => pw.focus(), 120);
+      }, 120);
+    }
+
+    function showDriverLogin() {
+      const modal = document.getElementById('driver-login-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      // prefill from last created profile if available
+      try {
+        const lastEmail = localStorage.getItem('vizalok_last_driver_email');
+        const emailInput = modal.querySelector('input[type="email"]');
+        if (lastEmail && emailInput && !emailInput.value) emailInput.value = lastEmail;
+      } catch(e){}
+    }
+
+    function closeDriverLogin() {
+      const modal = document.getElementById('driver-login-modal');
+      if (!modal) return;
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+    }
+
+    function handleDriverLogin(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      setTimeout(() => {
+        alert('Driver Login Successful (Demo)\n\nWelcome back to Vizalok Logistics!\n\n(Production version would load your driver dashboard: assigned routes, earnings, schedule, upload docs, support chat, etc.)');
+        closeDriverLogin();
+        form.reset();
+        if (btn) btn.disabled = false;
+      }, 450);
+    }
+  </script>
+
+</body>
+</html>

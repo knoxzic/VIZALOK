@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nash Services | Property Preservation &amp; Construction</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK modular (v10+) - using provided config for modern API. Loaded early for onclick handlers -->
+    <script type="module" src="script.js"></script>
+    <style>
+        /* Additional styles for new professional sections - reuses existing theme */
+        .bio-photo {
+            width: 100%;
+            max-width: 360px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            object-fit: contain;
+            height: auto;
+            max-height: 520px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .bio-layout {
+            display: grid;
+            grid-template-columns: minmax(240px, 360px) 1fr;
+            gap: 2.25rem;
+            align-items: start;
+        }
+        .bio-text h3 {
+            margin-top: 0;
+            color: var(--gold);
+        }
+        .bio-text p {
+            color: var(--muted);
+            line-height: 1.75;
+            margin-bottom: 1rem;
+        }
+        .bio-text .highlight {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .quote {
+            margin-top: 1.25rem;
+            padding: 1rem 1.25rem;
+            border-left: 4px solid var(--gold);
+            background: var(--panel-soft);
+            font-style: italic;
+            color: var(--text);
+        }
+        .service-category {
+            margin-bottom: 2.25rem;
+        }
+        .service-category h3 {
+            margin: 0 0 0.75rem;
+            font-size: 1.25rem;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 0.65rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .service-list li {
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.65rem 0.95rem;
+            font-size: 0.95rem;
+            color: var(--muted);
+            transition: all 0.2s ease;
+        }
+        .service-list li:hover {
+            border-color: var(--purple);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+        .service-list li button {
+            float: right;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.55rem;
+            margin-left: 0.5rem;
+            border-radius: 999px;
+        }
+        .gallery-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            aspect-ratio: 16 / 10;
+            display: flex;
+            align-items: flex-end;
+        }
+        .gallery-item img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.85) brightness(0.9);
+        }
+        .gallery-item .gallery-overlay {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(transparent, rgba(5,5,7,0.85));
+            padding: 1.1rem 1rem 0.9rem;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .gallery-item .gallery-overlay strong {
+            display: block;
+            color: var(--gold);
+            font-size: 0.95rem;
+        }
+        .gallery-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .gallery-pair .gallery-item {
+            aspect-ratio: 4 / 3;
+        }
+        .gallery-pair .gallery-item .gallery-overlay {
+            font-size: 0.85rem;
+            padding: 0.8rem 0.7rem 0.6rem;
+        }
+        .gallery-pair .gallery-item .gallery-overlay strong {
+            font-size: 0.9rem;
+        }
+        .mission {
+            max-width: 820px;
+            margin: 0 auto 3rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--muted);
+            line-height: 1.75;
+        }
+        .footer-admin {
+            text-align: center;
+            padding: 1.5rem 1rem 2rem;
+            font-size: 0.8rem;
+            opacity: 0.75;
+        }
+        .footer-admin a {
+            color: var(--muted);
+        }
+        .footer-admin a:hover {
+            color: var(--gold);
+        }
+        @media (max-width: 860px) {
+            .bio-layout {
+                grid-template-columns: 1fr;
+            }
+            .bio-photo {
+                max-width: 100%;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <!-- Full-page persistent video background (visible on scroll) -->
+        <div class="hero-video-wrap">
+            <video id="bgVideo" autoplay muted loop playsinline class="hero-video">
+                <source src="xai-video-81b2c3b4-f28a-48aa-9388-f0b553a80490.mp4" type="video/mp4">
+                <source src="xai-video-99b45a20-0d50-4a6d-ad8c-a8a3531c2487.mp4" type="video/mp4">
+                <source src="grok-video-4522949d-c6e9-4af8-a047-6274d953faee2.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-overlay"></div>
+
+        <header class="topbar">
+            <div class="brand">
+                <img src="logo.png" alt="Nash Services Logo" class="brand-logo">
+                <div>
+                    <span class="brand-name">Nash Services</span>
+                    <span class="brand-tag">Property Preservation &amp; Construction</span>
+                </div>
+            </div>
+            <nav class="topnav">
+                <a href="#hero">Home</a>
+                <a href="#about">About Curtis</a>
+                <a href="#services">Services</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#areas">Service Areas</a>
+                <a href="#estimate">Request Estimate</a>
+                <a href="#contact">Contact</a>
+                <!-- Prominent new Sign In / Sign Up at the top -->
+                <button class="button button-secondary" style="padding: 0.5rem 0.95rem; font-size: 0.82rem; white-space: nowrap;" onclick="openSignIn()">Sign In</button>
+                <button class="button button-primary" style="padding: 0.5rem 0.95rem; font-size: 0.82rem; white-space: nowrap;" onclick="openSignUp()">Sign Up</button>
+                <a href="admin.html" class="button button-outline" style="padding: 0.5rem 0.95rem; font-size: 0.82rem; white-space: nowrap; margin-left: auto;" title="Admin Portal">Admin</a>
+            </nav>
+        </header>
+
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <div style="font-size: clamp(2.2rem, 6vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--gold); margin-bottom: 0.4rem;">NASH SERVICES</div>
+                <p>Protecting Properties. Restoring Value. Strengthening Communities.</p>
+                <div class="hero-actions">
+                    <a href="#estimate" class="button button-primary">Request an Estimate</a>
+                    <a href="#services" class="button button-secondary">Explore Services</a>
+                </div>
+                <div class="hero-highlights">
+                    <div>
+                        <strong>30+ Years Experience</strong>
+                        <span>From systems engineering to hands-on property restoration.</span>
+                    </div>
+                    <div>
+                        <strong>Quality Craftsmanship</strong>
+                        <span>Every project treated with the dignity communities deserve.</span>
+                    </div>
+                    <div>
+                        <strong>Community First</strong>
+                        <span>Helping restore homes and strengthen neighborhoods one project at a time.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main>
+            <!-- Mission Statement -->
+            <div class="section-block" style="padding-top: 2.5rem; padding-bottom: 1.5rem;">
+                <p class="mission">
+                    Every property has potential, and every community deserves quality workmanship, dignity, and investment. 
+                    Nash Services exists to combine decades of experience, craftsmanship, and problem-solving to restore homes, 
+                    preserve assets, and strengthen communities one project at a time.
+                </p>
+            </div>
+
+            <!-- Quick Request Section: shown after sign-in + complete profile. One-time profile means no re-entering name/email/phone/address. -->
+            <section id="quick-request" class="section-block" style="display: none; padding-top: 1rem; padding-bottom: 2.5rem;">
+                <div class="glass-panel" style="max-width: 820px; margin: 0 auto; padding: 2rem;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+                        <div>
+                            <span class="eyebrow">WELCOME BACK</span>
+                            <h2 style="margin: 0.25rem 0 0.25rem;">Quick Request</h2>
+                            <p style="margin:0; color:var(--muted);">Profile details loaded. Select a service and submit in seconds.</p>
+                        </div>
+                        <div id="quick-user" style="font-weight:600; color:var(--gold); text-align:right; min-width:160px;"></div>
+                    </div>
+
+                    <div id="quick-profile-summary" style="background: rgba(10,8,25,0.6); padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.9rem; color: var(--muted);">
+                        <!-- Populated by JS with profile -->
+                    </div>
+
+                    <div style="margin: 0.75rem 0;">
+                        <label style="display:block; font-size:0.9rem; color:var(--muted); margin-bottom:0.4rem;">Select Service</label>
+                        <div id="quick-service-pills" style="display:flex; flex-wrap:wrap; gap:0.5rem;"></div>
+                    </div>
+
+                    <div class="input-row" style="margin-bottom:0.75rem;">
+                        <label for="quick-datetime">Preferred Date &amp; Time</label>
+                        <input id="quick-datetime" type="datetime-local">
+                    </div>
+
+                    <div class="input-row" style="margin-bottom:0.75rem;">
+                        <label for="quick-details">Notes &amp; Details</label>
+                        <textarea id="quick-details" rows="2" placeholder="Any specific details, access instructions, or requirements?"></textarea>
+                    </div>
+
+                    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                        <button class="button button-primary" onclick="submitQuickRequest()">Submit Request / Purchase Service</button>
+                        <span style="font-size:0.8rem; color:var(--muted);">Your profile details are pre-filled. Team will contact you to confirm.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Curtis Nash - full integrated bio + local photo -->
+            <section id="about" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Meet the Founder</span>
+                    <h2>About Curtis Nash</h2>
+                    <p>Born and raised in West Virginia — building solutions, creating systems, and turning ideas into lasting results.</p>
+                </div>
+
+                <div class="bio-layout glass-panel" style="padding: 2rem; border-radius: 28px;">
+                    <div>
+                        <img src="nashme.jpg" alt="Curtis Nash - Property Preservation Specialist" class="bio-photo">
+                    </div>
+                    <div class="bio-text">
+                        <p>Born and raised in West Virginia, I have spent my life building solutions, creating systems, and turning ideas into results. My professional journey began during the early days of computer technology in the 1970s and 1980s, when the field of programming was still evolving and required pioneers willing to learn and innovate.</p>
+                        
+                        <p>I began my technology career with Union Carbide, where I completed specialized training and earned a certificate in COBOL programming. Over the next three decades, I built a successful career in information technology and systems development, providing programming and technical expertise for organizations including <span class="highlight">Union Carbide, General Motors, and ultimately Blue Cross Blue Shield</span>. Throughout my career, I learned that great outcomes are achieved through structure, workflow, patience, and understanding—principles that continue to guide me today.</p>
+                        
+                        <p>While technology was my profession, creating and building with my hands has always been my passion. I have always enjoyed taking something with potential and transforming it into something valuable and beautiful. That passion led me into real estate rehabilitation, construction, and property preservation.</p>
+                        
+                        <p>One of my proudest accomplishments has been transforming a former land grant home into a profitable second rental property, demonstrating my commitment to revitalization and community investment. Today, I work in property preservation and construction services, providing:</p>
+                        
+                        <ul style="color: var(--muted); line-height: 1.7; padding-left: 1.1rem; margin: 0.75rem 0 1rem;">
+                            <li>Property cleanouts and debris removal</li>
+                            <li>Lawn care and shrubbery maintenance</li>
+                            <li>Property preservation services</li>
+                            <li>Interior renovations and repairs</li>
+                            <li>Roofing and construction projects</li>
+                            <li>Residential improvements and rehabilitation services</li>
+                        </ul>
+                        
+                        <p>My mission for this chapter of my life is simple: to combine decades of experience, problem-solving, and craftsmanship to help restore homes, strengthen neighborhoods, and serve underserved communities. I believe that every property has potential, and every community deserves quality workmanship, dignity, and investment.</p>
+                        
+                        <p>After spending more than 30 years building systems through technology, I now devote my time to building stronger communities—one property, one project, and one family at a time.</p>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <strong style="color: var(--gold);">Curtis Nash</strong><br>
+                            <span style="font-size:0.92rem; color:var(--muted);">Property Preservation Specialist | Construction Professional | Community Revitalization Advocate</span>
+                        </div>
+                        
+                        <div class="quote">
+                            “Creating value through vision, craftsmanship, and a commitment to rebuilding communities.”
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Services - full blueprint categories -->
+            <section id="services" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">What We Deliver</span>
+                    <h2>Core Service Areas</h2>
+                    <p>Professional, reliable services tailored for property owners, landlords, managers, and communities across the Detroit metro area and Michigan region.</p>
+                </div>
+
+                <!-- Property Preservation -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem; margin-bottom: 1.5rem;">
+                    <h3>🏠 Property Preservation</h3>
+                    <ul class="service-list">
+                        <li>Property Inspections <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Property Inspections')">Select</button></li>
+                        <li>Property Securing <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Property Securing')">Select</button></li>
+                        <li>Lock Changes <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Lock Changes')">Select</button></li>
+                        <li>Boarding Services <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Boarding Services')">Select</button></li>
+                        <li>Winterization <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Winterization')">Select</button></li>
+                        <li>General Maintenance <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('General Maintenance')">Select</button></li>
+                    </ul>
+                </div>
+
+                <!-- Cleanouts & Debris Removal -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem; margin-bottom: 1.5rem;">
+                    <h3>🗑️ Cleanouts &amp; Debris Removal</h3>
+                    <ul class="service-list">
+                        <li>Estate Cleanouts <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Estate Cleanouts')">Select</button></li>
+                        <li>Eviction Cleanouts <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Eviction Cleanouts')">Select</button></li>
+                        <li>Trash-Out Services <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Trash-Out Services')">Select</button></li>
+                        <li>Appliance Removal <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Appliance Removal')">Select</button></li>
+                        <li>Construction Debris Removal <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Construction Debris Removal')">Select</button></li>
+                    </ul>
+                </div>
+
+                <!-- Lawn Care & Exterior Maintenance -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem; margin-bottom: 1.5rem;">
+                    <h3>🌿 Lawn Care &amp; Exterior Maintenance</h3>
+                    <ul class="service-list">
+                        <li>Grass Cutting <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Grass Cutting')">Select</button></li>
+                        <li>Shrub Trimming <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Shrub Trimming')">Select</button></li>
+                        <li>Seasonal Cleanup <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Seasonal Cleanup')">Select</button></li>
+                        <li>Pressure Washing <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Pressure Washing')">Select</button></li>
+                        <li>Gutter Cleaning <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Gutter Cleaning')">Select</button></li>
+                    </ul>
+                </div>
+
+                <!-- Construction & Repair Services -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem; margin-bottom: 1.5rem;">
+                    <h3>🔨 Construction &amp; Repair Services</h3>
+                    <ul class="service-list">
+                        <li>Roofing Repairs <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Roofing Repairs')">Select</button></li>
+                        <li>Drywall Repair <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Drywall Repair')">Select</button></li>
+                        <li>Painting <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Painting')">Select</button></li>
+                        <li>Flooring <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Flooring')">Select</button></li>
+                        <li>Door and Window Replacement <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Door and Window Replacement')">Select</button></li>
+                        <li>Deck and Fence Repairs <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Deck and Fence Repairs')">Select</button></li>
+                        <li>General Carpentry <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('General Carpentry')">Select</button></li>
+                        <li>Minor Plumbing Repairs <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Minor Plumbing Repairs')">Select</button></li>
+                        <li>Minor Electrical Repairs <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Minor Electrical Repairs')">Select</button></li>
+                    </ul>
+                </div>
+
+                <!-- Residential Rehabilitation -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem; margin-bottom: 1.5rem;">
+                    <h3>🏡 Residential Rehabilitation</h3>
+                    <ul class="service-list">
+                        <li>Rental Turnovers <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Rental Turnovers')">Select</button></li>
+                        <li>Interior Improvements <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Interior Improvements')">Select</button></li>
+                        <li>Exterior Improvements <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Exterior Improvements')">Select</button></li>
+                        <li>Property Rehabilitation <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Property Rehabilitation')">Select</button></li>
+                        <li>Home Improvements <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Home Improvements')">Select</button></li>
+                    </ul>
+                </div>
+
+                <!-- Emergency Services -->
+                <div class="service-category glass-panel" style="padding: 1.75rem 1.85rem;">
+                    <h3>⚡ Emergency Services</h3>
+                    <ul class="service-list">
+                        <li>Storm Damage Cleanup <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Storm Damage Cleanup')">Select</button></li>
+                        <li>Emergency Repairs <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Emergency Repairs')">Select</button></li>
+                        <li>Tree Debris Removal <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Tree Debris Removal')">Select</button></li>
+                        <li>Water Damage Assistance <button class="button button-outline" style="font-size:0.65rem;padding:0.1rem 0.5rem;" onclick="selectServiceAndGo('Water Damage Assistance')">Select</button></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Gallery - includes the local photo prominently -->
+            <section id="gallery" class="section-block" style="background: rgba(15, 12, 28, 0.55);">
+                <div class="section-header">
+                    <span class="eyebrow">Our Work</span>
+                    <h2>Gallery</h2>
+                    <p>Before and after examples of our remodeling and construction projects.</p>
+                </div>
+                <div class="gallery-grid">
+                    <!-- Kitchen Remodel Pair -->
+                    <div class="gallery-pair">
+                        <div class="gallery-item">
+                            <img src="Before_1.jpeg" alt="Kitchen remodel before - construction in progress">
+                            <div class="gallery-overlay">
+                                <strong>BEFORE</strong>
+                                <span>Kitchen Remodel</span>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="After_1.jpeg" alt="Kitchen remodel after - modern finished kitchen">
+                            <div class="gallery-overlay">
+                                <strong>AFTER</strong>
+                                <span>Kitchen Remodel</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Exterior Renovation Pair -->
+                    <div class="gallery-pair">
+                        <div class="gallery-item">
+                            <img src="Before_2.jpeg" alt="House exterior renovation before">
+                            <div class="gallery-overlay">
+                                <strong>BEFORE</strong>
+                                <span>Exterior Renovation</span>
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="After_2.jpeg" alt="House exterior renovation after">
+                            <div class="gallery-overlay">
+                                <strong>AFTER</strong>
+                                <span>Exterior Renovation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top:1.25rem; font-size:0.85rem; color:var(--muted);">Side-by-side comparisons of real remodeling and construction transformations.</p>
+            </section>
+
+            <!-- Reviews Section -->
+            <section id="reviews" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Client Feedback</span>
+                    <h2>Reviews</h2>
+                    <p>Real reviews from homeowners and property managers we've helped in the Detroit metro area.</p>
+                </div>
+
+                <div id="reviews-grid" class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <!-- Populated dynamically via Firebase realtime listener -->
+                </div>
+                <p id="no-reviews-msg" style="text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 1rem; display: none;">No reviews yet. Be the first to share your experience!</p>
+
+                <div class="glass-panel" style="max-width: 700px; margin: 2rem auto 0; padding: 1.5rem;">
+                    <h3 style="margin-top:0;">Leave a Review</h3>
+                    <p style="color:var(--muted); font-size:0.9rem;">Share your experience with Nash Services. Only logged-in users can submit reviews (real-time updates via Firebase).</p>
+                    
+                    <div class="input-row">
+                        <label for="review-name">Your Name</label>
+                        <input id="review-name" type="text" placeholder="Your Name">
+                    </div>
+                    <div class="input-row">
+                        <label for="review-rating">Rating</label>
+                        <select id="review-rating">
+                            <option value="5">★★★★★ Excellent</option>
+                            <option value="4">★★★★☆ Very Good</option>
+                            <option value="3">★★★☆☆ Good</option>
+                            <option value="2">★★☆☆☆ Fair</option>
+                            <option value="1">★☆☆☆☆ Poor</option>
+                        </select>
+                    </div>
+                    <div class="input-row">
+                        <label for="review-service">Service Used</label>
+                        <select id="review-service">
+                            <option>Property Preservation</option>
+                            <option>Cleanouts &amp; Debris Removal</option>
+                            <option>Lawn Care &amp; Exterior Maintenance</option>
+                            <option>Construction &amp; Repair Services</option>
+                            <option>Residential Rehabilitation</option>
+                            <option>Emergency Services</option>
+                        </select>
+                    </div>
+                    <div class="input-row">
+                        <label for="review-text">Your Review</label>
+                        <textarea id="review-text" rows="3" placeholder="Tell us about your experience..."></textarea>
+                    </div>
+                    <button class="button button-primary" onclick="submitReview()">Submit Review</button>
+                    <p id="review-status" style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem;"></p>
+                </div>
+            </section>
+
+            <!-- Service Areas -->
+            <section id="areas" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Where We Serve</span>
+                    <h2>Service Areas</h2>
+                    <p>Proudly serving the Detroit metro area and surrounding communities throughout Southeast Michigan.</p>
+                </div>
+                <div class="card-grid">
+                    <div class="feature-card">
+                        <span>Primary Focus</span>
+                        <p>Detroit and the greater Southeast Michigan area, including urban neighborhoods, suburbs, and historic districts.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span>Regional Coverage</span>
+                        <p>Wayne, Oakland, Macomb, Washtenaw, Livingston, and surrounding counties. Rapid response for preservation, construction, cleanouts, lawn care, and emergency work.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span>Property Types</span>
+                        <p>Single-family homes, multi-family apartments &amp; buildings, rental properties &amp; portfolios, estates &amp; historic homes, commercial &amp; retail properties, industrial &amp; warehouse facilities, vacant/foreclosed/distressed properties, condominiums &amp; townhomes, mixed-use developments, and land/vacant lots.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Request an Estimate (Intake) - updated -->
+            <section id="estimate" class="section-block intake-block">
+                <div class="section-header">
+                    <span class="eyebrow">Get Started</span>
+                    <h2>Request an Estimate</h2>
+                    <p>Tell us about your property needs. Our team responds quickly with a transparent quote.</p>
+                </div>
+                <div class="intake-grid">
+                    <div class="intake-panel glass-panel">
+                        <h3>Submit your project details</h3>
+                        <p>Complete the form for property preservation, construction, cleanouts, lawn care, or emergency services.</p>
+                        <div class="input-row">
+                            <label for="client-name">Full Name</label>
+                            <input id="client-name" type="text" placeholder="Jordan Lee">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-email">Email Address</label>
+                            <input id="client-email" type="email" placeholder="you@example.com">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-phone">Phone Number</label>
+                            <input id="client-phone" type="tel" placeholder="(313) 739-0269">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-address">Property Address</label>
+                            <input id="client-address" type="text" placeholder="456 Oak St, Detroit, MI 48201">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-service">Service Needed</label>
+                            <select id="client-service">
+                                <option>Property Inspections</option>
+                                <option>Property Securing</option>
+                                <option>Eviction Cleanouts</option>
+                                <option>Estate Cleanouts</option>
+                                <option>Construction Debris Removal</option>
+                                <option>Grass Cutting &amp; Shrub Trimming</option>
+                                <option>Pressure Washing</option>
+                                <option>Roofing Repairs</option>
+                                <option>Interior Renovations</option>
+                                <option>Rental Turnovers</option>
+                                <option>Storm Damage Cleanup</option>
+                                <option>Emergency Repairs</option>
+                                <option>General Maintenance</option>
+                                <option>Other / Custom Project</option>
+                            </select>
+                        </div>
+                        <div class="input-row">
+                            <label for="service-datetime">Preferred Service Date &amp; Time</label>
+                            <input id="service-datetime" type="datetime-local">
+                        </div>
+                        <div class="input-row">
+                            <label for="client-details">Details &amp; Notes</label>
+                            <textarea id="client-details" rows="4" placeholder="Describe the current condition, access instructions, urgency, or any specific requirements."></textarea>
+                        </div>
+                        <button class="button button-primary" onclick="submitIntakeForm()">Submit Request / Purchase Service</button>
+                        <p class="disclaimer" style="font-size:0.8rem;">Submissions are processed securely. Sign in required to submit.</p>
+                    </div>
+                    <div class="intake-summary glass-panel">
+                        <h3>Why Work With Nash Services</h3>
+                        <ul>
+                            <li>Decades of real-world problem solving and craftsmanship.</li>
+                            <li>Transparent communication and dependable timelines.</li>
+                            <li>Respectful handling of every property and family situation.</li>
+                            <li>Focus on revitalizing communities, not just completing jobs.</li>
+                        </ul>
+                        <div class="summary-stat">
+                            <strong>30+</strong>
+                            <span>Years building systems and restoring value</span>
+                        </div>
+                        <div class="summary-stat">
+                            <strong>Community Driven</strong>
+                            <span>Every project strengthens neighborhoods</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact -->
+            <section id="contact" class="section-block">
+                <div class="section-header">
+                    <span class="eyebrow">Get In Touch</span>
+                    <h2>Contact Nash Services</h2>
+                    <p>Ready to discuss your property or request an estimate? We respond promptly.</p>
+                </div>
+                <div class="intake-grid" style="grid-template-columns: 1fr 1fr; gap: 2.25rem; max-width: 1080px; margin: 0 auto;">
+                    <div class="glass-panel">
+                        <h3 style="margin-top: 0;">Reach Curtis Directly</h3>
+                        <p style="line-height: 1.85;">
+                            <strong>Phone:</strong> (313) 739-0269<br>
+                            <strong>Email:</strong> curtisnash800@gmail.com
+                        </p>
+                        <div style="margin-top: 1.5rem; padding: 1rem 1.15rem; background: var(--purple-soft); border-radius: 16px; border-left: 4px solid var(--purple);">
+                            <strong>Available for consultations and site visits.</strong><br>
+                            <span style="color: var(--muted); font-size: 0.92rem;">Emergency and time-sensitive projects prioritized.</span>
+                        </div>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="margin-top: 0;">Future Professional Branding</h3>
+                        <p style="color: var(--muted); font-size: 0.95rem; line-height: 1.7;">
+                            info@nashservices.com<br>
+                            curtis@nashservices.com<br>
+                            estimates@nashservices.com<br>
+                            operations@nashservices.com<br>
+                            billing@nashservices.com<br>
+                            support@nashservices.com<br><br>
+                            <strong>Website:</strong> www.nashservices.com (coming soon)
+                        </p>
+                        <a href="#estimate" class="button button-primary" style="margin-top: 1rem; display: inline-flex;">Request Estimate Now</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- AI Widget (kept for convenience, falls back gracefully for local preview) -->
+    <div class="ai-widget">
+        <div class="ai-button" onclick="toggleAIChat()" title="Service Assistant">🛠️</div>
+        <div id="ai-chat" class="ai-chat">
+            <div class="ai-chat-header">
+                <strong>Nash Services Assistant</strong>
+                <span onclick="toggleAIChat()" style="cursor:pointer; font-size:1.2rem;">×</span>
+            </div>
+            <div id="ai-chat-body" class="ai-chat-body">
+                <div class="ai-message bot">Hello! Ask me about Curtis Nash, our preservation and construction services, pricing guidance, or how we can help your property.</div>
+            </div>
+            <div class="ai-chat-input">
+                <input id="ai-input" type="text" placeholder="E.g. What does a full rental turnover include?" onkeypress="if(event.key === 'Enter') sendAIQuery()">
+                <button onclick="sendAIQuery()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Auth Modal (existing, now triggered from top nav Sign In / Sign Up) -->
+    <div id="auth-modal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab(0)">Login</div>
+                <div class="auth-tab" onclick="switchAuthTab(1)">Create Account</div>
+            </div>
+            <div id="login-form" class="auth-form">
+                <h3>Client Login</h3>
+                <input type="email" id="client-email-login" placeholder="Email" required>
+                <input type="password" id="client-password-login" placeholder="Password" required>
+                <button onclick="clientLogin()">Login</button>
+            </div>
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <h3>Create Account</h3>
+                <input type="text" id="client-name-signup" placeholder="Full Name" required>
+                <input type="email" id="client-email-signup" placeholder="Email" required>
+                <input type="password" id="client-password-signup" placeholder="Password (min 6 chars)" required>
+                <button onclick="clientSignup()">Create Account</button>
+            </div>
+            <div class="auth-switch">
+                <span onclick="toggleAuthModal()" style="display:inline-block; padding:0.25rem 0.85rem; border:1px solid var(--border); border-radius:999px; font-size:0.8rem;">Close</span>
+            </div>
+            <div id="auth-message" style="margin-top: 1rem; text-align: center; min-height: 1.2em; color: var(--muted); font-size: 0.85rem;"></div>
+        </div>
+    </div>
+
+    <!-- Profile Completion Modal (shown after signup or if profile incomplete on login) -->
+    <div id="profile-modal" class="auth-modal">
+        <div class="auth-modal-content">
+            <h3 style="color: var(--gold); text-align: center; margin-bottom: 1rem;">Complete Your Project Profile</h3>
+            <p style="color: var(--muted); font-size: 0.9rem; text-align: center; margin-bottom: 1.5rem;">This one-time information lets you quickly request services without re-entering details every time.</p>
+            
+            <div class="input-row">
+                <label for="profile-fullname">Full Name</label>
+                <input id="profile-fullname" type="text" placeholder="Jordan Lee" required>
+            </div>
+            <div class="input-row">
+                <label for="profile-email">Email Address</label>
+                <input id="profile-email" type="email" placeholder="you@example.com" required>
+            </div>
+            <div class="input-row">
+                <label for="profile-phone">Phone Number</label>
+                <input id="profile-phone" type="tel" placeholder="(313) 739-0269" required>
+            </div>
+            <div class="input-row">
+                <label for="profile-address">Property Address</label>
+                <input id="profile-address" type="text" placeholder="456 Oak St, Detroit, MI 48201" required>
+            </div>
+            
+            <button class="button button-primary" style="width: 100%; margin-top: 1rem;" onclick="saveProfileAndClose()">Save Profile &amp; Continue</button>
+            
+            <div id="profile-message" style="margin-top: 1rem; text-align: center; min-height: 1.2em; color: var(--muted); font-size: 0.85rem;"></div>
+            <div style="text-align:center; margin-top:0.75rem;">
+                <span onclick="document.getElementById('profile-modal').style.display='none'" style="display:inline-block; padding:0.2rem 0.7rem; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:0.75rem; cursor:pointer;">Close (use full form instead)</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

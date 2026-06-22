@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIZALOK • From Inspired to Inspiring</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .logo-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .bubble {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .bubble:hover {
+      transform: scale(1.08) translateY(-10px);
+      box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
+    }
+
+    /* Full-page YouTube video background - covers entire viewport, autoplay + loop */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      overflow: hidden;
+      pointer-events: none;
+      background: #000;
+    }
+    .video-bg iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 aspect ratio */
+      min-height: 100vh;
+      min-width: 177.77777778vh; /* inverted 16:9 to ensure cover */
+      transform: translate(-50%, -50%);
+      border: 0;
+      pointer-events: none;
+    }
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(10, 10, 15, 0.68), rgba(15, 15, 25, 0.75));
+      z-index: -1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen overflow-x-hidden">
+
+  <!-- Full page YouTube background video (auto play + loop, covers entire background) -->
+  <div class="video-bg">
+    <iframe 
+      src="https://www.youtube.com/embed/k0Z9-5dEcfw?autoplay=1&amp;loop=1&amp;mute=1&amp;playlist=k0Z9-5dEcfw&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0&amp;iv_load_policy=3&amp;fs=0" 
+      title="YouTube video player" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-overlay"></div>
+
+  <div class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 relative z-10">
+  
+    <!-- Logo + Tagline (responsive, allows scroll on small screens) -->
+    <div class="flex flex-col items-center text-center mb-8 sm:mb-12 logo-float">
+      <img src="logo.png" alt="VIZALOK Logo" class="w-36 h-36 sm:w-56 sm:h-56 mb-4 sm:mb-6 object-contain">
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black tracking-[-4px] sm:tracking-[-6px] text-white"
+          style="text-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 60px rgb(165 243 252 / 0.4);">
+        VIZALOK
+      </h1>
+      <p class="mt-4 sm:mt-6 text-xl sm:text-2xl text-zinc-300 max-w-md text-center leading-tight">
+        From being inspired to inspiring
+      </p>
+    </div>
+
+    <p class="text-zinc-400 text-xl sm:text-2xl mb-8 sm:mb-10 tracking-wide text-center">Choose Your Platform</p>
+
+    <!-- Cards: fully flexible — 2-col on mobile (vertical scroll easy), scales to 4-col. No overflow clip. -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl w-full mx-auto">
+
+      <!-- FIXED Music Card -->
+      <div onclick="window.location.href='music/'" 
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
+        <div class="h-14 flex justify-center mb-6">
+          <i class="fa-solid fa-music text-5xl text-cyan-400"></i>
+        </div>
+        <h3 class="text-3xl font-bold mb-2">Music</h3>
+        <p class="text-zinc-400 text-sm mb-8">Stream • Upload • Live • Royalties</p>
+        <div class="text-cyan-400 font-medium flex items-center justify-center gap-2 text-sm">
+          Enter Music Portal <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+
+      <!-- Creators (now full portal: YT + Twitch hybrid with community feed first, studio, + points for Grok Imagine) -->
+      <div onclick="window.location.href='creators/'" 
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-palette text-4xl sm:text-5xl text-purple-400"></i>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2">Creators</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8">Upload • Stream • Monetize • Imagine</p>
+        <div class="text-purple-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+          Enter Creators Portal <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+
+      <div onclick="window.location.href='logistics.html'" 
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-truck text-4xl sm:text-5xl text-amber-400"></i>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-amber-300">Vizalok Logistics</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-4 sm:mb-6">Medical Courier & Logistics in Maryland</p>
+        <p class="text-amber-400 text-[10px] sm:text-xs leading-tight mb-6 sm:mb-8">
+          Integrity-driven deliveries • Contractor opportunities
+        </p>
+        <div class="text-amber-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+          Enter Vizalok Logistics <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+
+      <!-- New Nash Services Panel (Full Project from Attachments) -->
+      <div onclick="window.location.href='nash-services/'" 
+           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-building text-4xl sm:text-5xl text-rose-400"></i>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-rose-300">Nash Services</h3>
+        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8"># Professional Removal and Cleanup with Precision</p>
+        <div class="text-rose-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+          Enter Full Nash Services Site <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
+  </div>
+
+  
+
+</body>
+</html>

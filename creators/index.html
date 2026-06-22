@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIZALOK Creators • YouTube + Twitch Hybrid</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .sleek-bg { background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f172a 100%); }
+    .creator-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .creator-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+    .section-header { position: relative; }
+    .section-header:after { content: ''; position: absolute; bottom: -6px; left: 0; width: 48px; height: 3px; background: linear-gradient(to right, #a78bfa, #67e8f9); border-radius: 999px; }
+    .platform-nav a.active { color: #c026ff; border-bottom: 2px solid #c026ff; }
+    .content-thumb { aspect-ratio: 16/9; background-size: cover; background-position: center; }
+    .pack-card { transition: transform .2s ease, box-shadow .2s ease; }
+    .pack-card:hover { transform: scale(1.03); }
+    .nav-active { color: #e0e7ff; background: rgba(255,255,255,0.06); border-radius: 9999px; }
+    .modal { animation: modalPop 0.2s ease forwards; }
+    @keyframes modalPop { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .chat-msg { max-width: 80%; }
+    .imagine-result { transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .live-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+    .viz-gradient { background: linear-gradient(90deg, #67e8f9, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white sleek-bg min-h-screen">
+
+  <!-- Top Nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../" class="flex items-center gap-2.5">
+          <img src="../logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
+          <div>
+            <span class="font-bold tracking-tighter text-xl">VIZALOK</span>
+            <span class="text-[10px] text-purple-400 font-medium tracking-[1.5px] ml-0.5">CREATORS</span>
+          </div>
+        </a>
+        <div class="hidden sm:flex items-center gap-1 text-sm ml-4">
+          <a href="#discover" onclick="document.getElementById('discover').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Discover</a>
+          <a href="#studio" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Studio</a>
+          <a href="#live" onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Live</a>
+          <a href="#imagine" onclick="document.getElementById('imagine').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Grok Imagine</a>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Profile / Auth -->
+        <div id="nav-profile" class="hidden items-center gap-2">
+          <div onclick="showProfileModal()" class="flex items-center gap-2 cursor-pointer bg-white/5 hover:bg-white/10 rounded-2xl px-3 py-1.5 text-sm">
+            <div class="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-[10px] font-bold" id="nav-avatar">C</div>
+            <div>
+              <span id="nav-name" class="font-medium"></span>
+              <span class="ml-2 text-emerald-400 text-xs font-mono" id="nav-points">0 pts</span>
+            </div>
+          </div>
+          <button onclick="logoutUser()" class="text-xs px-2.5 py-1 rounded-xl border border-white/20 hover:bg-white/5">Sign out</button>
+        </div>
+        <button id="nav-signin-btn" onclick="openAuthModal()" 
+                class="px-4 py-1.5 rounded-2xl text-sm font-medium bg-white text-zinc-950 hover:bg-zinc-200 flex items-center gap-2">
+          <i class="fa-solid fa-user"></i> <span>Sign In</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="max-w-5xl mx-auto px-6 pt-10 pb-8 text-center">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs tracking-widest mb-3">YOUTUBE × TWITCH POWERED BY VIZALOK</div>
+    <h1 class="text-5xl sm:text-6xl font-black tracking-[-2.5px] mb-3">Create.<br class="hidden sm:block">Stream. Inspire.</h1>
+    <p class="max-w-md mx-auto text-zinc-400">A hybrid platform for creators. Discover the community first — then launch your own workflow with Grok Imagine credits.</p>
+    <div class="flex gap-3 justify-center mt-6">
+      <button onclick="document.getElementById('discover').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center gap-2 hover:bg-zinc-200">
+        <i class="fa-solid fa-play"></i> Explore Community
+      </button>
+      <button onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 border border-white/30 rounded-2xl hover:bg-white/5">Start Creating</button>
+    </div>
+  </div>
+
+  <!-- Discover Community (see BEFORE starting your workflow) -->
+  <div id="discover" class="max-w-7xl mx-auto px-5 sm:px-6 pb-12">
+    <div class="flex items-end justify-between mb-4">
+      <div>
+        <div class="uppercase text-purple-400 text-xs tracking-[2px]">Community First</div>
+        <h2 class="text-3xl font-bold tracking-tight">Discover Community Creations</h2>
+        <p class="text-zinc-400 text-sm mt-1">Get inspired by what others are making right now. Real uploads from VIZALOK creators.</p>
+      </div>
+      <div class="hidden sm:block text-xs text-zinc-500">Scroll or filter to explore</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-2 mb-4" id="feed-filters">
+      <button onclick="filterCommunity('all')" class="filter-btn active px-4 py-1 text-sm rounded-2xl bg-white/10">All</button>
+      <button onclick="filterCommunity('video')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Videos</button>
+      <button onclick="filterCommunity('image')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Images & Art</button>
+      <button onclick="filterCommunity('clip')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Live Clips</button>
+    </div>
+
+    <!-- Community Grid: static inspiring cards + realtime dynamic uploads -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="community-grid">
+      <!-- Populated by JS (static + Firestore) -->
+    </div>
+
+    <div class="text-center mt-3">
+      <span class="text-[10px] text-zinc-500">New uploads from signed-in creators appear here in realtime. Add yours in the Studio below.</span>
+    </div>
+  </div>
+
+  <!-- Studio / Workflow -->
+  <div id="studio" class="bg-zinc-900/60 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 py-10">
+      <div class="section-header mb-6">
+        <span class="text-purple-400 text-xs tracking-[2px]">YOUR TURN</span>
+        <h2 class="text-3xl font-bold">Start Your Creative Workflow</h2>
+        <p class="text-sm text-zinc-400">Upload, generate with points, or go live. Everything you create can show up in the community feed.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <!-- Upload -->
+        <div class="bg-zinc-950 border border-white/10 rounded-3xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <i class="fa-solid fa-upload text-xl text-cyan-400"></i>
+            <h3 class="font-semibold text-lg">Upload &amp; Publish</h3>
+          </div>
+          <p class="text-sm text-zinc-400 mb-4">Share video or image work with the community instantly.</p>
+          
+          <input type="file" id="upload-file" accept="video/*,image/*" class="block w-full text-xs mb-3 file:mr-3 file:px-3 file:py-1.5 file:rounded-2xl file:border-0 file:bg-purple-600 file:text-white">
+          <input id="upload-title" placeholder="Title (e.g. My latest animation)" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-2">
+          <textarea id="upload-desc" placeholder="Short description or story..." rows="2" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
+          
+          <button onclick="publishUpload()" class="w-full py-2 rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-medium text-sm">Publish to Community</button>
+          <div id="upload-status" class="text-xs mt-2 h-4 text-emerald-400"></div>
+        </div>
+
+        <!-- Grok Imagine (points) -->
+        <div class="bg-zinc-950 border border-purple-500/30 rounded-3xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <i class="fa-solid fa-magic text-xl text-purple-400"></i>
+            <h3 class="font-semibold text-lg">Grok Imagine</h3>
+          </div>
+          <p class="text-sm text-zinc-400 mb-3">Turn prompts into visuals. Costs 10 pts per generation. Points are stored in your profile.</p>
+          
+          <textarea id="imagine-prompt" placeholder="A cyberpunk fox DJ on a neon rooftop at midnight, cinematic lighting..." rows="3" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
+          
+          <div class="flex gap-2">
+            <button onclick="runGrokImagine()" class="flex-1 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 font-medium text-sm">Generate (10 pts)</button>
+            <button onclick="document.getElementById('imagine').scrollIntoView({behavior:'smooth'})" class="px-4 text-xs border border-white/20 rounded-2xl">Buy pts</button>
+          </div>
+          
+          <div id="imagine-results" class="mt-4 grid grid-cols-2 gap-2 min-h-[84px]"></div>
+        </div>
+
+        <!-- Quick Studio -->
+        <div class="bg-zinc-950 border border-white/10 rounded-3xl p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <i class="fa-solid fa-rocket text-xl text-amber-400"></i>
+            <h3 class="font-semibold text-lg">Quick Actions</h3>
+          </div>
+          <div class="space-y-2 text-sm">
+            <button onclick="quickStartLive()" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
+              <span><i class="fa-solid fa-video mr-2"></i> Go Live Now</span>
+              <i class="fa-solid fa-arrow-right text-amber-400"></i>
+            </button>
+            <button onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
+              <span><i class="fa-solid fa-users mr-2"></i> Browse Live Channels</span>
+            </button>
+            <button onclick="showProfileModal()" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
+              <span><i class="fa-solid fa-wallet mr-2"></i> View My Points &amp; Profile</span>
+            </button>
+          </div>
+          <div class="text-[10px] text-zinc-500 mt-4">All your uploads &amp; generations are saved to your profile and visible to the community.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Platform (Twitch-style) -->
+  <div id="live" class="max-w-7xl mx-auto px-5 sm:px-6 py-10">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <span class="text-red-400 text-xs tracking-widest">LIVE RIGHT NOW</span>
+        <h2 class="text-3xl font-bold">Live Platform</h2>
+      </div>
+      <button onclick="quickStartLive()" class="px-5 py-2 rounded-2xl bg-red-600 hover:bg-red-500 flex items-center gap-2 text-sm font-semibold">
+        <i class="fa-solid fa-circle text-red-300"></i> START STREAMING
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="live-grid">
+      <!-- Populated by JS: live sessions -->
+    </div>
+    <p class="text-center text-xs text-zinc-500 mt-3">Click any live to join the stream + live chat (demo powered by realtime data).</p>
+  </div>
+
+  <!-- Grok Imagine Points Purchasing -->
+  <div id="imagine" class="bg-zinc-900/70 border-t border-white/10 py-10">
+    <div class="max-w-5xl mx-auto px-5 sm:px-6">
+      <div class="section-header mb-6">
+        <span class="text-emerald-400 text-xs tracking-[2px]">POWER YOUR CREATIVITY</span>
+        <h2 class="text-3xl font-bold">Grok Imagine Points</h2>
+        <p class="text-zinc-400">Buy credits that are stored directly to your profile. Use them in the Imagine tool above or future Grok features.</p>
+      </div>
+
+      <div class="flex items-baseline gap-3 mb-6">
+        <div class="text-5xl font-mono font-semibold" id="points-balance">0</div>
+        <div class="text-xl text-emerald-400">points available</div>
+        <button onclick="refreshPoints()" class="ml-2 text-xs px-2 py-1 border border-white/20 rounded-xl">Refresh</button>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4">
+        <!-- Packs -->
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack(50, 2.99)">
+          <div class="flex justify-between">
+            <div>
+              <div class="text-2xl font-bold">50</div>
+              <div class="text-emerald-400 text-sm -mt-1">points</div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-semibold">$2.99</div>
+              <div class="text-xs text-zinc-500">Starter</div>
+            </div>
+          </div>
+          <div class="mt-4 text-xs text-zinc-400">Perfect for first experiments with Grok Imagine.</div>
+          <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-emerald-600 hover:bg-emerald-500">Buy Pack</button>
+        </div>
+
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer ring-1 ring-purple-400/40" onclick="purchasePack(200, 7.99)">
+          <div class="flex justify-between">
+            <div>
+              <div class="text-2xl font-bold">200</div>
+              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-purple-300 text-[10px]">+ BONUS 25</span></div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-semibold">$7.99</div>
+              <div class="text-xs text-zinc-500">Creator</div>
+            </div>
+          </div>
+          <div class="mt-4 text-xs text-zinc-400">Most popular. Great value for regular creators.</div>
+          <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-purple-600 hover:bg-purple-500">Buy Pack</button>
+        </div>
+
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack(1000, 24.99)">
+          <div class="flex justify-between">
+            <div>
+              <div class="text-2xl font-bold">1000</div>
+              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-amber-300 text-[10px]">+ 150 bonus</span></div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-semibold">$24.99</div>
+              <div class="text-xs text-zinc-500">Pro</div>
+            </div>
+          </div>
+          <div class="mt-4 text-xs text-zinc-400">Best for power users and heavy studio sessions.</div>
+          <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-amber-600 hover:bg-amber-500">Buy Pack</button>
+        </div>
+      </div>
+
+      <div class="mt-4 text-[10px] text-center text-zinc-500">Demo purchases instantly credit your profile via Firebase (no real payment processed). Points persist across sessions and devices.</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-zinc-500 border-t border-white/10">
+    VIZALOK Creators • Hybrid content platform. Back to <a href="../" class="underline">main landing</a> • Points &amp; profiles powered by Firebase (shared with Nash Services)
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4" onclick="if (event.target.id==='auth-modal') hideAuthModal()">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 w-full max-w-sm rounded-3xl p-6">
+      <div class="flex mb-4 border-b border-white/10">
+        <div onclick="switchAuthTab(0)" id="auth-tab-0" class="flex-1 text-center py-3 cursor-pointer font-medium border-b-2 border-purple-400">Sign In</div>
+        <div onclick="switchAuthTab(1)" id="auth-tab-1" class="flex-1 text-center py-3 cursor-pointer text-white/60">Create Account</div>
+      </div>
+
+      <div id="login-form">
+        <input id="login-email" type="email" placeholder="Email" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
+        <input id="login-pass" type="password" placeholder="Password" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-4 text-sm">
+        <button onclick="doLogin()" class="w-full py-3 bg-white text-black font-semibold rounded-2xl">Sign In</button>
+      </div>
+
+      <div id="signup-form" class="hidden">
+        <input id="signup-name" type="text" placeholder="Display Name" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
+        <input id="signup-email" type="email" placeholder="Email" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
+        <input id="signup-pass" type="password" placeholder="Password (6+ chars)" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-4 text-sm">
+        <button onclick="doSignup()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 font-semibold rounded-2xl">Create Account &amp; Get 25 Starter Pts</button>
+      </div>
+
+      <div id="auth-msg" class="text-center text-xs mt-3 text-red-400 h-4"></div>
+      <div class="text-center mt-4 text-xs text-white/40 cursor-pointer" onclick="hideAuthModal()">Close</div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" onclick="if(event.target.id==='profile-modal') hideProfileModal()" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 rounded-3xl max-w-sm w-full p-6">
+      <h3 class="font-semibold mb-1">Your Creator Profile</h3>
+      <div class="text-xs text-white/60 mb-4">Points and creations are stored to your account (shared ecosystem).</div>
+      
+      <div class="space-y-3 text-sm">
+        <div><span class="text-white/60">Name:</span> <span id="prof-name" class="font-medium"></span></div>
+        <div><span class="text-white/60">Email:</span> <span id="prof-email"></span></div>
+        <div class="flex items-center"><span class="text-white/60">Grok Imagine Points:</span> <span id="prof-points" class="ml-2 text-2xl font-mono text-emerald-400"></span></div>
+      </div>
+
+      <div class="mt-6 text-xs bg-white/5 rounded-2xl p-3">
+        Tip: Earn and spend points across the VIZALOK creator tools. More features (storage, monetization) coming soon.
+      </div>
+
+      <div class="flex gap-3 mt-5">
+        <button onclick="hideProfileModal()" class="flex-1 py-2.5 rounded-2xl border border-white/20">Close</button>
+        <button onclick="logoutUser(); hideProfileModal();" class="flex-1 py-2.5 rounded-2xl bg-red-600/80">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content / Video Modal -->
+  <div id="content-modal" onclick="if(event.target.id==='content-modal') closeContentModal()" class="hidden fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-3">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 max-w-3xl w-full rounded-3xl overflow-hidden border border-white/10">
+      <div class="p-4 flex justify-between border-b border-white/10 items-center">
+        <div id="modal-meta"></div>
+        <button onclick="closeContentModal()" class="text-2xl leading-none text-white/60 hover:text-white">&times;</button>
+      </div>
+      <div class="p-3" id="modal-player">
+        <!-- video or img injected by JS -->
+      </div>
+      <div class="p-4 text-sm text-zinc-400 border-t border-white/10" id="modal-desc"></div>
+      <div class="p-4 flex gap-2 text-xs">
+        <button class="px-3 py-1.5 rounded-2xl bg-white/10">♥ Like</button>
+        <button class="px-3 py-1.5 rounded-2xl bg-white/10">Share</button>
+        <div class="flex-1"></div>
+        <span class="text-emerald-400/70 self-center text-xs">Community content</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" onclick="if(event.target.id==='checkout-modal') hideCheckoutModal()" class="hidden fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-4">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full">
+      <h3 class="font-semibold mb-1">Checkout — Demo Purchase</h3>
+      <div id="checkout-summary" class="text-sm text-white/70 mb-4"></div>
+      
+      <div class="space-y-2 text-sm mb-4">
+        <input placeholder="Cardholder Name" value="Alex Rivera" class="w-full bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
+        <input placeholder="Card Number" value="4242 4242 4242 4242" class="w-full bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
+        <div class="grid grid-cols-2 gap-2">
+          <input placeholder="MM / YY" value="12 / 28" class="bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
+          <input placeholder="CVV" value="123" class="bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
+        </div>
+      </div>
+      
+      <button id="checkout-pay-btn" onclick="completePurchase()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 font-semibold rounded-2xl">Pay &amp; Credit Points</button>
+      <div class="text-center mt-3 text-xs text-white/40">This is a simulation. Points will be added to your profile instantly.</div>
+    </div>
+  </div>
+
+  <!-- Live Viewer Modal (Twitch-like) -->
+  <div id="live-modal" onclick="if(event.target.id==='live-modal') closeLiveModal()" class="hidden fixed inset-0 bg-black/90 z-[120] flex items-center justify-center p-3">
+    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 rounded-3xl overflow-hidden border border-red-500/20 w-full max-w-4xl">
+      <div class="flex justify-between items-center px-4 py-2 bg-black/60">
+        <div id="live-modal-title" class="font-semibold"></div>
+        <div class="flex items-center gap-2 text-xs"><span class="live-dot inline-block w-2 h-2 bg-red-500 rounded-full"></span> <span>LIVE</span> <span id="live-viewers"></span></div>
+        <button onclick="closeLiveModal()" class="text-xl leading-none px-2">&times;</button>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3">
+        <!-- Video area -->
+        <div class="lg:col-span-2 bg-black p-2">
+          <video id="live-video" class="w-full aspect-video bg-zinc-950 rounded-xl" autoplay loop muted playsinline>
+            <source src="../musicvid3.mp4" type="video/mp4">
+          </video>
+          <div class="text-[10px] px-1 text-red-400 flex items-center gap-1 mt-1"><i class="fa-solid fa-broadcast-tower"></i> <span>Simulated live feed</span></div>
+        </div>
+        
+        <!-- Chat -->
+        <div class="p-3 border-l border-white/10 flex flex-col h-[320px] lg:h-auto">
+          <div class="text-xs font-medium mb-1 text-white/60">LIVE CHAT</div>
+          <div id="live-chat" class="flex-1 overflow-y-auto bg-zinc-950 rounded-xl p-2 text-xs space-y-1 mb-2"></div>
+          <div class="flex gap-1">
+            <input id="live-chat-input" onkeypress="if(event.key==='Enter') sendLiveChat()" placeholder="Say something..." class="flex-1 bg-zinc-900 text-xs px-3 py-1.5 rounded-2xl border border-white/10">
+            <button onclick="sendLiveChat()" class="px-3 bg-red-600 rounded-2xl text-xs">Send</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-2 flex justify-end border-t border-white/10">
+        <button onclick="endLiveDemo()" class="text-xs px-4 py-1 bg-white/10 hover:bg-white/20 rounded-2xl">End Stream (demo)</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // === Firebase (same project as Nash Services for shared profiles) ===
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7K7LZCNdryJyKhavJZ7RYpLMc_qLJo6w",
+      authDomain: "nash-enterprise.firebaseapp.com",
+      projectId: "nash-enterprise",
+      storageBucket: "nash-enterprise.firebasestorage.app",
+      messagingSenderId: "987917763852",
+      appId: "1:987917763852:web:f13de1d0c2273ef7a6f529",
+      measurementId: "G-NLS1FY27NJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let userProfile = null;
+    let creationsUnsub = null;
+    let currentFilter = 'all';
+    let liveSessions = []; // local + firestore simulated
+
+    // Tailwind script run (already loaded via CDN)
+    function initTailwind() {
+      // no-op, script already in head
+    }
+
+    function updateNavUI() {
+      const signBtn = document.getElementById('nav-signin-btn');
+      const prof = document.getElementById('nav-profile');
+      if (!signBtn || !prof) return;
+
+      if (currentUser && userProfile) {
+        signBtn.classList.add('hidden');
+        prof.classList.remove('hidden');
+        prof.classList.add('flex');
+        document.getElementById('nav-name').textContent = userProfile.fullName || currentUser.displayName || currentUser.email.split('@')[0];
+        const pts = userProfile.imaginePoints || 0;
+        document.getElementById('nav-points').textContent = pts + ' pts';
+        const av = document.getElementById('nav-avatar');
+        av.textContent = (userProfile.fullName || 'C').charAt(0).toUpperCase();
+      } else {
+        signBtn.classList.remove('hidden');
+        prof.classList.remove('flex');
+        prof.classList.add('hidden');
+      }
+    }
+
+    async function loadUserProfile(uid) {
+      if (!uid) return null;
+      const ref = doc(db, 'userProfiles', uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        userProfile = snap.data();
+        return userProfile;
+      }
+      // Auto-create starter profile for new creators
+      const newProf = {
+        fullName: currentUser.displayName || '',
+        email: currentUser.email || '',
+        imaginePoints: 25,
+        createdAt: serverTimestamp()
+      };
+      await setDoc(ref, newProf);
+      userProfile = newProf;
+      return newProf;
+    }
+
+    async function saveProfile(updates) {
+      if (!currentUser) return;
+      const ref = doc(db, 'userProfiles', currentUser.uid);
+      await setDoc(ref, { ...updates, updatedAt: serverTimestamp() }, { merge: true });
+      userProfile = { ...(userProfile || {}), ...updates };
+      updateNavUI();
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = userProfile.imaginePoints || 0;
+    }
+
+    function onAuth(user) {
+      currentUser = user;
+      userProfile = null;
+      if (user) {
+        loadUserProfile(user.uid).then(() => {
+          updateNavUI();
+          const pb = document.getElementById('points-balance');
+          if (pb) pb.textContent = (userProfile && userProfile.imaginePoints) || 0;
+          // Load realtime community
+          loadCommunityFeed();
+        });
+      } else {
+        updateNavUI();
+        // show static community even logged out
+        renderCommunityGrid([]);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initTailwind();
+
+      // Firebase auth
+      onAuthStateChanged(auth, onAuth);
+
+      // Initial community render (static + realtime when logged)
+      renderCommunityGrid([]); // will be enhanced
+
+      // Seed a couple live sessions for demo
+      seedLiveSessions();
+
+      // Show initial points if somehow already logged
+      setTimeout(() => {
+        const pb = document.getElementById('points-balance');
+        if (pb && userProfile) pb.textContent = userProfile.imaginePoints || 0;
+      }, 800);
+
+      // Keyboard escape for modals
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.fixed.inset-0').forEach(m => m.classList.add('hidden'));
+        }
+      });
+
+      console.log('%c[VIZALOK Creators] Portal ready — community first, points, studio, live.', 'color:#64748b');
+    });
+
+    // === Community Feed (static inspiration + realtime Firestore uploads) ===
+    const staticCommunity = [
+      { id: 's1', type: 'video', title: 'Midnight Drive — Original Beat', creator: 'LUNAR', views: '14.2k', thumb: 'linear-gradient(135deg,#1e2937,#0f172a)', icon: 'fa-music', desc: 'Lo-fi hiphop with live guitar. Made in one take.' },
+      { id: 's2', type: 'image', title: 'Neon Reverie', creator: 'Kai Visuals', views: '8.9k', thumb: 'linear-gradient(135deg,#581c87,#1e3a8a)', icon: 'fa-image', desc: 'Grok-assisted concept art turned album cover.' },
+      { id: 's3', type: 'clip', title: 'Live Coding Session Highlights', creator: 'byteflow', views: '3.1k', thumb: 'linear-gradient(135deg,#0f766e,#164e63)', icon: 'fa-video', desc: 'Built a generative visualizer on stream.' },
+      { id: 's4', type: 'image', title: 'The Last Signal', creator: 'Mira', views: '21k', thumb: 'linear-gradient(135deg,#334155,#1e2937)', icon: 'fa-palette', desc: 'Dystopian character design series.' },
+      { id: 's5', type: 'video', title: 'Acoustic Cover — "Echoes"', creator: 'River', views: '5.4k', thumb: 'linear-gradient(135deg,#3b0764,#1e3a8a)', icon: 'fa-guitar', desc: 'Raw performance from the studio.' }
+    ];
+
+    let dynamicCreations = [];
+
+    function renderCommunityGrid(extra = []) {
+      const grid = document.getElementById('community-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const all = [...staticCommunity, ...extra, ...dynamicCreations];
+
+      all.forEach(item => {
+        const el = document.createElement('div');
+        el.className = `creator-card bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden cursor-pointer flex flex-col`;
+        el.innerHTML = `
+          <div class="content-thumb" style="background: ${item.thumb || 'linear-gradient(135deg,#27223a,#111827)'}">
+            <div class="h-full w-full flex items-end p-2">
+              <div class="text-[10px] px-1.5 py-0.5 rounded bg-black/70 flex items-center gap-1">
+                <i class="fa-solid ${item.icon || 'fa-play'} text-[9px]"></i>
+                <span class="uppercase tracking-wider text-[9px]">${item.type}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-2.5 flex-1 flex flex-col">
+            <div class="font-semibold text-sm leading-tight line-clamp-2">${item.title}</div>
+            <div class="text-[10px] text-white/60 mt-0.5">by ${item.creator}</div>
+            <div class="mt-auto flex items-center justify-between pt-2 text-[10px]">
+              <span class="text-emerald-400">${item.views || 'New'}</span>
+              <span class="text-white/50"><i class="fa-solid fa-eye"></i></span>
+            </div>
+          </div>
+        `;
+        el.onclick = () => showContentModal(item);
+        grid.appendChild(el);
+      });
+    }
+
+    function filterCommunity(type) {
+      // Update active buttons
+      document.querySelectorAll('#feed-filters button').forEach(b => b.classList.remove('active', 'bg-white/10'));
+      document.querySelectorAll('#feed-filters button').forEach(b => {
+        if ((type === 'all' && b.textContent === 'All') ||
+            (type === 'video' && b.textContent.includes('Videos')) ||
+            (type === 'image' && b.textContent.includes('Images')) ||
+            (type === 'clip' && b.textContent.includes('Live Clips'))) {
+          b.classList.add('active', 'bg-white/10');
+        }
+      });
+      currentFilter = type;
+
+      const grid = document.getElementById('community-grid');
+      if (!grid) return;
+      const cards = grid.children;
+      Array.from(cards).forEach(card => {
+        const txt = card.textContent.toLowerCase();
+        let show = true;
+        if (type === 'video') show = txt.includes('video') || txt.includes('beat') || txt.includes('cover');
+        else if (type === 'image') show = txt.includes('image') || txt.includes('art') || txt.includes('visual') || txt.includes('design');
+        else if (type === 'clip') show = txt.includes('live') || txt.includes('coding') || txt.includes('clip');
+        card.style.display = show ? '' : 'none';
+      });
+    }
+
+    async function loadCommunityFeed() {
+      if (creationsUnsub) creationsUnsub();
+
+      const q = query(collection(db, 'creations'), orderBy('timestamp', 'desc'));
+      creationsUnsub = onSnapshot(q, (snap) => {
+        dynamicCreations = [];
+        snap.forEach(d => {
+          const data = d.data();
+          dynamicCreations.push({
+            id: d.id,
+            type: data.type || 'video',
+            title: data.title || 'Untitled',
+            creator: data.creatorName || 'Creator',
+            views: 'Just now',
+            thumb: data.type === 'image' ? 'linear-gradient(135deg,#4c1d95,#1e3a8a)' : 'linear-gradient(135deg,#1e2937,#334155)',
+            icon: data.type === 'image' ? 'fa-image' : (data.type === 'clip' ? 'fa-video' : 'fa-play'),
+            desc: data.desc || 'New community upload.',
+            isDynamic: true
+          });
+        });
+        renderCommunityGrid([]);
+      }, (err) => {
+        console.warn('Community feed listener:', err);
+      });
+    }
+
+    function showContentModal(item) {
+      const modal = document.getElementById('content-modal');
+      const player = document.getElementById('modal-player');
+      const meta = document.getElementById('modal-meta');
+      const desc = document.getElementById('modal-desc');
+
+      meta.innerHTML = `<div class="font-semibold">${item.title}</div><div class="text-xs text-white/60">by ${item.creator} • ${item.views || ''}</div>`;
+      desc.textContent = item.desc || '';
+
+      player.innerHTML = '';
+      if (item.type === 'image') {
+        const imgWrap = document.createElement('div');
+        imgWrap.className = 'aspect-video rounded-xl flex items-center justify-center text-center p-8';
+        imgWrap.style.background = item.thumb || 'linear-gradient(135deg,#312e81,#1e3a8a)';
+        imgWrap.innerHTML = `<div><i class="fa-solid fa-image text-6xl opacity-30 mb-3 block"></i><div class="text-sm font-medium">Community Image</div><div class="text-xs opacity-60 max-w-[220px] mx-auto">${item.desc || item.title}</div></div>`;
+        player.appendChild(imgWrap);
+      } else {
+        const v = document.createElement('video');
+        v.className = 'w-full rounded-xl aspect-video bg-black';
+        v.controls = true;
+        v.autoplay = true;
+        v.muted = true;
+        v.loop = true;
+        // Use root music video assets (path from /creators/)
+        v.innerHTML = `<source src="../musicvid2.mp4" type="video/mp4">`;
+        player.appendChild(v);
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeContentModal() {
+      const modal = document.getElementById('content-modal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+      const v = modal.querySelector('video');
+      if (v) v.pause();
+    }
+
+    // === Publish upload (adds to Firestore so everyone sees it) ===
+    async function publishUpload() {
+      if (!currentUser) {
+        alert('Please sign in first to publish.');
+        openAuthModal();
+        return;
+      }
+      const fileEl = document.getElementById('upload-file');
+      const titleEl = document.getElementById('upload-title');
+      const descEl = document.getElementById('upload-desc');
+      const status = document.getElementById('upload-status');
+
+      if (!fileEl.files.length || !titleEl.value.trim()) {
+        status.textContent = 'Choose a file and add a title.';
+        status.style.color = '#f87171';
+        return;
+      }
+
+      const file = fileEl.files[0];
+      const type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'clip');
+      const previewURL = URL.createObjectURL(file); // local only for this session
+
+      status.textContent = 'Publishing to community...';
+      status.style.color = '#67e8f9';
+
+      try {
+        await addDoc(collection(db, 'creations'), {
+          title: titleEl.value.trim(),
+          desc: descEl.value.trim() || 'New upload from the studio.',
+          creatorName: userProfile?.fullName || currentUser.displayName || currentUser.email.split('@')[0],
+          creatorId: currentUser.uid,
+          type,
+          timestamp: serverTimestamp()
+          // Note: file not persisted server-side in this demo (client preview only)
+        });
+
+        status.textContent = 'Published! Appears in Discover instantly.';
+        status.style.color = '#4ade80';
+
+        // clear
+        fileEl.value = '';
+        titleEl.value = '';
+        descEl.value = '';
+
+        setTimeout(() => { status.textContent = ''; }, 2600);
+      } catch (e) {
+        console.error(e);
+        status.textContent = 'Publish failed. Check console.';
+        status.style.color = '#f87171';
+      }
+    }
+
+    // === Grok Imagine ===
+    let lastResultsContainer = null;
+
+    async function runGrokImagine() {
+      if (!currentUser) { openAuthModal(); return; }
+      const pts = (userProfile && userProfile.imaginePoints) || 0;
+      const cost = 10;
+      if (pts < cost) {
+        alert('Not enough points. Buy more in the Grok Imagine section below.');
+        document.getElementById('imagine').scrollIntoView({behavior: 'smooth'});
+        return;
+      }
+
+      const promptEl = document.getElementById('imagine-prompt');
+      const prompt = promptEl.value.trim() || 'A beautiful abstract visualization of sound and light';
+      const container = document.getElementById('imagine-results');
+      container.innerHTML = `<div class="col-span-2 text-xs text-center py-2 text-purple-400">Generating with Grok Imagine...</div>`;
+
+      // Deduct points first
+      const newPts = pts - cost;
+      await saveProfile({ imaginePoints: newPts });
+
+      // Simulate "AI" generation time
+      await new Promise(r => setTimeout(r, 820));
+
+      // Create 2-3 visual results (procedural nice cards)
+      container.innerHTML = '';
+      for (let i = 0; i < 2; i++) {
+        const hue = (prompt.length * (i+3)) % 360;
+        const art = document.createElement('div');
+        art.className = `imagine-result aspect-video rounded-2xl overflow-hidden border border-purple-400/30 flex flex-col justify-end p-2 text-[10px]`;
+        art.style.background = `linear-gradient(135deg, hsl(${hue} 70% 25%), hsl(${(hue+70)%360} 65% 12%))`;
+        art.innerHTML = `
+          <div class="text-white/90 font-medium line-clamp-2">${prompt}</div>
+          <div class="text-[9px] text-purple-300 mt-0.5">Grok Imagine • ${cost} pts used</div>
+        `;
+        art.onclick = () => {
+          alert('Saved to your portfolio (demo). You can publish this to the community feed from Studio.');
+        };
+        container.appendChild(art);
+      }
+
+      // Update balance display everywhere
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = newPts;
+      updateNavUI();
+    }
+
+    // === Points Purchase ===
+    let pendingPurchase = null;
+
+    function purchasePack(points, price) {
+      if (!currentUser) {
+        alert('Sign in to purchase and store points to your profile.');
+        openAuthModal();
+        return;
+      }
+      pendingPurchase = { points, price };
+      const modal = document.getElementById('checkout-modal');
+      document.getElementById('checkout-summary').innerHTML = `
+        <div class="flex justify-between text-sm"><span>Pack</span><span class="font-semibold">${points} points</span></div>
+        <div class="flex justify-between text-sm"><span>Price</span><span class="font-semibold">$${price}</span></div>
+      `;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function hideCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+    }
+
+    async function completePurchase() {
+      if (!pendingPurchase || !currentUser) return;
+      const btn = document.getElementById('checkout-pay-btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      const { points } = pendingPurchase;
+      const current = (userProfile && userProfile.imaginePoints) || 0;
+      const updated = current + points;
+
+      try {
+        await saveProfile({ imaginePoints: updated });
+
+        // Also record a simple purchase log (optional collection)
+        await addDoc(collection(db, 'imaginePurchases'), {
+          uid: currentUser.uid,
+          pointsAdded: points,
+          timestamp: serverTimestamp()
+        });
+
+        btn.textContent = 'Success! Points added.';
+        const pb = document.getElementById('points-balance');
+        if (pb) pb.textContent = updated;
+        updateNavUI();
+
+        setTimeout(() => {
+          hideCheckoutModal();
+          btn.disabled = false;
+          btn.textContent = 'Pay & Credit Points';
+          pendingPurchase = null;
+          // nice toast
+          const t = document.createElement('div');
+          t.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-xs px-4 py-1.5 rounded-3xl shadow';
+          t.textContent = `+${points} Grok Imagine points added to profile!`;
+          document.body.appendChild(t);
+          setTimeout(() => t.remove(), 2400);
+        }, 650);
+      } catch (e) {
+        console.error(e);
+        btn.textContent = 'Error — try again';
+        setTimeout(() => { btn.disabled = false; btn.textContent = 'Pay & Credit Points'; }, 1200);
+      }
+    }
+
+    function refreshPoints() {
+      const pb = document.getElementById('points-balance');
+      if (pb && userProfile) pb.textContent = userProfile.imaginePoints || 0;
+      updateNavUI();
+    }
+
+    // === Live (Twitch) ===
+    function seedLiveSessions() {
+      liveSessions = [
+        { id: 'l1', title: 'Midnight Synth Jam', creator: 'LUNAR', viewers: 1240 },
+        { id: 'l2', title: 'Painting a Dreamscape Live', creator: 'Mira Arts', viewers: 387 }
+      ];
+      renderLiveGrid();
+    }
+
+    function renderLiveGrid() {
+      const container = document.getElementById('live-grid');
+      if (!container) return;
+      container.innerHTML = '';
+      liveSessions.forEach(live => {
+        const card = document.createElement('div');
+        card.className = `creator-card bg-zinc-900 border border-red-500/20 rounded-2xl p-3 cursor-pointer`;
+        card.innerHTML = `
+          <div class="flex items-center gap-2 mb-2">
+            <span class="live-dot w-2.5 h-2.5 bg-red-500 rounded-full inline-block"></span>
+            <span class="uppercase text-red-400 text-[10px] tracking-widest">LIVE</span>
+            <span class="ml-auto text-xs text-white/60">${live.viewers.toLocaleString()} watching</span>
+          </div>
+          <div class="font-semibold text-sm">${live.title}</div>
+          <div class="text-xs text-white/60">by ${live.creator}</div>
+        `;
+        card.onclick = () => joinLive(live);
+        container.appendChild(card);
+      });
+    }
+
+    let currentLive = null;
+
+    function joinLive(live) {
+      currentLive = live;
+      const modal = document.getElementById('live-modal');
+      document.getElementById('live-modal-title').innerHTML = `${live.title} <span class="text-red-400 text-xs">— ${live.creator}</span>`;
+      document.getElementById('live-viewers').textContent = live.viewers.toLocaleString() + ' viewers';
+      document.getElementById('live-chat').innerHTML = `<div class="text-emerald-400 text-xs">Stream started • Say hi!</div>`;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      // start fake viewer growth
+      if (window.liveInterval) clearInterval(window.liveInterval);
+      window.liveInterval = setInterval(() => {
+        if (!currentLive || modal.classList.contains('hidden')) { clearInterval(window.liveInterval); return; }
+        currentLive.viewers += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('live-viewers').textContent = currentLive.viewers.toLocaleString() + ' viewers';
+      }, 3800);
+    }
+
+    function sendLiveChat() {
+      if (!currentLive) return;
+      const input = document.getElementById('live-chat-input');
+      const chat = document.getElementById('live-chat');
+      if (!input.value.trim()) return;
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg bg-white/10 rounded-xl px-2 py-1 mb-1';
+      msg.innerHTML = `<span class="text-purple-300 text-xs">${userProfile ? (userProfile.fullName || 'You') : 'Guest'}:</span> ${input.value}`;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+      input.value = '';
+    }
+
+    function closeLiveModal() {
+      const modal = document.getElementById('live-modal');
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+      const v = document.getElementById('live-video');
+      if (v) v.pause();
+      if (window.liveInterval) { clearInterval(window.liveInterval); window.liveInterval = null; }
+    }
+
+    function endLiveDemo() {
+      if (currentLive) {
+        liveSessions = liveSessions.filter(s => s.id !== currentLive.id);
+        renderLiveGrid();
+      }
+      closeLiveModal();
+    }
+
+    function quickStartLive() {
+      if (!currentUser) { openAuthModal(); return; }
+      const title = prompt('Stream title?', 'Live from my studio — Q&A + creation');
+      if (!title) return;
+      const newLive = { 
+        id: 'live-' + Date.now(), 
+        title: title, 
+        creator: userProfile?.fullName || currentUser.displayName || 'You', 
+        viewers: 1 
+      };
+      liveSessions.unshift(newLive);
+      renderLiveGrid();
+      setTimeout(() => joinLive(newLive), 180);
+    }
+
+    // === Auth (reused pattern) ===
+    let authTab = 0;
+    function openAuthModal() {
+      const m = document.getElementById('auth-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      switchAuthTab(0);
+    }
+    function hideAuthModal() {
+      const m = document.getElementById('auth-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+      document.getElementById('auth-msg').textContent = '';
+    }
+    function switchAuthTab(tab) {
+      authTab = tab;
+      document.getElementById('login-form').classList.toggle('hidden', tab !== 0);
+      document.getElementById('signup-form').classList.toggle('hidden', tab !== 1);
+      document.getElementById('auth-tab-0').classList.toggle('border-b-2', tab === 0);
+      document.getElementById('auth-tab-0').classList.toggle('text-white/60', tab !== 0);
+      document.getElementById('auth-tab-1').classList.toggle('border-b-2', tab === 1);
+      document.getElementById('auth-tab-1').classList.toggle('text-white/60', tab !== 1);
+    }
+    async function doLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-pass').value;
+      const msg = document.getElementById('auth-msg');
+      if (!email || !pass) { msg.textContent = 'Enter email and password.'; return; }
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        hideAuthModal();
+      } catch (e) { msg.textContent = e.message || 'Login failed'; }
+    }
+    async function doSignup() {
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const pass = document.getElementById('signup-pass').value;
+      const msg = document.getElementById('auth-msg');
+      if (!email || !pass || pass.length < 6) { msg.textContent = 'Valid email + 6+ char password required.'; return; }
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        if (name) await updateProfile(cred.user, { displayName: name });
+        // Profile created with starter pts in onAuth listener
+        hideAuthModal();
+      } catch (e) { msg.textContent = e.message || 'Signup failed'; }
+    }
+
+    async function logoutUser() {
+      await signOut(auth);
+      currentUser = null;
+      userProfile = null;
+      updateNavUI();
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = '0';
+    }
+
+    function showProfileModal() {
+      if (!currentUser) return;
+      const m = document.getElementById('profile-modal');
+      document.getElementById('prof-name').textContent = userProfile?.fullName || currentUser.displayName || 'Creator';
+      document.getElementById('prof-email').textContent = currentUser.email;
+      document.getElementById('prof-points').textContent = (userProfile?.imaginePoints || 0) + ' pts';
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function hideProfileModal() {
+      const m = document.getElementById('profile-modal');
+      m.classList.remove('flex');
+      m.classList.add('hidden');
+    }
+
+    // Expose a few helpers for console / future
+    window.VIZ_CREATORS = { refreshPoints, filterCommunity };
+  </script>
+</body>
+</html>
