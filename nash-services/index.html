@@ -169,6 +169,42 @@
                 margin: 0 auto;
             }
         }
+
+        /* View fixes for reliable local preview over fixed video bg */
+        .page-shell header,
+        .page-shell section,
+        .page-shell main,
+        .page-shell > div:not(.hero-video-wrap):not(.hero-overlay) {
+            position: relative;
+            z-index: 10;
+        }
+
+        .topbar {
+            z-index: 50 !important;
+        }
+
+        /* Stronger readable overlay + slight content lift */
+        .hero-overlay {
+            background: linear-gradient(180deg, rgba(20, 10, 40, 0.42), rgba(6, 6, 18, 0.78)) !important;
+        }
+
+        /* Ensure glass panels and sections have solid enough backing for text over video */
+        .glass-panel, .service-category {
+            background: rgba(15, 12, 28, 0.92) !important;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+
+        /* Fallback visibility for animated elements (in case IntersectionObserver/JS doesn't run in local file preview) */
+        .hero-content,
+        .service-card,
+        .feature-card,
+        .glass-panel,
+        .metric-card,
+        .list-item,
+        .section-header {
+            opacity: 1 !important;
+            transform: none !important;
+        }
     </style>
 </head>
 <body>

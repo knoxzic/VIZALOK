@@ -24,6 +24,184 @@
       box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
     }
 
+    /* === VIZALOK Platform Cards Animation (cyberpunk enhanced) === */
+    .platform-card {
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  border-color 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hover lift + glow */
+    .platform-card:hover {
+      transform: translateY(-14px) scale(1.015);
+      box-shadow: 0 30px 70px -15px rgb(0 0 0 / 0.5);
+    }
+
+    /* Icon animation */
+    .platform-card .icon,
+    .platform-card svg,
+    .platform-card img[alt*="icon"] {
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .platform-card:hover .icon,
+    .platform-card:hover svg {
+      transform: scale(1.12) rotate(4deg);
+    }
+
+    /* Subtle bottom link underline animation (targets inner enter text) */
+    .platform-card .enter-text {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .platform-card .enter-text::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 0;
+      height: 2px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .platform-card:hover .enter-text::after {
+      width: 100%;
+    }
+
+    /* Staggered entrance animation */
+    @keyframes cardFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .platform-card {
+      animation: cardFadeUp 0.7s ease forwards;
+      opacity: 0;
+    }
+
+    .platform-card:nth-child(1) { animation-delay: 0.1s; }
+    .platform-card:nth-child(2) { animation-delay: 0.2s; }
+    .platform-card:nth-child(3) { animation-delay: 0.3s; }
+    .platform-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Cyberpunk extras */
+    .platform-card {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+    }
+
+    .platform-card h3 {
+      text-shadow: 0 0 8px currentColor;
+    }
+
+    /* Subtle scanlines / digital rain feel */
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .platform-card:hover::before {
+      opacity: 0.85;
+    }
+
+    /* Ripple burst styles */
+    .cyber-ripple {
+      position: absolute;
+      border-radius: 9999px;
+      border: 2px solid;
+      pointer-events: none;
+      z-index: 10;
+      animation: cyber-ripple-anim 650ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes cyber-ripple-anim {
+      from {
+        transform: scale(0.15);
+        opacity: 0.95;
+      }
+      to {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+
+    .cyber-spark {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 11;
+      box-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+      transition: transform 0.65s ease-out, opacity 0.65s ease-out;
+    }
+
+    /* Cyber relic icon treatment - glowing ancient artifact feel */
+    .platform-card .icon {
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
+      animation: relicPulse 4s ease-in-out infinite;
+    }
+
+    .platform-card:hover .icon {
+      filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor) drop-shadow(0 0 32px currentColor);
+    }
+
+    /* Relic holo frame / bezel around the icon area */
+    .platform-card > div:first-child {
+      position: relative;
+    }
+
+    .platform-card > div:first-child::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 1px solid currentColor;
+      border-radius: 9999px;
+      opacity: 0.12;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    .platform-card:hover > div:first-child::before {
+      opacity: 0.38;
+      transform: scale(1.08);
+      box-shadow: 0 0 12px currentColor, 0 0 22px currentColor;
+    }
+
+    @keyframes relicPulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
+      }
+      50% {
+        filter: drop-shadow(0 0 9px currentColor) drop-shadow(0 0 18px currentColor) drop-shadow(0 0 26px currentColor);
+      }
+    }
+
     /* Full-page YouTube video background - covers entire viewport, autoplay + loop */
     .video-bg {
       position: fixed;
@@ -92,64 +270,159 @@
     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl w-full mx-auto">
 
       <!-- FIXED Music Card -->
-      <div onclick="window.location.href='music/'" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
+      <a href="music/" 
+         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
         <div class="h-14 flex justify-center mb-6">
-          <i class="fa-solid fa-music text-5xl text-cyan-400"></i>
+          <i class="fa-solid fa-compact-disc text-5xl text-cyan-400 icon"></i>
         </div>
         <h3 class="text-3xl font-bold mb-2">Music</h3>
         <p class="text-zinc-400 text-sm mb-8">Stream • Upload • Live • Royalties</p>
-        <div class="text-cyan-400 font-medium flex items-center justify-center gap-2 text-sm">
+        <div class="enter-text text-cyan-400 font-medium flex items-center justify-center gap-2 text-sm">
           Enter Music Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
-      </div>
+      </a>
 
       <!-- Creators (now full portal: YT + Twitch hybrid with community feed first, studio, + points for Grok Imagine) -->
-      <div onclick="window.location.href='creators/'" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+      <a href="creators/" 
+         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
-          <i class="fa-solid fa-palette text-4xl sm:text-5xl text-purple-400"></i>
+          <i class="fa-solid fa-magic text-4xl sm:text-5xl text-purple-400 icon"></i>
         </div>
         <h3 class="text-2xl sm:text-3xl font-bold mb-2">Creators</h3>
         <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8">Upload • Stream • Monetize • Imagine</p>
-        <div class="text-purple-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+        <div class="enter-text text-purple-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Creators Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
-      </div>
+      </a>
 
-      <div onclick="window.location.href='logistics.html'" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+      <a href="logistics.html" 
+         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
-          <i class="fa-solid fa-truck text-4xl sm:text-5xl text-amber-400"></i>
+          <i class="fa-solid fa-microchip text-4xl sm:text-5xl text-amber-400 icon"></i>
         </div>
         <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-amber-300">Vizalok Logistics</h3>
         <p class="text-zinc-400 text-xs sm:text-sm mb-4 sm:mb-6">Medical Courier & Logistics in Maryland</p>
         <p class="text-amber-400 text-[10px] sm:text-xs leading-tight mb-6 sm:mb-8">
           Integrity-driven deliveries • Contractor opportunities
         </p>
-        <div class="text-amber-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+        <div class="enter-text text-amber-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Vizalok Logistics <i class="fa-solid fa-arrow-right"></i>
         </div>
-      </div>
+      </a>
 
       <!-- New Nash Services Panel (Full Project from Attachments) -->
-      <div onclick="window.location.href='nash-services/'" 
-           class="bubble bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+      <a href="nash-services/" 
+         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
-          <i class="fa-solid fa-building text-4xl sm:text-5xl text-rose-400"></i>
+          <i class="fa-solid fa-cogs text-4xl sm:text-5xl text-rose-400 icon"></i>
         </div>
         <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-rose-300">Nash Services</h3>
         <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8"># Professional Removal and Cleanup with Precision</p>
-        <div class="text-rose-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+        <div class="enter-text text-rose-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Full Nash Services Site <i class="fa-solid fa-arrow-right"></i>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
   </div>
 
-  
+  <!-- Cyberpunk Platform Cards: tilt + ripple burst on click -->
+  <script>
+    const cards = document.querySelectorAll('.platform-card');
+
+    cards.forEach(card => {
+      // 3D Tilt Effect toward mouse (cyberpunk premium feel)
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) - 0.5;
+        const y = ((e.clientY - rect.top) / rect.height) - 0.5;
+
+        const rotateX = (-y * 12).toFixed(2);
+        const rotateY = (x * 16).toFixed(2);
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-14px) scale(1.015)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+        card.style.transform = 'translateY(0) scale(1)';
+        
+        // reset transition after animation
+        setTimeout(() => {
+          card.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease';
+        }, 600);
+      });
+
+      // Ripple burst (cyberpunk electric) on click
+      card.addEventListener('click', (e) => {
+        createCyberRippleBurst(card, e);
+        // Let the <a href> navigation proceed normally
+      });
+    });
+
+    function createCyberRippleBurst(card, e) {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Determine accent color from the card's border (cyan/purple/amber/rose)
+      const accent = getComputedStyle(card).borderColor || '#67e8f9';
+
+      // Main expanding neon ripple ring
+      const ripple = document.createElement('span');
+      ripple.className = 'cyber-ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.width = '22px';
+      ripple.style.height = '22px';
+      ripple.style.marginLeft = '-11px';
+      ripple.style.marginTop = '-11px';
+      ripple.style.borderColor = accent;
+      ripple.style.boxShadow = `0 0 10px ${accent}, 0 0 22px ${accent}, 0 0 40px ${accent}`;
+      card.appendChild(ripple);
+
+      // Burst sparks / particles for "electric burst" cyberpunk feel (6-7 sparks)
+      const sparkCount = 7;
+      for (let i = 0; i < sparkCount; i++) {
+        const spark = document.createElement('span');
+        spark.className = 'cyber-spark';
+        spark.style.left = `${x}px`;
+        spark.style.top = `${y}px`;
+        spark.style.background = accent;
+        spark.style.boxShadow = `0 0 5px ${accent}, 0 0 10px ${accent}`;
+
+        const angle = (i * (360 / sparkCount)) + (Math.random() * 18 - 9);
+        const distance = 38 + Math.random() * 28;
+
+        // Position instantly then animate outward + fade
+        const tx = Math.cos(angle * Math.PI / 180) * distance;
+        const ty = Math.sin(angle * Math.PI / 180) * distance;
+
+        spark.style.transform = `translate(0,0) scale(1)`;
+        spark.style.opacity = '1';
+
+        card.appendChild(spark);
+
+        // Trigger the burst animation on next frame
+        requestAnimationFrame(() => {
+          spark.style.transition = 'transform 620ms cubic-bezier(0.23,1,0.32,1), opacity 620ms ease-out';
+          spark.style.transform = `translate(${tx}px, ${ty}px) scale(${0.2 + Math.random() * 0.3})`;
+          spark.style.opacity = '0';
+        });
+
+        // Cleanup
+        setTimeout(() => {
+          if (spark && spark.parentNode) spark.parentNode.removeChild(spark);
+        }, 800);
+      }
+
+      // Remove main ripple
+      setTimeout(() => {
+        if (ripple && ripple.parentNode) ripple.parentNode.removeChild(ripple);
+      }, 700);
+    }
+  </script>
 
 </body>
 </html>
