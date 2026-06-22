@@ -240,17 +240,17 @@
         </div>
       </div>
 
-      <!-- Right: User Signed In -->
+      <!-- Right: User Signed In (profile populated from Supabase after login for seamless share) -->
       <div class="flex items-center gap-3">
         <div onclick="showUserMenu()" class="flex items-center gap-2.5 px-3 py-1.5 bg-zinc-900/70 hover:bg-zinc-900 border border-white/10 rounded-3xl cursor-pointer transition-all">
-          <div class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">KX</div>
+          <div id="nav-avatar" class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">U</div>
           <div class="hidden md:block">
-            <div class="text-xs font-medium">Knoxzic</div>
-            <div class="text-[10px] text-emerald-400 -mt-0.5">Verified Producer</div>
+            <div id="nav-user-name" class="text-xs font-medium">User</div>
+            <div class="text-[10px] text-emerald-400 -mt-0.5">Producer</div>
           </div>
           <div class="flex items-center gap-1 text-xs bg-zinc-950 px-1.5 rounded-xl py-px border border-white/10">
-            <span id="user-balance">1,284</span>
-            <span class="text-purple-400">VIZ</span>
+            <span id="user-balance">0</span>
+            <span class="text-purple-400">pts</span>
           </div>
           <i class="fa-solid fa-chevron-down text-xs text-white/50 ml-0.5"></i>
         </div>
@@ -496,7 +496,7 @@
           gateSwitchLink.textContent = 'Sign Up';
         } else {
           gateBtn.textContent = 'Create Account';
-          gateTitle.textContent = 'Create your Creator Account';
+          gateTitle.textContent = 'Create your Music Producer Account';
           if (gateUsernameGroup) gateUsernameGroup.classList.remove('hidden');
           gateSwitchText.textContent = 'Already have an account?';
           gateSwitchLink.textContent = 'Sign In';
@@ -539,19 +539,39 @@
             if (error) throw error;
             hideAuthGate();
           } else {
-            const { error } = await supabase.auth.signUp({
+            const { data: signUpData, error } = await supabase.auth.signUp({
               email,
               password,
               options: { data: { full_name: username } }
             });
             if (error) throw error;
-            alert('Account created! Check your email for confirmation if required, then sign in.');
-            isGateLoginMode = true;
-            gateBtn.textContent = 'Sign In';
-            gateTitle.textContent = 'Sign in to access your Dashboard';
-            if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-            gateSwitchText.textContent = "Don't have an account?";
-            gateSwitchLink.textContent = 'Sign Up';
+            // Create profile immediately for seamless access across portals (music + creators)
+            // wrapped so RLS/permission on pre-confirm doesn't block the account creation
+            if (signUpData.user) {
+              try {
+                await supabase.from('profiles').upsert({
+                  id: signUpData.user.id,
+                  full_name: username || signUpData.user.email.split('@')[0],
+                  email: signUpData.user.email,
+                  points: 25,
+                  music_library: []
+                }, { onConflict: 'id' });
+              } catch (pErr) {
+                console.warn('Profile pre-upsert on signUp skipped (will create on first login):', pErr?.message || pErr);
+              }
+            }
+            if (signUpData.session) {
+              // No email confirmation required in Supabase settings - auto login seamless
+              hideAuthGate();
+            } else {
+              alert('Account created! Check your email for confirmation if required, then sign in to access shared profile (music rights + points for image gen in Creators).');
+              isGateLoginMode = true;
+              gateBtn.textContent = 'Sign In';
+              gateTitle.textContent = 'Sign in to access your Dashboard';
+              if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+              gateSwitchText.textContent = "Don't have an account?";
+              gateSwitchLink.textContent = 'Sign Up';
+            }
           }
         } catch (error) {
           console.error(error);
@@ -602,7 +622,7 @@
     async function loadUserProfile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -610,32 +630,56 @@
       if (data) {
         userProfile = data;
       } else {
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .insert({
+        try {
+          const { data: newProfile, error: insErr } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              full_name: user.user_metadata?.full_name || user.email.split('@')[0],
+              points: 25,
+              email: user.email,
+              music_library: []
+            })
+            .select()
+            .single();
+          if (insErr) throw insErr;
+          userProfile = newProfile;
+        } catch (e) {
+          console.error('Could not create profile row (verify RLS policy on profiles allows INSERT for auth.uid(), and table has the columns: id,full_name,points,email,music_library). Using local fallback for seamless demo across music+creators.', e);
+          // Fallback so signin succeeds and shared profile (points + music_library for rights/gens) works in UI
+          userProfile = {
             id: user.id,
             full_name: user.user_metadata?.full_name || user.email.split('@')[0],
             points: 25,
             email: user.email,
             music_library: []
-          })
-          .select()
-          .single();
-        userProfile = newProfile;
+          };
+        }
       }
       updateNavUI();
+      // Sync legacy local balance var (for trade floor UI) from shared profile
+      if (userProfile && typeof userBalance !== 'undefined') {
+        userBalance = userProfile.points || userBalance;
+        if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
+      }
     }
 
     async function saveProfile(updates) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase
-        .from('profiles')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', user.id)
-        .select()
-        .single();
-      if (data) userProfile = { ...userProfile, ...data };
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', user.id)
+          .select()
+          .single();
+        if (data) userProfile = { ...userProfile, ...data };
+      } catch (e) {
+        console.warn('saveProfile update may have partial failure (e.g. no updated_at col or RLS). Keeping local userProfile for demo.', e?.message || e);
+        // still apply local so UI (points/library) updates immediately
+        userProfile = { ...userProfile, ...updates };
+      }
       updateNavUI();
       const pb = document.getElementById('points-balance');
       if (pb) pb.textContent = (userProfile && userProfile.points) || 0;
@@ -652,14 +696,13 @@
     }
 
     function updateNavUI() {
-      // Update top right user info
+      // Update top right user info from shared Supabase profile (points + name + avatar for seamless music/creators)
       const balanceEls = document.querySelectorAll('#user-balance');
       balanceEls.forEach(el => el.textContent = (userProfile && userProfile.points) || 0);
-      // Update name if profile
-      const nameEls = document.querySelectorAll('.text-xs.font-medium');
-      if (nameEls.length && userProfile) {
-        nameEls[0].textContent = userProfile.full_name || 'User';
-      }
+      const nameEl = document.getElementById('nav-user-name');
+      if (nameEl && userProfile) nameEl.textContent = userProfile.full_name || 'User';
+      const av = document.getElementById('nav-avatar');
+      if (av && userProfile) av.textContent = (userProfile.full_name || 'U').charAt(0).toUpperCase();
     }
 
     // Data
@@ -726,7 +769,8 @@
     
     function updateBalanceDisplay() {
       const els = document.querySelectorAll('#user-balance');
-      els.forEach(el => el.textContent = userBalance.toLocaleString());
+      const val = (userProfile && userProfile.points) || (typeof userBalance !== 'undefined' ? userBalance : 0);
+      els.forEach(el => el.textContent = (val || 0).toLocaleString ? (val || 0).toLocaleString() : val);
     }
     
     // Render the Auto-Play Belt
@@ -1175,7 +1219,7 @@
         div.innerHTML = `
           <div class="flex-1">
             <div class="flex items-center gap-3">
-              <img src="place.png" class="w-10 h-10 rounded-2xl object-cover border border-white/10" alt="track icon">
+              <img src="poster.jpg" class="w-10 h-10 rounded-2xl object-cover border border-white/10" alt="track icon">
               <div>
                 <div class="font-semibold">${track.title}</div>
                 <div class="text-xs text-zinc-400">${track.artist} • ${track.duration || ''}</div>
@@ -1185,6 +1229,7 @@
           
           <div class="mt-4 pt-4 border-t border-white/10 flex gap-2">
             <button onclick="playOwned(${track.id})" class="text-xs flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-2xl">PLAY</button>
+            <button onclick="transferTrackToStudio(${track.id}); event.stopImmediatePropagation();" class="text-xs flex-1 py-1.5 bg-purple-600 hover:bg-purple-500 rounded-2xl">Send to Creators Studio</button>
           </div>
         `;
         container.appendChild(div);
@@ -1195,6 +1240,28 @@
     
     function playOwned(trackId) {
       playTrack(trackId);
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 z-[210] px-4 py-1.5 text-xs rounded-3xl bg-zinc-900 border border-white/10 shadow';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2100);
+    }
+
+    function transferTrackToStudio(trackId) {
+      // Hand off via localStorage so Creators studio can import from shared music_library + open editor
+      try {
+        localStorage.setItem('viz_studio_transfer', JSON.stringify({ type: 'music', id: trackId }));
+      } catch (e) {}
+      const url = '../creators/index.html#studio-editor';
+      window.open(url, '_blank');
+      if (typeof showToast === 'function') {
+        showToast('Track sent to Studio. Sign in on Creators to edit (audio cutter ready).');
+      } else {
+        alert('Track sent to Creators Studio (new tab). Use the Audio Cutter after signing in.');
+      }
     }
     
     function sellOwnedNFT(trackId, btn) {
@@ -1251,7 +1318,7 @@
       menu.className = `absolute right-6 top-16 z-[100] w-52 glass border border-white/10 rounded-3xl p-2 text-sm`;
       menu.innerHTML = `
         <div class="px-3 py-2 text-xs text-zinc-400">Signed in as</div>
-        <div class="px-3 pb-2 font-medium">${(userProfile && userProfile.full_name) || 'User'} • Verified Producer</div>
+        <div class="px-3 pb-2 font-medium">${(userProfile && userProfile.full_name) || 'User'} • Shared Profile</div>
         
         <div class="border-t border-white/10 my-1"></div>
         
@@ -1264,8 +1331,11 @@
         <div onclick="showMyTrades(); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
           <i class="fa-solid fa-exchange-alt w-4"></i> My Active Trades
         </div>
+        <div onclick="window.open('../creators/index.html', '_blank'); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-purple-400">
+          <i class="fa-solid fa-magic w-4"></i> Open Creators Studio
+        </div>
         <div onclick="window.location.reload()" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-red-400">
-          <i class="fa-solid fa-sign-out-alt w-4"></i> Sign Out
+          <i class="fa-solid fa-sign-out-alt w-4"></i> Sign Out (reload)
         </div>
       `;
       

@@ -226,6 +226,93 @@
           </div>
         </div>
       </div>
+
+      <!-- NEW: Studio Editor - Cut/Edit/Transfer purchased assets (music_library from shared profile + gens) -->
+      <!-- For music rights management + image gen editing. Transfer buttons from Music Lib + generator results. -->
+      <div id="studio-editor" class="mt-8 bg-zinc-950/80 border border-emerald-400/20 rounded-3xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <span class="text-emerald-400 text-xs tracking-[2px]">STUDIO LAB — EDIT &amp; CUT</span>
+            <h3 class="text-2xl font-bold">Create • Trim • Edit Assets</h3>
+            <p class="text-xs text-zinc-400">Load purchased tracks (shared via profile for music rights) or your AI generations. Cut audio, filter/crop images. Save edits to personal library (persisted local + profile.studio_library if column enabled).</p>
+          </div>
+          <button onclick="document.getElementById('buy-points').scrollIntoView({behavior:'smooth'})" class="text-xs px-3 py-1 border border-white/20 hover:bg-white/5 rounded-2xl">Buy more pts</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <!-- Audio Cutter -->
+          <div class="bg-zinc-900 border border-white/10 rounded-2xl p-4">
+            <div class="flex items-center gap-2 mb-2 text-cyan-400">
+              <i class="fa-solid fa-cut"></i>
+              <span class="font-semibold text-white">Audio Cutter (for Music Rights / Sync)</span>
+            </div>
+            <select id="studio-audio-select" class="w-full bg-zinc-950 border border-white/10 text-sm rounded-xl p-2 mb-2" onchange="loadAudioForEdit(this.value)">
+              <option value="">— Select owned track from shared Music Library —</option>
+            </select>
+            <audio id="studio-audio" controls class="w-full rounded mb-2" style="height:32px"></audio>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                Start <span id="audio-start-val" class="font-mono">0.0</span>s
+                <input type="range" id="audio-start" min="0" max="300" step="0.1" value="0" class="w-full accent-cyan-400" oninput="updateAudioTrim()">
+              </div>
+              <div>
+                End <span id="audio-end-val" class="font-mono">30</span>s
+                <input type="range" id="audio-end" min="0" max="300" step="0.1" value="30" class="w-full accent-cyan-400" oninput="updateAudioTrim()">
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button onclick="previewTrim()" class="flex-1 py-1.5 text-xs rounded-xl bg-cyan-600 hover:bg-cyan-500">▶ Preview Trim</button>
+              <button onclick="exportTrimmedAudio()" class="flex-1 py-1.5 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500">Export Trimmed .WAV</button>
+            </div>
+            <button onclick="saveCurrentAudioEdit()" class="mt-2 w-full py-1.5 text-xs rounded-xl border border-cyan-400/60 hover:bg-cyan-950/30">Save Edited Clip → Studio Library</button>
+            <div class="text-[9px] text-zinc-500 mt-1">Trims use browser AudioContext (no upload). Great for rights-cleared loops / stems.</div>
+          </div>
+
+          <!-- Image / Frame Editor -->
+          <div class="bg-zinc-900 border border-white/10 rounded-2xl p-4">
+            <div class="flex items-center gap-2 mb-2 text-purple-400">
+              <i class="fa-solid fa-crop-alt"></i>
+              <span class="font-semibold text-white">Image / Frame Editor</span>
+            </div>
+            <canvas id="studio-canvas" width="320" height="180" class="w-full border border-white/20 rounded-xl bg-black mb-2" style="image-rendering: pixelated;"></canvas>
+            <div class="text-[10px] mb-1 text-zinc-400">Live Filters</div>
+            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+              <label class="flex items-center gap-1">Bright <input type="range" id="filt-bright" min="0.4" max="2.2" step="0.05" value="1" oninput="applyImageFilters()" class="flex-1 accent-purple-400"></label>
+              <label class="flex items-center gap-1">Contrast <input type="range" id="filt-contrast" min="0.4" max="2.2" step="0.05" value="1" oninput="applyImageFilters()" class="flex-1 accent-purple-400"></label>
+              <label class="flex items-center gap-1">Sat <input type="range" id="filt-sat" min="0" max="2.5" step="0.05" value="1" oninput="applyImageFilters()" class="flex-1 accent-purple-400"></label>
+              <label class="flex items-center gap-1">Hue <input type="range" id="filt-hue" min="0" max="360" step="5" value="0" oninput="applyImageFilters()" class="flex-1 accent-purple-400"></label>
+            </div>
+            <div class="flex gap-2 mt-2">
+              <button onclick="applyCropToCanvas()" class="flex-1 py-1 text-xs rounded-xl bg-purple-600 hover:bg-purple-500">Bake Crop (center 70%)</button>
+              <button onclick="resetCanvasEditor()" class="flex-1 py-1 text-xs rounded-xl border border-white/20">Reset Filters</button>
+            </div>
+            <input id="studio-overlay-text" placeholder="Overlay title e.g. VIZALOK FRAME" class="mt-2 w-full bg-zinc-950 border border-white/10 text-xs p-1.5 rounded-xl" />
+            <div class="flex gap-2 mt-1.5">
+              <button onclick="addTextOverlayToCanvas()" class="flex-1 py-1 text-xs rounded-xl bg-purple-500 hover:bg-purple-600">Add Text Overlay</button>
+              <button onclick="exportCanvasToLibrary()" class="flex-1 py-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500">Export PNG → Library</button>
+            </div>
+            <div class="mt-1">
+              <input type="file" id="studio-img-upload" accept="image/*" class="text-[9px] w-full" onchange="loadUploadedImageToCanvas(event)">
+              <div class="text-[9px] text-zinc-500">Or upload frame. Click any gen result below to auto-load it here.</div>
+            </div>
+          </div>
+
+          <!-- My Studio Library (saved edits, transferable) -->
+          <div class="bg-zinc-900 border border-white/10 rounded-2xl p-4 flex flex-col min-h-[260px]">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-semibold flex items-center gap-2"><i class="fa-solid fa-folder text-amber-400"></i> My Studio Library</span>
+              <span id="studio-asset-count" class="text-[10px] bg-white/5 px-2 py-0.5 rounded-2xl border border-white/10">0</span>
+            </div>
+            <div id="studio-library-list" class="flex-1 text-xs overflow-auto space-y-1.5 pr-1 max-h-[200px]"></div>
+            <div class="flex gap-2 mt-2">
+              <button onclick="clearStudioLibrary()" class="flex-1 text-[10px] py-1 rounded-xl border border-red-400/40 text-red-400 hover:bg-red-950/30">Clear All</button>
+              <button onclick="importAllOwnedToStudio()" class="flex-1 text-[10px] py-1 rounded-xl border border-white/20">Import All Owned Tracks</button>
+            </div>
+            <div class="text-[9px] text-center text-zinc-500 mt-1">Saved edits stay in this browser (or profile if studio_library col added). Re-edit or download anytime.</div>
+          </div>
+        </div>
+      </div>
+      <!-- end studio-editor -->
     </div>
   </div>
 
@@ -538,20 +625,40 @@
             // Success - hide gate, show portal, update UI
             hideAuthGate();
           } else {
-            const { error } = await supabase.auth.signUp({
+            const { data: signUpData, error } = await supabase.auth.signUp({
               email,
               password,
               options: { data: { full_name: username } }
             });
             if (error) throw error;
-            alert('Account created! Please check your email to confirm if required, then sign in.');
-            // Reset to login mode
-            isGateLoginMode = true;
-            gateBtn.textContent = 'Sign In';
-            gateTitle.textContent = 'Sign in to access the Portal';
-            if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-            gateSwitchText.textContent = "Don't have an account?";
-            gateSwitchLink.textContent = 'Sign Up';
+            // Create profile immediately for seamless access across portals (music rights + image gen)
+            // wrapped so RLS/permission on pre-confirm doesn't block the account creation UX
+            if (signUpData.user) {
+              try {
+                await supabase.from('profiles').upsert({
+                  id: signUpData.user.id,
+                  full_name: username || signUpData.user.email.split('@')[0],
+                  email: signUpData.user.email,
+                  points: 25,
+                  music_library: []
+                }, { onConflict: 'id' });
+              } catch (pErr) {
+                console.warn('Profile pre-upsert on signUp skipped (will create/ensure on first login via load):', pErr?.message || pErr);
+              }
+            }
+            if (signUpData.session) {
+              // No email confirmation required - auto proceed
+              hideAuthGate();
+            } else {
+              alert('Account created! Check your email for confirmation if required, then sign in. Your profile (points, music_library) will be shared seamlessly with the Music portal.');
+              // Reset to login mode
+              isGateLoginMode = true;
+              gateBtn.textContent = 'Sign In';
+              gateTitle.textContent = 'Sign in to access the Portal';
+              if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+              gateSwitchText.textContent = "Don't have an account?";
+              gateSwitchLink.textContent = 'Sign Up';
+            }
           }
         } catch (error) {
           console.error(error);
@@ -580,6 +687,10 @@
       if (typeof updateNavUI === 'function') updateNavUI();
       if (typeof updateAnimatorAccess === 'function') updateAnimatorAccess();
       if (typeof loadCommunityFeed === 'function') loadCommunityFeed();
+      // Studio inits (safe if called early)
+      if (typeof populateStudioAudioSelect === 'function') populateStudioAudioSelect();
+      if (typeof initStudioCanvas === 'function') initStudioCanvas();
+      if (typeof renderStudioLibrary === 'function') renderStudioLibrary();
     }
 
     // Check session on load - if already signed in, hide gate immediately
@@ -642,6 +753,24 @@
     let currentFilter = 'all';
     let liveSessions = []; // demo local data
 
+    // === Studio Editor Data (shared music_library drives purchased assets for editing) ===
+    // Dupe of music beats list but with paths adjusted for /creators/ page
+    const studioAllTracks = [
+      { id: 1, title: "Cookin", artist: "knoxzic", src: "../music/beats/knoxzic - Cookin.wav", price: "0.35", nftId: "VIZNFT-001", duration: "3:42" },
+      { id: 2, title: "BAXCAV3", artist: "knoxzic", src: "../music/beats/knoxzic-  BAXCAV3.mp3", price: "0.48", nftId: "VIZNFT-002", duration: "2:58" },
+      { id: 3, title: "LEVEL IN", artist: "knoxzic", src: "../music/beats/knoxzic-  LEVEL in.wav", price: "0.29", nftId: "VIZNFT-003", duration: "4:11" },
+      { id: 4, title: "Trackaz", artist: "knoxzic", src: "../music/beats/knoxzic-  trackaz.mp3", price: "0.55", nftId: "VIZNFT-004", duration: "3:27" },
+      { id: 5, title: "Trippy", artist: "knoxzic", src: "../music/beats/knoxzic-  Trippy.mp3", price: "0.41", nftId: "VIZNFT-005", duration: "2:49" },
+      { id: 6, title: "FrostPrint", artist: "knoxzic", src: "../music/beats/knoxzic- .FrostPrint.mp3", price: "0.62", nftId: "VIZNFT-006", duration: "5:03" },
+      { id: 7, title: "Googlenaire", artist: "knoxzic", src: "../music/beats/knoxzic- Googlenaire.wav", price: "0.33", nftId: "VIZNFT-007", duration: "3:15" },
+      { id: 8, title: "Jill Scott", artist: "knoxzic", src: "../music/beats/knoxzic- Jill Scott.mp3", price: "0.27", nftId: "VIZNFT-008", duration: "4:38" },
+      { id: 9, title: "Let the Vibe Sing", artist: "Vizalok", src: "../music/beats/knoxzic- Let the Vibe Sing.wav", price: "0.51", nftId: "VIZNFT-009", duration: "3:09" },
+      { id: 10, title: "RaidTime", artist: "knoxzic", src: "../music/beats/knoxzic- RaidTime.mp3", price: "0.39", nftId: "VIZNFT-010", duration: "2:34" }
+    ];
+    let studioAssets = []; // {id, type:'audio'|'image', name, src?, data?, meta? } persisted via localStorage + profile.studio_library
+    let currentEditingTrack = null;
+    let currentCanvasState = null; // for image editor base
+
     // Stripe already initialized in setup block above
 
     // Supabase Auth listener - this makes sign in/up automatically show the profile at the top
@@ -654,6 +783,12 @@
         const pb = document.getElementById('points-balance');
         if (pb && userProfile) pb.textContent = userProfile.points || 0;
         if (typeof loadCommunityFeed === 'function') await loadCommunityFeed();
+        // Studio editor: load assets + owned tracks from shared profile, check transfers
+        if (typeof loadStudioAssetsFromProfile === 'function') loadStudioAssetsFromProfile();
+        if (typeof populateStudioAudioSelect === 'function') populateStudioAudioSelect();
+        if (typeof renderStudioLibrary === 'function') renderStudioLibrary();
+        if (typeof initStudioCanvas === 'function') initStudioCanvas();
+        if (typeof checkStudioTransfer === 'function') checkStudioTransfer();
         hideAuthGate(); // hide the sign in gate once authenticated
       } else {
         userProfile = null;
@@ -685,7 +820,7 @@
 
     async function loadUserProfile() {
       if (!currentUser) return null;
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
@@ -695,34 +830,69 @@
         userProfile = data;
         return data;
       } else {
-        // Create starter profile
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .insert({
+        // Create starter profile (or fallback). This ensures seamless shared profile with music dashboard
+        try {
+          const { data: newProfile, error: insErr } = await supabase
+            .from('profiles')
+            .insert({
+              id: currentUser.id,
+              full_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
+              points: 25,
+              email: currentUser.email,
+              music_library: []
+            })
+            .select()
+            .single();
+          if (insErr) throw insErr;
+          userProfile = newProfile;
+          return newProfile;
+        } catch (e) {
+          console.error('Profile insert failed in creators load (RLS/columns?). Fallback for cross-portal sharing of points + music_library.', e);
+          userProfile = {
             id: currentUser.id,
             full_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
             points: 25,
-            email: currentUser.email
-          })
-          .select()
-          .single();
-        userProfile = newProfile;
-        return newProfile;
+            email: currentUser.email,
+            music_library: []
+          };
+          return userProfile;
+        }
+      }
+      // Load studio edits (prefer profile, fallback localStorage for this user)
+      if (userProfile) {
+        const uid = currentUser.id;
+        const fromProf = userProfile.studio_library;
+        if (Array.isArray(fromProf)) {
+          studioAssets = fromProf;
+        } else {
+          try {
+            studioAssets = JSON.parse(localStorage.getItem('viz_studio_assets_' + uid) || '[]');
+          } catch (_) { studioAssets = []; }
+        }
       }
     }
 
     async function saveProfile(updates) {
       if (!currentUser) return;
-      const { data } = await supabase
-        .from('profiles')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', currentUser.id)
-        .select()
-        .single();
-      if (data) userProfile = { ...userProfile, ...data };
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', currentUser.id)
+          .select()
+          .single();
+        if (data) userProfile = { ...userProfile, ...data };
+      } catch (e) {
+        console.warn('saveProfile update warning (e.g. missing column or RLS). Local state kept for UI/points/studio.', e?.message || e);
+        userProfile = { ...userProfile, ...updates };
+      }
       updateNavUI();
       const pb = document.getElementById('points-balance');
       if (pb) pb.textContent = (userProfile && userProfile.points) || 0;
+      // If library changed (e.g. purchase in music tab), refresh studio select
+      if (updates && updates.music_library && typeof populateStudioAudioSelect === 'function') {
+        populateStudioAudioSelect();
+      }
     }
 
     function updateAnimatorAccess() {
@@ -1017,9 +1187,11 @@
         const art = document.createElement('div');
         art.className = `imagine-result aspect-video rounded-2xl overflow-hidden border border-purple-400/40 flex flex-col justify-end p-2 text-[10px] cursor-pointer`;
         art.style.background = `linear-gradient(135deg, hsl(${hue} 75% 28%), hsl(${(hue + 80) % 360} 60% 14%))`;
+        art.dataset.prompt = prompt;
         art.innerHTML = `
           <div class="text-white/95 font-medium line-clamp-2 drop-shadow">${prompt}</div>
           <div class="text-[9px] text-purple-200 mt-0.5">AI Image • ${cost} pts • Frame ${i+1}</div>
+          <button onclick="event.stopImmediatePropagation(); loadGenImageToStudio(this.parentElement);" class="mt-1 self-start text-[9px] px-2 py-0.5 bg-white/10 hover:bg-white/20 rounded">Edit in Studio →</button>
         `;
         art.onclick = () => publishGenerated('image', prompt, art.style.background);
         container.appendChild(art);
@@ -1059,6 +1231,7 @@
             <button onclick="playVideoLoop(this)" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 rounded-xl text-xs">▶ Play Loop</button>
             <span class="text-zinc-500">4 frames • 2s loop</span>
           </div>
+          <button onclick="loadGenVideoFrameToStudio(this)" class="mt-1 w-full text-[9px] py-0.5 rounded bg-white/10 hover:bg-white/20">Edit representative frame in Studio →</button>
         </div>
       `;
 
@@ -1370,6 +1543,560 @@
 
     // Expose a few helpers for console / future
     window.VIZ_CREATORS = { refreshPoints, filterCommunity };
+
+    // =====================================================
+    // STUDIO EDITOR FUNCTIONS (Audio cut + Image edit + Library + Transfers)
+    // All tied to shared Supabase profile for seamless music/creator use (rights + gens)
+    // =====================================================
+
+    function loadStudioAssetsFromProfile() {
+      // Called on auth; loadUserProfile already primed studioAssets
+      if (!studioAssets || !studioAssets.length) {
+        try {
+          const uid = currentUser ? currentUser.id : 'anon';
+          studioAssets = JSON.parse(localStorage.getItem('viz_studio_assets_' + uid) || '[]');
+        } catch (_) { studioAssets = []; }
+      }
+      renderStudioLibrary();
+    }
+
+    function persistStudioAssets() {
+      if (!currentUser) {
+        localStorage.setItem('viz_studio_assets', JSON.stringify(studioAssets));
+        return;
+      }
+      const uid = currentUser.id;
+      localStorage.setItem('viz_studio_assets_' + uid, JSON.stringify(studioAssets));
+      // Also attempt profile (user may need to add studio_library jsonb col to profiles table)
+      try {
+        if (typeof saveProfile === 'function') {
+          saveProfile({ studio_library: studioAssets }).catch(() => {});
+        }
+      } catch (_) {}
+    }
+
+    function populateStudioAudioSelect() {
+      const sel = document.getElementById('studio-audio-select');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">— Select owned track from shared Music Library —</option>';
+      if (!userProfile) return;
+      const libIds = userProfile.music_library || [];
+      const owned = studioAllTracks.filter(t => libIds.includes(t.id));
+      owned.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.title + ' — ' + t.artist + ' (' + (t.duration || '') + ')';
+        sel.appendChild(opt);
+      });
+      if (owned.length === 0) {
+        const o = document.createElement('option');
+        o.value = '';
+        o.textContent = '(No tracks yet — buy in Music dashboard first)';
+        sel.appendChild(o);
+      }
+    }
+
+    function loadAudioForEdit(trackId) {
+      const sel = document.getElementById('studio-audio-select');
+      const audioEl = document.getElementById('studio-audio');
+      if (!trackId || !audioEl) return;
+      const track = studioAllTracks.find(t => t.id == trackId);
+      if (!track) return;
+      currentEditingTrack = track;
+      audioEl.src = track.src;
+      audioEl.load();
+      // set sensible trim defaults based on duration string rough
+      const durStr = (track.duration || '3:00').split(':');
+      const maxSec = (parseInt(durStr[0]) || 3) * 60 + (parseInt(durStr[1]) || 0);
+      const startR = document.getElementById('audio-start');
+      const endR = document.getElementById('audio-end');
+      if (startR) { startR.max = maxSec; startR.value = 0; }
+      if (endR) { endR.max = maxSec; endR.value = Math.min(30, maxSec); }
+      updateAudioTrim();
+      // auto play brief preview
+      setTimeout(() => { try { audioEl.play().then(() => setTimeout(() => audioEl.pause(), 1800)); } catch(e){} }, 400);
+    }
+
+    function updateAudioTrim() {
+      const startR = document.getElementById('audio-start');
+      const endR = document.getElementById('audio-end');
+      const sv = document.getElementById('audio-start-val');
+      const ev = document.getElementById('audio-end-val');
+      if (!startR || !endR) return;
+      let s = parseFloat(startR.value) || 0;
+      let e = parseFloat(endR.value) || 30;
+      if (e <= s) e = s + 1;
+      if (sv) sv.textContent = s.toFixed(1);
+      if (ev) ev.textContent = e.toFixed(1);
+      // clamp end max etc handled by inputs
+    }
+
+    function previewTrim() {
+      const audioEl = document.getElementById('studio-audio');
+      if (!audioEl || !currentEditingTrack) { alert('Select a track first.'); return; }
+      const start = parseFloat(document.getElementById('audio-start').value) || 0;
+      const end = parseFloat(document.getElementById('audio-end').value) || 30;
+      audioEl.currentTime = start;
+      audioEl.play().catch(()=>{});
+      const ms = (end - start) * 1000;
+      setTimeout(() => {
+        if (audioEl && !audioEl.paused) audioEl.pause();
+      }, Math.max(300, ms));
+    }
+
+    function exportTrimmedAudio() {
+      if (!currentEditingTrack) { alert('Load a track into the cutter first.'); return; }
+      const start = parseFloat(document.getElementById('audio-start').value) || 0;
+      const end = parseFloat(document.getElementById('audio-end').value) || 30;
+      const src = currentEditingTrack.src;
+      doTrimExport(src, start, end, currentEditingTrack.title);
+    }
+
+    async function doTrimExport(src, startSec, endSec, baseName) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const resp = await fetch(src);
+        const buf = await resp.arrayBuffer();
+        const decoded = await ctx.decodeAudioData(buf);
+        const sr = decoded.sampleRate;
+        const ch = decoded.numberOfChannels;
+        const s0 = Math.max(0, Math.floor(startSec * sr));
+        const s1 = Math.min(decoded.length, Math.floor(endSec * sr));
+        const newLen = Math.max(1, s1 - s0);
+        const out = ctx.createBuffer(ch, newLen, sr);
+        for (let c = 0; c < ch; c++) {
+          const srcDat = decoded.getChannelData(c);
+          const dst = out.getChannelData(c);
+          for (let i = 0; i < newLen; i++) dst[i] = srcDat[s0 + i];
+        }
+        const wavBlob = bufferToWav(out);
+        const url = URL.createObjectURL(wavBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (baseName || 'clip') + '-trim-' + startSec.toFixed(1) + '-' + endSec.toFixed(1) + '.wav';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast && showToast('Trimmed WAV exported (demo local)');
+      } catch (err) {
+        console.error('Trim export failed (CORS/fetch on beats?):', err);
+        alert('Export needs the audio file fetchable. For demo, the preview trim + save meta works. (beats/ served same origin)');
+        // Fallback: still allow save the edit meta
+        saveCurrentAudioEdit();
+      }
+    }
+
+    // Minimal WAV encoder (PCM 16-bit)
+    function bufferToWav(buffer) {
+      const numChan = buffer.numberOfChannels;
+      const len = buffer.length;
+      const sr = buffer.sampleRate;
+      const bytesPerSample = 2;
+      const blockAlign = numChan * bytesPerSample;
+      const byteRate = sr * blockAlign;
+      const dataSize = len * blockAlign;
+      const bufferSize = 44 + dataSize;
+      const ab = new ArrayBuffer(bufferSize);
+      const dv = new DataView(ab);
+      let p = 0;
+      const writeStr = (s) => { for (let i=0;i<s.length;i++) dv.setUint8(p++, s.charCodeAt(i)); };
+      const write16 = (v) => { dv.setUint16(p, v, true); p += 2; };
+      const write32 = (v) => { dv.setUint32(p, v, true); p += 4; };
+      writeStr('RIFF'); write32(bufferSize - 8); writeStr('WAVE');
+      writeStr('fmt '); write32(16); write16(1); write16(numChan);
+      write32(sr); write32(byteRate); write16(blockAlign); write16(16);
+      writeStr('data'); write32(dataSize);
+      const chans = [];
+      for (let c=0; c<numChan; c++) chans.push(buffer.getChannelData(c));
+      for (let i=0; i<len; i++) {
+        for (let c=0; c<numChan; c++) {
+          let s = Math.max(-1, Math.min(1, chans[c][i]));
+          s = s < 0 ? s * 0x8000 : s * 0x7FFF;
+          dv.setInt16(p, s | 0, true);
+          p += 2;
+        }
+      }
+      return new Blob([ab], { type: 'audio/wav' });
+    }
+
+    function saveCurrentAudioEdit() {
+      if (!currentEditingTrack) { alert('Select + load a track in Audio Cutter first.'); return; }
+      const start = parseFloat(document.getElementById('audio-start').value) || 0;
+      const end = parseFloat(document.getElementById('audio-end').value) || 30;
+      const asset = {
+        id: Date.now(),
+        type: 'audio',
+        name: currentEditingTrack.title + ' (trim ' + start.toFixed(1) + '-' + end.toFixed(1) + 's)',
+        src: currentEditingTrack.src,
+        meta: { trackId: currentEditingTrack.id, start, end }
+      };
+      studioAssets.unshift(asset);
+      renderStudioLibrary();
+      persistStudioAssets();
+      alert('Saved trimmed audio edit to Studio Library. Re-open editor to tweak.');
+    }
+
+    function renderStudioLibrary() {
+      const list = document.getElementById('studio-library-list');
+      const cnt = document.getElementById('studio-asset-count');
+      if (!list || !cnt) return;
+      list.innerHTML = '';
+      cnt.textContent = studioAssets.length;
+      if (studioAssets.length === 0) {
+        list.innerHTML = `<div class="text-zinc-500 text-[10px] p-2 border border-white/10 rounded">No saved edits yet. Cut a purchased track or export from image editor / gens.</div>`;
+        return;
+      }
+      studioAssets.forEach((a, idx) => {
+        const el = document.createElement('div');
+        el.className = `flex items-center gap-2 bg-zinc-950 border border-white/10 rounded-xl p-1.5 text-xs`;
+        if (a.type === 'audio') {
+          el.innerHTML = `
+            <i class="fa-solid fa-music text-cyan-400 w-4"></i>
+            <span class="flex-1 truncate">${a.name}</span>
+            <button class="px-2 py-0.5 bg-cyan-600 rounded text-[10px]" onclick="reopenAudioEdit(${idx})">Re-trim</button>
+            <button class="px-2 py-0.5 border rounded text-[10px]" onclick="downloadStudioAsset(${idx})">DL</button>
+            <button class="px-1 text-red-400" onclick="removeStudioAsset(${idx})">×</button>
+          `;
+        } else {
+          el.innerHTML = `
+            <i class="fa-solid fa-image text-purple-400 w-4"></i>
+            <span class="flex-1 truncate">${a.name}</span>
+            <button class="px-2 py-0.5 bg-purple-600 rounded text-[10px]" onclick="reopenImageEdit(${idx})">Edit</button>
+            <button class="px-2 py-0.5 border rounded text-[10px]" onclick="downloadStudioAsset(${idx})">DL</button>
+            <button class="px-1 text-red-400" onclick="removeStudioAsset(${idx})">×</button>
+          `;
+        }
+        list.appendChild(el);
+      });
+    }
+
+    function removeStudioAsset(idx) {
+      studioAssets.splice(idx, 1);
+      renderStudioLibrary();
+      persistStudioAssets();
+    }
+
+    function clearStudioLibrary() {
+      if (!confirm('Clear all local studio edits?')) return;
+      studioAssets = [];
+      renderStudioLibrary();
+      persistStudioAssets();
+    }
+
+    function downloadStudioAsset(idx) {
+      const a = studioAssets[idx];
+      if (!a) return;
+      if (a.type === 'image' && a.data) {
+        const dl = document.createElement('a');
+        dl.href = a.data;
+        dl.download = (a.name || 'frame') + '.png';
+        dl.click();
+      } else if (a.src) {
+        // audio: just open original or note (trim meta not re-export here)
+        const dl = document.createElement('a');
+        dl.href = a.src;
+        dl.download = (a.name || 'track') + '.wav';
+        dl.click();
+      }
+    }
+
+    function reopenAudioEdit(idx) {
+      const a = studioAssets[idx];
+      if (!a || a.type !== 'audio') return;
+      const sel = document.getElementById('studio-audio-select');
+      if (sel) sel.value = a.meta ? a.meta.trackId : '';
+      const track = studioAllTracks.find(t => t.id === (a.meta && a.meta.trackId));
+      if (!track) return;
+      currentEditingTrack = track;
+      const audioEl = document.getElementById('studio-audio');
+      audioEl.src = track.src;
+      audioEl.load();
+      const sr = document.getElementById('audio-start');
+      const er = document.getElementById('audio-end');
+      if (sr) sr.value = a.meta.start || 0;
+      if (er) er.value = a.meta.end || 30;
+      updateAudioTrim();
+      document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'});
+    }
+
+    function reopenImageEdit(idx) {
+      const a = studioAssets[idx];
+      if (!a || a.type !== 'image' || !a.data) return;
+      const c = document.getElementById('studio-canvas');
+      const ctx = c.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        currentCanvasState = { dataUrl: a.data };
+        document.getElementById('studio-overlay-text').value = a.name || '';
+        document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'});
+      };
+      img.src = a.data;
+    }
+
+    function initStudioCanvas() {
+      const c = document.getElementById('studio-canvas');
+      if (!c) return;
+      const ctx = c.getContext('2d', { alpha: true });
+      // default cyberpunk gradient frame
+      const g = ctx.createLinearGradient(0, 0, c.width, c.height);
+      g.addColorStop(0, '#312e81');
+      g.addColorStop(0.5, '#1e3a8a');
+      g.addColorStop(1, '#164e63');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, c.width, c.height);
+      // scanlines / grid for vibe
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      for (let y = 8; y < c.height; y += 18) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(c.width, y); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '10px monospace';
+      ctx.fillText('VIZALOK • STUDIO', 10, 18);
+      currentCanvasState = { type: 'gradient' };
+      // wire filter inputs if not
+      ['filt-bright','filt-contrast','filt-sat','filt-hue'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el._wired) {
+          el._wired = true;
+          el.oninput = applyImageFilters;
+        }
+      });
+    }
+
+    function applyImageFilters() {
+      const c = document.getElementById('studio-canvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const b = document.getElementById('filt-bright').value || 1;
+      const ct = document.getElementById('filt-contrast').value || 1;
+      const s = document.getElementById('filt-sat').value || 1;
+      const h = document.getElementById('filt-hue').value || 0;
+      ctx.save();
+      ctx.filter = `brightness(${b}) contrast(${ct}) saturate(${s}) hue-rotate(${h}deg)`;
+      // re-paint base under filter by drawing previous snapshot or default
+      if (currentCanvasState && currentCanvasState.dataUrl) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0,0,c.width,c.height);
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          ctx.restore();
+        };
+        img.src = currentCanvasState.dataUrl;
+      } else {
+        // repaint default gradient (simple)
+        ctx.clearRect(0,0,c.width,c.height);
+        const g = ctx.createLinearGradient(0,0,c.width,c.height);
+        g.addColorStop(0, '#312e81'); g.addColorStop(1, '#164e63');
+        ctx.fillStyle = g; ctx.fillRect(0,0,c.width,c.height);
+        ctx.restore();
+      }
+    }
+
+    function resetCanvasEditor() {
+      const c = document.getElementById('studio-canvas');
+      if (!c) return;
+      ['filt-bright','filt-contrast','filt-sat','filt-hue'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = (id==='filt-hue'?'0':'1');
+      });
+      initStudioCanvas();
+    }
+
+    function applyCropToCanvas() {
+      const c = document.getElementById('studio-canvas');
+      const ctx = c.getContext('2d');
+      // simple "center 70%" crop baked to full size
+      const tmp = document.createElement('canvas');
+      tmp.width = c.width; tmp.height = c.height;
+      const tctx = tmp.getContext('2d');
+      const pad = Math.floor(c.width * 0.15);
+      tctx.drawImage(c, pad, Math.floor(c.height*0.15), c.width - pad*2, c.height - c.height*0.3, 0, 0, c.width, c.height);
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.drawImage(tmp, 0, 0);
+      currentCanvasState = { dataUrl: c.toDataURL('image/png') };
+    }
+
+    function addTextOverlayToCanvas() {
+      const c = document.getElementById('studio-canvas');
+      const ctx = c.getContext('2d');
+      const txt = document.getElementById('studio-overlay-text').value.trim() || 'VIZALOK FRAME';
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = 'bold 14px system-ui, monospace';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,0.6)';
+      ctx.shadowBlur = 3;
+      ctx.fillText(txt, c.width/2, c.height - 14);
+      ctx.restore();
+      currentCanvasState = { dataUrl: c.toDataURL('image/png') };
+    }
+
+    function exportCanvasToLibrary() {
+      const c = document.getElementById('studio-canvas');
+      if (!c) return;
+      const data = c.toDataURL('image/png');
+      const name = (document.getElementById('studio-overlay-text').value.trim() || 'edited-frame-' + Date.now());
+      studioAssets.unshift({ id: Date.now(), type: 'image', name, data });
+      renderStudioLibrary();
+      persistStudioAssets();
+    }
+
+    function loadUploadedImageToCanvas(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const c = document.getElementById('studio-canvas');
+      const ctx = c.getContext('2d');
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        currentCanvasState = { dataUrl: c.toDataURL('image/png') };
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
+    function loadGenImageToStudio(el) {
+      if (!el) return;
+      const c = document.getElementById('studio-canvas');
+      if (!c) { document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'}); return; }
+      const ctx = c.getContext('2d');
+      const bg = el.style.background || '';
+      ctx.clearRect(0,0,c.width,c.height);
+      // recreate similar gradient vibe
+      const g = ctx.createLinearGradient(0,0,c.width,c.height);
+      g.addColorStop(0, '#4c1d95');
+      g.addColorStop(1, '#1e3a8a');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,c.width,c.height);
+      // subtle lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      for (let i=0; i<4; i++) { ctx.beginPath(); ctx.moveTo(0, 12+i*22); ctx.lineTo(c.width, 12+i*22); ctx.stroke(); }
+      currentCanvasState = { dataUrl: c.toDataURL('image/png'), prompt: el.dataset.prompt || '' };
+      document.getElementById('studio-overlay-text').value = (el.dataset.prompt || '').slice(0,28);
+      document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'});
+      // auto apply a slight default filter for "edit"
+      setTimeout(() => {
+        const hb = document.getElementById('filt-bright'); if (hb) hb.value = '1.1';
+        const hs = document.getElementById('filt-sat'); if (hs) hs.value = '1.15';
+        applyImageFilters();
+      }, 60);
+    }
+
+    function loadGenVideoFrameToStudio(btn) {
+      const container = btn.parentElement;
+      if (!container) return;
+      const c = document.getElementById('studio-canvas');
+      if (!c) { document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'}); return; }
+      const ctx = c.getContext('2d');
+      // pick first child frame bg or default
+      const firstFrame = container.querySelector('.grid > div');
+      const bg = firstFrame ? firstFrame.style.background : 'linear-gradient(135deg,#4c1d95,#1e3a8a)';
+      ctx.clearRect(0,0,c.width,c.height);
+      const g = ctx.createLinearGradient(0,0,c.width,c.height);
+      g.addColorStop(0, '#4c1d95'); g.addColorStop(1, '#1e3a8a');
+      ctx.fillStyle = g; ctx.fillRect(0,0,c.width,c.height);
+      currentCanvasState = { dataUrl: c.toDataURL() };
+      document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'});
+    }
+
+    function importAllOwnedToStudio() {
+      if (!userProfile) { alert('Sign in first.'); return; }
+      const lib = userProfile.music_library || [];
+      const toAdd = studioAllTracks.filter(t => lib.includes(t.id));
+      let added = 0;
+      toAdd.forEach(t => {
+        if (!studioAssets.some(a => a.meta && a.meta.trackId === t.id && a.type==='audio')) {
+          studioAssets.push({
+            id: Date.now() + added,
+            type: 'audio',
+            name: t.title + ' (full)',
+            src: t.src,
+            meta: { trackId: t.id, start: 0, end: 30 }
+          });
+          added++;
+        }
+      });
+      if (added) {
+        renderStudioLibrary();
+        persistStudioAssets();
+      }
+      populateStudioAudioSelect();
+    }
+
+    function checkStudioTransfer() {
+      // Cross-page transfer from music dashboard (localStorage handoff)
+      try {
+        const raw = localStorage.getItem('viz_studio_transfer');
+        if (!raw) return;
+        localStorage.removeItem('viz_studio_transfer');
+        const data = JSON.parse(raw);
+        if (data && data.type === 'music' && data.id != null) {
+          // auto add the track as asset and open cutter
+          const track = studioAllTracks.find(t => t.id == data.id);
+          if (track && userProfile && (userProfile.music_library || []).includes(track.id)) {
+            const exists = studioAssets.some(a => a.meta && a.meta.trackId === track.id);
+            if (!exists) {
+              studioAssets.unshift({ id: Date.now(), type:'audio', name: track.title + ' (imported)', src: track.src, meta: {trackId: track.id, start:0, end:30} });
+              persistStudioAssets();
+              renderStudioLibrary();
+            }
+            // load into cutter
+            const sel = document.getElementById('studio-audio-select');
+            if (sel) sel.value = track.id;
+            loadAudioForEdit(track.id);
+            document.getElementById('studio-editor').scrollIntoView({behavior:'smooth'});
+          } else {
+            alert('Track transfer received but not in your shared Music Library yet. Buy it in Music dashboard first.');
+          }
+        }
+      } catch (e) { console.warn('transfer check', e); }
+    }
+
+    // Also expose for music tab direct calls if needed
+    window.transferToCreatorsStudio = function(trackId) {
+      localStorage.setItem('viz_studio_transfer', JSON.stringify({type:'music', id: trackId}));
+      window.open('../creators/index.html#studio-editor', '_blank');
+    };
+
+    // Convenience toast if not present
+    if (typeof window.showToast !== 'function') {
+      window.showToast = function(msg) {
+        const t = document.createElement('div');
+        t.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[200] text-xs px-4 py-1.5 rounded-3xl bg-zinc-800 border border-white/10';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 1600);
+      };
+    }
+
+    // Late safety init for studio (bootstrap/listener may have fired before these decls parsed)
+    setTimeout(() => {
+      try {
+        if (typeof populateStudioAudioSelect === 'function') populateStudioAudioSelect();
+        if (typeof initStudioCanvas === 'function') initStudioCanvas();
+        if (typeof renderStudioLibrary === 'function') renderStudioLibrary();
+        if (currentUser && typeof checkStudioTransfer === 'function') checkStudioTransfer();
+      } catch (e) { /* ignore */ }
+    }, 180);
+
+    // Expose all studio handlers to window/global so that inline onclick= / oninput= attributes
+    // (from the added HTML) resolve correctly even inside <script type="module">
+    const __studioHandlers = {
+      loadAudioForEdit, updateAudioTrim, previewTrim, exportTrimmedAudio, saveCurrentAudioEdit,
+      renderStudioLibrary, removeStudioAsset, clearStudioLibrary, downloadStudioAsset,
+      reopenAudioEdit, reopenImageEdit, importAllOwnedToStudio,
+      initStudioCanvas, applyImageFilters, resetCanvasEditor, applyCropToCanvas,
+      addTextOverlayToCanvas, exportCanvasToLibrary, loadUploadedImageToCanvas,
+      loadGenImageToStudio, loadGenVideoFrameToStudio, populateStudioAudioSelect
+    };
+    Object.keys(__studioHandlers).forEach(k => { if (__studioHandlers[k]) window[k] = __studioHandlers[k]; });
+
   </script>
 </body>
 </html>
