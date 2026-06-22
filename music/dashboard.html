@@ -508,21 +508,23 @@
       gateSwitchLink.addEventListener('click', (e) => {
         e.preventDefault();
         isGateLoginMode = !isGateLoginMode;
-        gateError.classList.add('hidden');
-        gateError.textContent = '';
+        if (gateError) {
+          gateError.classList.add('hidden');
+          gateError.textContent = '';
+        }
 
         if (isGateLoginMode) {
-          gateBtn.textContent = 'Sign In';
-          gateTitle.textContent = 'Sign in to access your Dashboard';
+          if (gateBtn) gateBtn.textContent = 'Sign In';
+          if (gateTitle) gateTitle.textContent = 'Sign in to access your Dashboard';
           if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-          gateSwitchText.textContent = "Don't have an account?";
-          gateSwitchLink.textContent = 'Sign Up';
+          if (gateSwitchText) gateSwitchText.textContent = "Don't have an account?";
+          if (gateSwitchLink) gateSwitchLink.textContent = 'Sign Up';
         } else {
-          gateBtn.textContent = 'Create Account';
-          gateTitle.textContent = 'Create your Music Producer Account';
+          if (gateBtn) gateBtn.textContent = 'Create Account';
+          if (gateTitle) gateTitle.textContent = 'Create your Music Producer Account';
           if (gateUsernameGroup) gateUsernameGroup.classList.remove('hidden');
-          gateSwitchText.textContent = 'Already have an account?';
-          gateSwitchLink.textContent = 'Sign In';
+          if (gateSwitchText) gateSwitchText.textContent = 'Already have an account?';
+          if (gateSwitchLink) gateSwitchLink.textContent = 'Sign In';
         }
       });
     }
@@ -595,11 +597,11 @@
             } else {
               alert('Account created! Check your email for confirmation if required, then sign in to access shared profile (music rights + points for image gen in Creators).');
               isGateLoginMode = true;
-              gateBtn.textContent = 'Sign In';
-              gateTitle.textContent = 'Sign in to access your Dashboard';
+              if (gateBtn) gateBtn.textContent = 'Sign In';
+              if (gateTitle) gateTitle.textContent = 'Sign in to access your Dashboard';
               if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-              gateSwitchText.textContent = "Don't have an account?";
-              gateSwitchLink.textContent = 'Sign Up';
+              if (gateSwitchText) gateSwitchText.textContent = "Don't have an account?";
+              if (gateSwitchLink) gateSwitchLink.textContent = 'Sign Up';
             }
           }
         } catch (error) {
@@ -702,6 +704,9 @@
         userBalance = userProfile.points || userBalance;
         if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
       }
+      // Re-render collection (and other profile-dependent UI) now that we have fresh data from Supabase.
+      // This ensures login actually populates "Your Music Library" etc. The initial init in hide may have run with stale profile.
+      if (typeof renderMyCollection === 'function') renderMyCollection();
     }
 
     async function saveProfile(updates) {
