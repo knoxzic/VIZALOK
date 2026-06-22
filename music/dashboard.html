@@ -173,45 +173,8 @@
 </head>
 <body class="bg-zinc-950 text-white min-h-screen cyber-bg">
 
-  <!-- Auth Gate - Sign in / Sign up required (Supabase, like creators) -->
-  <div id="auth-gate" class="fixed inset-0 bg-zinc-950 flex items-center justify-center z-[200]">
-    <div class="max-w-md w-full px-6">
-      <div class="text-center mb-8">
-        <img src="../logo.png" alt="VIZALOK" class="w-20 h-20 mx-auto mb-4 object-contain">
-        <h1 class="text-4xl font-black tracking-[-1px]">VIZALOK Music</h1>
-        <p class="text-purple-300 mt-1">NFT Trade Space for Producers</p>
-      </div>
-
-      <div class="bg-zinc-900 border border-white/10 rounded-3xl p-8">
-        <h2 id="gate-form-title" class="text-2xl font-semibold mb-6 text-center">Sign in to access your Dashboard</h2>
-        
-        <div id="gate-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
-
-        <form id="gate-auth-form">
-          <div class="mb-4">
-            <input type="email" id="gate-email" placeholder="Email address" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
-          </div>
-          <div class="mb-4">
-            <input type="password" id="gate-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
-          </div>
-          <div id="gate-username-group" class="hidden mb-4">
-            <input type="text" id="gate-username" placeholder="Display Name (for producers)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500">
-          </div>
-          
-          <button type="submit" id="gate-auth-btn" class="w-full py-3 bg-white text-zinc-950 font-semibold rounded-2xl hover:bg-zinc-200 transition">Sign In</button>
-        </form>
-
-        <p class="text-center mt-6 text-sm text-zinc-400">
-          <span id="gate-switch-text">Don't have an account?</span> 
-          <a href="#" id="gate-switch-link" class="text-purple-400 hover:underline font-medium">Sign Up</a>
-        </p>
-      </div>
-
-      <p class="text-center mt-6 text-xs text-zinc-500">
-        <a href="../index.html" class="underline hover:text-zinc-400">← Back to VIZALOK</a>
-      </p>
-    </div>
-  </div>
+  <!-- Auth is now optional / non-blocking. Sign in via top-right or profile menu for shared Supabase profile (points + music_library across Creators). 
+       Full portal is always viewable. Demo/local state used if not signed in. -->
 
   <!-- Top Navigation -->
   <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-b border-white/10">
@@ -240,20 +203,9 @@
         </div>
       </div>
 
-      <!-- Right: User Signed In (profile populated from Supabase after login for seamless share) -->
-      <div class="flex items-center gap-3">
-        <div onclick="showUserMenu()" class="flex items-center gap-2.5 px-3 py-1.5 bg-zinc-900/70 hover:bg-zinc-900 border border-white/10 rounded-3xl cursor-pointer transition-all">
-          <div id="nav-avatar" class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">U</div>
-          <div class="hidden md:block">
-            <div id="nav-user-name" class="text-xs font-medium">User</div>
-            <div class="text-[10px] text-emerald-400 -mt-0.5">Producer</div>
-          </div>
-          <div class="flex items-center gap-1 text-xs bg-zinc-950 px-1.5 rounded-xl py-px border border-white/10">
-            <span id="user-balance">0</span>
-            <span class="text-purple-400">pts</span>
-          </div>
-          <i class="fa-solid fa-chevron-down text-xs text-white/50 ml-0.5"></i>
-        </div>
+      <!-- Right: User area - always visible. Click for menu. Sign in optional for shared profile/points. -->
+      <div id="nav-user-area" class="flex items-center gap-3">
+        <!-- Populated by JS: either Sign In button or profile pill -->
       </div>
     </div>
   </nav>
@@ -460,8 +412,44 @@
     </div>
   </div>
 
+  <!-- Optional Sign In / Sign Up Modal (non-blocking, for shared profile + points with Creators) -->
+  <div id="auth-modal" onclick="if (event.target.id === 'auth-modal') closeAuthModal()" class="hidden fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4">
+    <div onclick="event.stopImmediatePropagation()" class="glass border border-white/10 rounded-3xl p-8 w-full max-w-md">
+      <div class="text-center mb-6">
+        <img src="../logo.png" alt="VIZALOK" class="w-16 h-16 mx-auto mb-2 object-contain">
+        <h2 id="auth-modal-title" class="text-2xl font-semibold">Sign in to VIZALOK Music</h2>
+        <p class="text-sm text-zinc-400 mt-1">Optional for shared points &amp; music library with the Creators portal</p>
+      </div>
+
+      <div id="auth-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
+
+      <form id="auth-form">
+        <div class="mb-4">
+          <input type="email" id="auth-email" placeholder="Email address" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+        </div>
+        <div class="mb-4">
+          <input type="password" id="auth-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+        </div>
+        <div id="auth-username-group" class="hidden mb-4">
+          <input type="text" id="auth-username" placeholder="Display Name (for producers)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500">
+        </div>
+
+        <button type="submit" id="auth-btn" class="w-full py-3 bg-white text-zinc-950 font-semibold rounded-2xl hover:bg-zinc-200 transition">Sign In</button>
+      </form>
+
+      <p class="text-center mt-6 text-sm text-zinc-400">
+        <span id="auth-switch-text">Don't have an account?</span> 
+        <a href="#" id="auth-switch-link" class="text-purple-400 hover:underline font-medium">Sign Up</a>
+      </p>
+
+      <p class="text-center mt-4 text-[10px] text-zinc-500">
+        Sign in for persistent profile across Music + Creators. You can browse and use the portal without signing in (demo data).
+      </p>
+    </div>
+  </div>
+
   <script>
-    // Supabase setup (shared with Creators for points and auth)
+    // Supabase setup (shared with Creators for points and auth) - rebuilt for bypass
     const supabaseUrl = 'https://mynheowndjbojphrskju.supabase.co';
     const supabaseAnonKey = 'sb_publishable_T-T25tAbgccVBRnMxvRWIw_sDOjPM8L';
     let supabase;
@@ -469,267 +457,78 @@
       if (typeof window.supabase !== 'undefined' && typeof window.supabase.createClient === 'function') {
         supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
       } else {
-        throw new Error('Supabase UMD library not loaded into window.supabase');
+        throw new Error('Supabase UMD library not loaded');
       }
     } catch (e) {
-      console.error('%c[Supabase] Connection/library init failed:', 'color:red', e);
+      console.warn('%c[Supabase] Demo mode (full portal usable without sign in):', 'color:orange', e);
       supabase = null;
-    }
-
-    if (!supabase) {
-      // Surface connection problem immediately in the gate so user sees "cannot log on" reason
-      setTimeout(() => {
-        const errEl = document.getElementById('gate-error');
-        if (errEl) {
-          errEl.textContent = 'Cannot connect to authentication service (Supabase). Check your internet connection, try refreshing, or the service may be temporarily unavailable.';
-          errEl.classList.remove('hidden');
-        }
-        const btn = document.getElementById('gate-auth-btn');
-        if (btn) btn.disabled = true;
-      }, 50);
     }
 
     // Tailwind script
     function initTailwind() {
       // Already loaded via CDN
     }
-    
-    // Gate auth logic (Supabase sign in / sign up)
-    let isGateLoginMode = true;
-    const gateForm = document.getElementById('gate-auth-form');
-    const gateError = document.getElementById('gate-error');
-    const gateTitle = document.getElementById('gate-form-title');
-    const gateBtn = document.getElementById('gate-auth-btn');
-    const gateSwitchLink = document.getElementById('gate-switch-link');
-    const gateSwitchText = document.getElementById('gate-switch-text');
-    const gateUsernameGroup = document.getElementById('gate-username-group');
 
-    if (gateSwitchLink) {
-      gateSwitchLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        isGateLoginMode = !isGateLoginMode;
-        if (gateError) {
-          gateError.classList.add('hidden');
-          gateError.textContent = '';
-        }
-
-        if (isGateLoginMode) {
-          if (gateBtn) gateBtn.textContent = 'Sign In';
-          if (gateTitle) gateTitle.textContent = 'Sign in to access your Dashboard';
-          if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-          if (gateSwitchText) gateSwitchText.textContent = "Don't have an account?";
-          if (gateSwitchLink) gateSwitchLink.textContent = 'Sign Up';
-        } else {
-          if (gateBtn) gateBtn.textContent = 'Create Account';
-          if (gateTitle) gateTitle.textContent = 'Create your Music Producer Account';
-          if (gateUsernameGroup) gateUsernameGroup.classList.remove('hidden');
-          if (gateSwitchText) gateSwitchText.textContent = 'Already have an account?';
-          if (gateSwitchLink) gateSwitchLink.textContent = 'Sign In';
-        }
-      });
-    }
-
-    if (gateForm) {
-      gateForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        gateError.classList.add('hidden');
-        gateError.textContent = '';
-
-        if (!supabase) {
-          gateError.textContent = 'Auth service not connected. Cannot log on right now (see console for details). Refresh or check network.';
-          gateError.classList.remove('hidden');
-          return;
-        }
-
-        const email = document.getElementById('gate-email').value.trim();
-        const password = document.getElementById('gate-password').value;
-        const username = document.getElementById('gate-username') ? document.getElementById('gate-username').value.trim() : '';
-
-        if (!email || !password) {
-          gateError.textContent = 'Please enter email and password.';
-          gateError.classList.remove('hidden');
-          return;
-        }
-        if (!isGateLoginMode && !username) {
-          gateError.textContent = 'Please enter a display name for sign up.';
-          gateError.classList.remove('hidden');
-          return;
-        }
-        if (password.length < 6) {
-          gateError.textContent = 'Password must be at least 6 characters.';
-          gateError.classList.remove('hidden');
-          return;
-        }
-
-        gateBtn.disabled = true;
-        gateBtn.textContent = isGateLoginMode ? 'Signing in...' : 'Creating account...';
-
-        try {
-          if (isGateLoginMode) {
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            hideAuthGate();
-          } else {
-            const { data: signUpData, error } = await supabase.auth.signUp({
-              email,
-              password,
-              options: { data: { full_name: username } }
-            });
-            if (error) throw error;
-            // Create profile immediately for seamless access across portals (music + creators)
-            // wrapped so RLS/permission on pre-confirm doesn't block the account creation
-            if (signUpData.user) {
-              try {
-                await supabase.from('profiles').upsert({
-                  id: signUpData.user.id,
-                  full_name: username || signUpData.user.email.split('@')[0],
-                  email: signUpData.user.email,
-                  points: 25,
-                  music_library: []
-                }, { onConflict: 'id' });
-              } catch (pErr) {
-                console.warn('Profile pre-upsert on signUp skipped (will create on first login):', pErr?.message || pErr);
-              }
-            }
-            if (signUpData.session) {
-              // No email confirmation required in Supabase settings - auto login seamless
-              hideAuthGate();
-            } else {
-              alert('Account created! Check your email for confirmation if required, then sign in to access shared profile (music rights + points for image gen in Creators).');
-              isGateLoginMode = true;
-              if (gateBtn) gateBtn.textContent = 'Sign In';
-              if (gateTitle) gateTitle.textContent = 'Sign in to access your Dashboard';
-              if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
-              if (gateSwitchText) gateSwitchText.textContent = "Don't have an account?";
-              if (gateSwitchLink) gateSwitchLink.textContent = 'Sign Up';
-            }
-          }
-        } catch (error) {
-          console.error(error);
-          let msg = error.message || 'Authentication failed.';
-          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            msg = 'Incorrect email or password.';
-          } else if (error.code === 'auth/email-already-in-use') {
-            msg = 'This email is already registered.';
-          } else if (error.code === 'auth/invalid-email') {
-            msg = 'Invalid email address.';
-          } else if (error.message && /confirm|not confirmed|email_not_confirmed/i.test(error.message)) {
-            msg = 'Email not confirmed yet. Check your inbox (and spam folder) for the confirmation link, click it, then come back and sign in.';
-          } else if (!navigator.onLine || (error.message && /network|fetch|connect/i.test(error.message))) {
-            msg = 'Connection problem reaching the auth service. Check your internet and try again.';
-          }
-          gateError.textContent = msg;
-          gateError.classList.remove('hidden');
-        } finally {
-          gateBtn.disabled = false;
-          gateBtn.textContent = isGateLoginMode ? 'Sign In' : 'Create Account';
-        }
-      });
-    }
-
-    function hideAuthGate() {
-      const gate = document.getElementById('auth-gate');
-      if (gate) gate.style.display = 'none';
-      // Load user profile and init dashboard (guarded inside the functions)
-      if (typeof loadUserProfile === 'function') loadUserProfile();
-      if (typeof updateNavUI === 'function') updateNavUI();
-      if (typeof initDashboardContent === 'function') initDashboardContent();
-    }
-
-    // Bootstrap session (only if Supabase client connected)
-    if (supabase) {
-      (async () => {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            hideAuthGate();
-          }
-        } catch (e) {
-          console.warn('Supabase getSession failed (connection?):', e);
-        }
-      })();
-
-      // Global auth listener to hide gate
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (session) {
-          hideAuthGate();
-        }
-      });
-    }
-
-    // Supabase profile functions
+    // === REBUILT: No blocking gate. Portal fully viewable + all buttons working on load. 
+    // Sign in (optional) via top-right "Sign In" for Supabase shared profile/points with Creators.
+    let isAuthLoginMode = true;
     let userProfile = null;
 
-    async function loadUserProfile() {
+    function openAuthModal() { const m = document.getElementById('auth-modal'); if (m) { m.classList.remove('hidden'); m.classList.add('flex'); isAuthLoginMode = true; updateAuthModalUI(); const err = document.getElementById('auth-error'); if (err) { err.classList.add('hidden'); err.textContent = ''; } } }
+    function closeAuthModal() { const m = document.getElementById('auth-modal'); if (m) { m.classList.remove('flex'); m.classList.add('hidden'); } }
+    function updateAuthModalUI() {
+      const title = document.getElementById('auth-modal-title'); const btn = document.getElementById('auth-btn'); const st = document.getElementById('auth-switch-text'); const sl = document.getElementById('auth-switch-link'); const ug = document.getElementById('auth-username-group');
+      if (isAuthLoginMode) { if (title) title.textContent = 'Sign in to VIZALOK Music'; if (btn) btn.textContent = 'Sign In'; if (st) st.textContent = "Don't have an account?"; if (sl) sl.textContent = 'Sign Up'; if (ug) ug.classList.add('hidden'); }
+      else { if (title) title.textContent = 'Create Music Producer Account'; if (btn) btn.textContent = 'Create Account'; if (st) st.textContent = 'Already have an account?'; if (sl) sl.textContent = 'Sign In'; if (ug) ug.classList.remove('hidden'); }
+    }
+    function setupAuthModal() {
+      const form = document.getElementById('auth-form'); const sl = document.getElementById('auth-switch-link'); const err = document.getElementById('auth-error');
+      if (sl) sl.onclick = (e) => { e.preventDefault(); isAuthLoginMode = !isAuthLoginMode; if (err) { err.classList.add('hidden'); err.textContent = ''; } updateAuthModalUI(); };
+      if (form) {
+        form.onsubmit = async (e) => {
+          e.preventDefault(); if (err) { err.classList.add('hidden'); err.textContent = ''; }
+          const email = (document.getElementById('auth-email')||{}).value.trim(); const pw = (document.getElementById('auth-password')||{}).value; const un = (document.getElementById('auth-username')||{}).value.trim();
+          if (!email || !pw) { if (err) { err.textContent = 'Email + password required.'; err.classList.remove('hidden'); } return; }
+          if (!isAuthLoginMode && !un) { if (err) { err.textContent = 'Display name for sign up.'; err.classList.remove('hidden'); } return; }
+          if (pw.length < 6) { if (err) { err.textContent = 'Min 6 chars password.'; err.classList.remove('hidden'); } return; }
+          const b = document.getElementById('auth-btn'); if (b) { b.disabled = true; b.textContent = isAuthLoginMode ? 'Signing in...' : 'Creating...'; }
+          if (!supabase) { setTimeout(() => { closeAuthModal(); userProfile = { full_name: un || email.split('@')[0], points: 1284, music_library: [] }; renderNavUser(); if (typeof renderMyCollection==='function') renderMyCollection(); showToast('Signed in (demo - bypass ready, buttons work).'); }, 150); if (b) { b.disabled = false; b.textContent = 'Sign In'; } return; }
+          try {
+            if (isAuthLoginMode) { const { error } = await supabase.auth.signInWithPassword({ email, password: pw }); if (error) throw error; await loadUserProfileAndSync(true); closeAuthModal(); showToast('Signed in. Shared profile active.'); }
+            else { const { data: su, error } = await supabase.auth.signUp({ email, password: pw, options: { data: { full_name: un } } }); if (error) throw error; if (su.user) { try { await supabase.from('profiles').upsert({ id: su.user.id, full_name: un || su.user.email.split('@')[0], email: su.user.email, points: 25, music_library: [] }, { onConflict: 'id' }); } catch (_) {} } if (su.session) { await loadUserProfileAndSync(true); closeAuthModal(); } else { alert('Account created. Confirm email if needed then sign in.'); isAuthLoginMode = true; updateAuthModalUI(); } }
+          } catch (er) { let m = er.message || 'Failed.'; if (/confirm/i.test(m||'')) m = 'Confirm email then sign in.'; if (err) { err.textContent = m; err.classList.remove('hidden'); } } finally { if (b) { b.disabled = false; b.textContent = isAuthLoginMode ? 'Sign In' : 'Create Account'; } }
+        };
+      }
+    }
+
+    async function loadUserProfileAndSync(refresh = false) {
       if (!supabase) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      let { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (data) {
-        userProfile = data;
-      } else {
-        try {
-          const { data: newProfile, error: insErr } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              full_name: user.user_metadata?.full_name || user.email.split('@')[0],
-              points: 25,
-              email: user.email,
-              music_library: []
-            })
-            .select()
-            .single();
-          if (insErr) throw insErr;
-          userProfile = newProfile;
-        } catch (e) {
-          console.error('Could not create profile row (verify RLS policy on profiles allows INSERT for auth.uid(), and table has the columns: id,full_name,points,email,music_library). Using local fallback for seamless demo across music+creators.', e);
-          // Fallback so signin succeeds and shared profile (points + music_library for rights/gens) works in UI
-          userProfile = {
-            id: user.id,
-            full_name: user.user_metadata?.full_name || user.email.split('@')[0],
-            points: 25,
-            email: user.email,
-            music_library: []
-          };
-        }
-      }
-      updateNavUI();
-      // Sync legacy local balance var (for trade floor UI) from shared profile
-      if (userProfile && typeof userBalance !== 'undefined') {
-        userBalance = userProfile.points || userBalance;
-        if (typeof updateBalanceDisplay === 'function') updateBalanceDisplay();
-      }
-      // Re-render collection (and other profile-dependent UI) now that we have fresh data from Supabase.
-      // This ensures login actually populates "Your Music Library" etc. The initial init in hide may have run with stale profile.
-      if (typeof renderMyCollection === 'function') renderMyCollection();
+      const { data: { user } } = await supabase.auth.getUser(); if (!user) return;
+      let { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (data) { userProfile = data; } else { try { const { data: np } = await supabase.from('profiles').insert({ id: user.id, full_name: user.user_metadata?.full_name || user.email.split('@')[0], points: 25, email: user.email, music_library: [] }).select().single(); userProfile = np; } catch (_) { userProfile = { full_name: user.user_metadata?.full_name || user.email.split('@')[0], points: 25, music_library: [] }; } }
+      if (typeof userBalance !== 'undefined' && userProfile.points != null) userBalance = userProfile.points;
+      renderNavUser(); if (refresh && typeof renderMyCollection === 'function') renderMyCollection();
     }
 
     async function saveProfile(updates) {
-      if (!supabase) return;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      try {
-        const { data } = await supabase
-          .from('profiles')
-          .update({ ...updates, updated_at: new Date().toISOString() })
-          .eq('id', user.id)
-          .select()
-          .single();
-        if (data) userProfile = { ...userProfile, ...data };
-      } catch (e) {
-        console.warn('saveProfile update may have partial failure (e.g. no updated_at col or RLS). Keeping local userProfile for demo.', e?.message || e);
-        // still apply local so UI (points/library) updates immediately
-        userProfile = { ...userProfile, ...updates };
-      }
-      updateNavUI();
-      const pb = document.getElementById('points-balance');
-      if (pb) pb.textContent = (userProfile && userProfile.points) || 0;
+      if (!supabase || !userProfile) { if (updates.points != null && typeof userBalance !== 'undefined') userBalance = updates.points; renderNavUser(); return; }
+      try { const { data: { user } } = await supabase.auth.getUser(); if (user) { const { data } = await supabase.from('profiles').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', user.id).select().single(); if (data) userProfile = { ...userProfile, ...data }; } } catch (_) { userProfile = { ...userProfile, ...updates }; }
+      renderNavUser();
     }
+
+    function renderNavUser() {
+      const area = document.getElementById('nav-user-area'); if (!area) return;
+      const signed = !!(supabase && userProfile);
+      if (!signed) { area.innerHTML = `<button onclick="openAuthModal()" class="px-4 py-1.5 rounded-2xl text-sm font-medium bg-white text-zinc-950 hover:bg-zinc-200 flex items-center gap-2"><i class="fa-solid fa-user"></i> <span>Sign In</span></button>`; }
+      else { const nm = userProfile.full_name || 'User'; const pt = userProfile.points || 0; const ini = (nm || 'U').charAt(0).toUpperCase(); area.innerHTML = `<div onclick="showUserMenu()" class="flex items-center gap-2.5 px-3 py-1.5 bg-zinc-900/70 hover:bg-zinc-900 border border-white/10 rounded-3xl cursor-pointer transition-all"><div class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">${ini}</div><div class="hidden md:block"><div class="text-xs font-medium">${nm}</div><div class="text-[10px] text-emerald-400 -mt-0.5">Producer</div></div><div class="flex items-center gap-1 text-xs bg-zinc-950 px-1.5 rounded-xl py-px border border-white/10"><span id="user-balance">${pt}</span><span class="text-purple-400">pts</span></div><i class="fa-solid fa-chevron-down text-xs text-white/50 ml-0.5"></i></div>`; }
+    }
+
+    async function signOutUser() { if (supabase) await supabase.auth.signOut().catch(()=>{}); userProfile = null; renderNavUser(); if (typeof renderMyCollection === 'function') renderMyCollection(); showToast('Signed out (demo data).'); }
+    // (Old gate code removed - rebuilt below for working bypass + buttons)
+
+    // (Remaining old gate submit removed - new modal auth rebuilt below)
+
+    // (Old gate/profile remnants removed. Rebuilt optional auth + always-visible portal below.)
 
     function initDashboardContent() {
       loadState();
@@ -1358,13 +1157,14 @@
       showToast(`Minted ${title} as NFT!`);
     }
     
-    // User menu
+    // User menu (works for signed in profile or demo)
     function showUserMenu() {
       const menu = document.createElement('div');
       menu.className = `absolute right-6 top-16 z-[100] w-52 glass border border-white/10 rounded-3xl p-2 text-sm`;
+      const nm = (userProfile && userProfile.full_name) || 'User (demo)';
       menu.innerHTML = `
         <div class="px-3 py-2 text-xs text-zinc-400">Signed in as</div>
-        <div class="px-3 pb-2 font-medium">${(userProfile && userProfile.full_name) || 'User'} • Shared Profile</div>
+        <div class="px-3 pb-2 font-medium">${nm} • ${supabase ? 'Shared Profile' : 'Demo'}</div>
         
         <div class="border-t border-white/10 my-1"></div>
         
@@ -1374,19 +1174,15 @@
         <div onclick="document.getElementById('music-library').scrollIntoView({behavior:'smooth'}); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
           <i class="fa-solid fa-music w-4"></i> View My Library
         </div>
-        <div onclick="showMyTrades(); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
-          <i class="fa-solid fa-exchange-alt w-4"></i> My Active Trades
-        </div>
         <div onclick="window.open('../creators/index.html', '_blank'); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-purple-400">
           <i class="fa-solid fa-magic w-4"></i> Open Creators Studio
         </div>
-        <div onclick="window.location.reload()" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-red-400">
-          <i class="fa-solid fa-sign-out-alt w-4"></i> Sign Out (reload)
+        <div onclick="(typeof signOutUser==='function'?signOutUser():window.location.reload()); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-red-400">
+          <i class="fa-solid fa-sign-out-alt w-4"></i> Sign Out
         </div>
       `;
       
-      // Position relative to nav
-      const navRight = document.querySelector('nav .flex.items-center.gap-3');
+      const navRight = document.getElementById('nav-user-area') || document.querySelector('nav .flex.items-center.gap-3');
       if (navRight) {
         navRight.style.position = 'relative';
         navRight.appendChild(menu);
@@ -1408,62 +1204,29 @@
       alert("Trade history modal would open here. You have 3 active listings and 1 incoming offer (demo).");
     }
     
-    // Initialize everything (called on load to populate the UI under the gate; the gate itself controls access until successful Supabase sign in)
-    function initDashboard() {
-      initTailwind();
-      
+    // Rebuilt boot - always show full portal + working buttons. Optional auth for shared profile.
+    function initDashboardContent() {
       loadState();
       updateBalanceDisplay();
-      
-      // Render belt
       renderBelt();
-      
-      // Render trade floor
       renderTradeFloor();
-      
-      // Render collection
       renderMyCollection();
-      
-      // Search
       setupSearch();
-      
-      // User display
-      // already in HTML
-      
-      // Keyboard support for belt
-      document.addEventListener('keydown', (e) => {
-        if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') {
-          e.preventDefault();
-          if (currentTrackId) {
-            if (currentAudio.paused) currentAudio.play(); else currentAudio.pause();
-          } else {
-            startBeltAutoPlay();
-          }
-        }
-        if (e.key.toLowerCase() === 'b') {
-          startBeltAutoPlay();
-        }
-      });
-      
-      // The auth gate (top of page) + bootstrap/onAuthStateChange handle showing/hiding based on Supabase session.
-      console.log('%c[VIZALOK Music Dashboard] Loaded with Supabase auth gate. Sign in/up required for profile, points, and shared library. Belt/trade UI renders underneath the gate.', 'color:#64748b');
+      console.log('%c[VIZALOK Music Dashboard] REBUILT - full portal visible, all buttons working. Sign in optional for shared Supabase profile/points.', 'color:#67e8f9');
     }
-    
-    // Boot: populate underlying dashboard content. The gate overlay (if no session) blocks until successful login.
-    // Auth bootstrap code earlier in this script + onAuthStateChange will auto-hide the gate for existing sessions.
+
     window.onload = () => {
-      initDashboard();
-      
-      // Optional: pre-load one track in player for demo
-      setTimeout(() => {
-        if (allTracks.length) {
-          // miniPlayer.classList.remove('hidden'); // optional
-        }
-      }, 300);
+      initTailwind();
+      initDashboardContent();   // always run - bypass ready
+      setupAuthModal();         // new optional modal
+      renderNavUser();          // shows "Sign In" or profile pill
+
+      // demo pre-load optional track comment
+      setTimeout(() => { if (allTracks && allTracks.length) { /* ready */ } }, 300);
     };
-    
-    // Expose some for console tinkering
-    window.VIZ_MUSIC = { startBeltAutoPlay, pauseBeltAutoPlay, renderBelt };
+
+    // Expose
+    window.VIZ_MUSIC = { startBeltAutoPlay, pauseBeltAutoPlay, renderBelt, openAuthModal, signOutUser: () => { if (typeof signOutUser === 'function') signOutUser(); } };
   </script>
 </body>
 </html>
