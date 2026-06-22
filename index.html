@@ -111,7 +111,7 @@
       position: absolute;
       inset: 0;
       background-image: linear-gradient(
-        rgba(255,255,255,0.03) 1px,
+        rgba(255,255,255,0.02) 1px,
         transparent 1px
       );
       background-size: 100% 4px;
@@ -162,6 +162,7 @@
     .platform-card .icon {
       position: relative;
       z-index: 2;
+      opacity: 0.9;
       filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
       animation: relicPulse 4s ease-in-out infinite;
     }
@@ -262,8 +263,8 @@
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(rgba(103, 232, 249, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(103, 232, 249, 0.03) 1px, transparent 1px);
+        linear-gradient(rgba(103, 232, 249, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 232, 249, 0.02) 1px, transparent 1px);
       background-size: 10px 10px;
       pointer-events: none;
       z-index: 1;
@@ -522,17 +523,18 @@
       position: relative;
       /* Fitted relic background banner/grid exactly sized to the icon for professional look */
       background: 
-        linear-gradient(rgba(103, 232, 249, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(103, 232, 249, 0.07) 1px, transparent 1px),
-        rgba(15, 15, 25, 0.75);
+        linear-gradient(rgba(103, 232, 249, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 232, 249, 0.05) 1px, transparent 1px),
+        rgba(15, 15, 25, 0.7);
       background-size: 5px 5px;
       border-radius: 9999px;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6), 0 0 4px rgba(103, 232, 249, 0.1);
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6), 0 0 4px rgba(103, 232, 249, 0.08);
     }
 
     .platform-card .icon {
       font-size: 2.75rem;
       line-height: 1;
+      opacity: 0.9;
     }
 
     /* Ensure tab-header and brief are centered and readable */
@@ -570,8 +572,6 @@
         From being inspired to inspiring
       </p>
     </div>
-
-    <p class="text-zinc-400 text-xl sm:text-2xl mb-8 sm:mb-10 tracking-wide text-center">Choose Your Platform</p>
 
     <!-- VIZALOK Space Viewport with extensive cyberpunk/space effects -->
     <div class="vizalok-space-viewport">
@@ -653,8 +653,6 @@
         <button class="tab-dot" data-index="3" aria-label="Nash"></button>
       </div>
     </div>
-
-    <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
   </div>
 
   <!-- VIZALOK 3D Space + Cyberpunk Effects (Desktop Tilt/Spotlight + Mobile Gyro/Touch) -->
