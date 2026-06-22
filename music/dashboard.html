@@ -170,234 +170,192 @@
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen cyber-bg">
-  <!-- AUTH GATE (like music tab - prior to accessing the dashboard) -->
-  <div id="auth-gate" class="fixed inset-0 bg-zinc-950 flex items-center justify-center z-[200]">
-    <div class="max-w-md w-full px-6">
-      <div class="text-center mb-8">
-        <img src="../logo.png" alt="VIZALOK" class="w-20 h-20 mx-auto mb-4 object-contain">
-        <h1 class="text-4xl font-black tracking-[-1px]">VIZALOK Music</h1>
-        <p class="text-purple-300 mt-1">NFT Trade Space for Producers</p>
+  <!-- Top Navigation -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-b border-white/10">
+    <div class="max-w-screen-2xl mx-auto px-6 h-16 flex items-center justify-between">
+      <!-- Left: Logo -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <img src="../logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
+          <div>
+            <span class="font-black tracking-[-1.5px] text-2xl viza-logo">VIZALOK</span>
+            <span class="ml-1 text-xs font-mono tracking-[2px] text-purple-400">MUSIC</span>
+          </div>
+        </div>
+        <div class="px-2.5 py-1 bg-white/5 rounded-2xl text-[10px] font-medium tracking-wider border border-white/10">NFT TRADE SPACE</div>
       </div>
 
-      <div class="bg-zinc-900 border border-white/10 rounded-3xl p-8">
-        <h2 id="gate-form-title" class="text-2xl font-semibold mb-6 text-center">Sign in to access your Dashboard</h2>
+      <!-- Center: Search Bar -->
+      <div class="flex-1 max-w-xl mx-8">
+        <div class="relative group">
+          <input 
+            id="search-input" 
+            type="text" 
+            placeholder="Search tracks, producers, or NFT IDs..." 
+            class="w-full bg-zinc-900/80 border border-white/15 focus:border-purple-400/70 rounded-3xl pl-11 pr-4 py-2.5 text-sm outline-none transition-all placeholder:text-zinc-500">
+          <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-purple-400/80"></i>
+        </div>
+      </div>
+
+      <!-- Right: User Signed In -->
+      <div class="flex items-center gap-3">
+        <div onclick="showUserMenu()" class="flex items-center gap-2.5 px-3 py-1.5 bg-zinc-900/70 hover:bg-zinc-900 border border-white/10 rounded-3xl cursor-pointer transition-all">
+          <div class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">KX</div>
+          <div class="hidden md:block">
+            <div class="text-xs font-medium">Knoxzic</div>
+            <div class="text-[10px] text-emerald-400 -mt-0.5">Verified Producer</div>
+          </div>
+          <div class="flex items-center gap-1 text-xs bg-zinc-950 px-1.5 rounded-xl py-px border border-white/10">
+            <span id="user-balance">1,284</span>
+            <span class="text-purple-400">VIZ</span>
+          </div>
+          <i class="fa-solid fa-chevron-down text-xs text-white/50 ml-0.5"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Banner (cyberpunk like landing) -->
+  <div class="max-w-screen-2xl mx-auto px-6 pt-8 pb-6">
+    <div class="glass border border-white/10 rounded-3xl p-8 md:p-10 relative overflow-hidden">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs tracking-[1.5px] mb-4 border border-white/10">
+          <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+          EXCLUSIVE FOR LEGIT PRODUCERS, COMPOSERS &amp; SINGERS
+        </div>
         
-        <div id="gate-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
-
-        <form id="gate-auth-form">
-          <div class="mb-4">
-            <input type="email" id="gate-email" placeholder="Email address" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
-          </div>
-          <div class="mb-4">
-            <input type="password" id="gate-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
-          </div>
-          <div id="gate-username-group" class="hidden mb-4">
-            <input type="text" id="gate-username" placeholder="Display Name (for producers)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500">
-          </div>
-          
-          <button type="submit" id="gate-auth-btn" class="w-full py-3 bg-white text-zinc-950 font-semibold rounded-2xl hover:bg-zinc-200 transition">Sign In</button>
-        </form>
-
-        <p class="text-center mt-6 text-sm text-zinc-400">
-          <span id="gate-switch-text">Don't have an account?</span> 
-          <a href="#" id="gate-switch-link" class="text-purple-400 hover:underline font-medium">Sign Up</a>
+        <h1 class="text-5xl md:text-6xl font-black tracking-[-3.2px] leading-none mb-3">
+          VIZALOK<br>
+          <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">NFT MUSIC</span><br>
+          TRADE SPACE
+        </h1>
+        
+        <p class="text-zinc-400 max-w-md text-lg">
+          An exclusive online trade space for verified producers, composers, singers &amp; music creators. Buy, sell and trade music as NFTs only.
         </p>
+        
+        <div class="flex items-center gap-3 mt-6">
+          <button onclick="startBeltAutoPlay()" 
+                  class="px-6 py-3 bg-white text-zinc-950 font-semibold rounded-3xl flex items-center gap-2 hover:bg-zinc-200 transition">
+            <i class="fa-solid fa-play"></i>
+            <span>START AUTO-PLAY BELT</span>
+          </button>
+          <button onclick="document.getElementById('trade-floor').scrollIntoView({behavior:'smooth'})" 
+                  class="px-5 py-3 border border-white/20 hover:bg-white/5 rounded-3xl text-sm font-medium flex items-center gap-2">
+            <i class="fa-solid fa-exchange-alt"></i>
+            <span>BROWSE TRADE FLOOR</span>
+          </button>
+        </div>
       </div>
-
-      <p class="text-center mt-6 text-xs text-zinc-500">
-        <a href="../index.html" class="underline hover:text-zinc-400">← Back to VIZALOK</a>
-      </p>
+      
+      <!-- Decorative cyber elements like landing -->
+      <div class="absolute -right-6 -bottom-6 w-64 h-64 border border-cyan-400/10 rounded-full"></div>
+      <div class="absolute -right-2 -top-8 text-[120px] font-black opacity-[0.03] tracking-[-8px]">VIZ</div>
     </div>
   </div>
 
-  <!-- THE PORTAL CONTENT (hidden until signed in) -->
-  <div id="portal-content" style="display: none;">
-    <!-- Top Navigation -->
-    <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-b border-white/10">
-      <div class="max-w-screen-2xl mx-auto px-6 h-16 flex items-center justify-between">
-        <!-- Left: Logo -->
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2">
-            <img src="../logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
-            <div>
-              <span class="font-black tracking-[-1.5px] text-2xl viza-logo">VIZALOK</span>
-              <span class="ml-1 text-xs font-mono tracking-[2px] text-purple-400">MUSIC</span>
-            </div>
-          </div>
-          <div class="px-2.5 py-1 bg-white/5 rounded-2xl text-[10px] font-medium tracking-wider border border-white/10">NFT TRADE SPACE</div>
-        </div>
+  <!-- Center: Auto-Play Belt of Tracks -->
+  <div class="max-w-screen-2xl mx-auto px-6 pb-10">
+    <div class="flex items-end justify-between mb-5">
+      <div>
+        <div class="uppercase text-xs tracking-[2px] text-purple-400 mb-1">LIVE FROM THE VAULT</div>
+        <h2 class="text-3xl font-bold tracking-tight">Auto-Play Trade Belt</h2>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <button onclick="startBeltAutoPlay()" 
+                class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-play mr-1"></i> <span>PLAY BELT</span>
+        </button>
+        <button onclick="pauseBeltAutoPlay()" 
+                class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-pause"></i> <span>PAUSE</span>
+        </button>
+        <button onclick="nextBeltTrack()" 
+                class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl text-sm">
+          <i class="fa-solid fa-step-forward"></i>
+        </button>
+      </div>
+    </div>
 
-        <!-- Center: Search Bar -->
-        <div class="flex-1 max-w-xl mx-8">
-          <div class="relative group">
-            <input 
-              id="search-input" 
-              type="text" 
-              placeholder="Search tracks, producers, or NFT IDs..." 
-              class="w-full bg-zinc-900/80 border border-white/15 focus:border-purple-400/70 rounded-3xl pl-11 pr-4 py-2.5 text-sm outline-none transition-all placeholder:text-zinc-500">
-            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-purple-400/80"></i>
-          </div>
-        </div>
+    <!-- The Belt -->
+    <div id="trade-belt" 
+         class="flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory belt-container scroll-smooth"
+         style="scrollbar-width: thin; scrollbar-color: rgba(103,232,249,0.2) transparent;">
+      <!-- Populated by JS -->
+    </div>
+    <div class="text-[10px] text-center text-zinc-500 -mt-2 mb-8">Scroll horizontally • Click any track to play individually • Belt auto-plays on demand</div>
+  </div>
 
-        <!-- Right: User Signed In -->
-        <div class="flex items-center gap-3">
-          <div onclick="showUserMenu()" class="flex items-center gap-2.5 px-3 py-1.5 bg-zinc-900/70 hover:bg-zinc-900 border border-white/10 rounded-3xl cursor-pointer transition-all">
-            <div class="w-7 h-7 rounded-2xl bg-gradient-to-br from-purple-400 to-cyan-400 flex items-center justify-center text-xs font-black text-zinc-950">KX</div>
-            <div class="hidden md:block">
-              <div class="text-xs font-medium">Knoxzic</div>
-              <div class="text-[10px] text-emerald-400 -mt-0.5">Verified Producer</div>
-            </div>
-            <div class="flex items-center gap-1 text-xs bg-zinc-950 px-1.5 rounded-xl py-px border border-white/10">
-              <span id="user-balance">1,284</span>
-              <span class="text-purple-400">VIZ</span>
-            </div>
-            <i class="fa-solid fa-chevron-down text-xs text-white/50 ml-0.5"></i>
-          </div>
+  <!-- NFT Trade Floor -->
+  <div id="trade-floor" class="max-w-screen-2xl mx-auto px-6 pb-10">
+    <div class="flex items-end justify-between mb-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-pink-400">OPEN MARKET</span>
+        <h2 class="text-2xl font-bold">NFT Trade Floor</h2>
+        <p class="text-sm text-zinc-400">Buy and trade music NFTs. Exclusive for legit producers, composers, singers and music producers.</p>
+      </div>
+      <button onclick="showMintModal()" 
+              class="text-xs flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-white/10 hover:from-purple-500/30 transition">
+        <i class="fa-solid fa-plus"></i> <span class="font-medium">MINT NEW TRACK AS NFT</span>
+      </button>
+    </div>
+
+    <div id="trade-floor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Your NFT Collection -->
+  <div class="max-w-screen-2xl mx-auto px-6 pb-14">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold">Your NFT Collection</h2>
+      <div class="text-xs bg-white/5 px-3 py-1 rounded-3xl border border-white/10">
+        <span id="owned-count">0</span> tracks owned
+      </div>
+    </div>
+
+    <div id="my-collection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Bottom Mini Player (SoundCloud inspired) -->
+  <div id="mini-player" class="hidden fixed bottom-0 left-0 right-0 bg-zinc-950 border-t border-white/10 z-40">
+    <div class="max-w-screen-2xl mx-auto px-6 py-3 flex items-center gap-4">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div id="player-cover" 
+             class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-400 flex-shrink-0 flex items-center justify-center text-xs font-bold text-zinc-950">
+        </div>
+        <div class="min-w-0">
+          <div id="player-title" class="font-semibold text-sm truncate"></div>
+          <div id="player-artist" class="text-xs text-zinc-400 truncate"></div>
         </div>
       </div>
-    </nav>
 
-    <!-- Hero Banner (cyberpunk like landing) -->
-    <div class="max-w-screen-2xl mx-auto px-6 pt-8 pb-6">
-      <div class="glass border border-white/10 rounded-3xl p-8 md:p-10 relative overflow-hidden">
-        <div class="max-w-2xl">
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs tracking-[1.5px] mb-4 border border-white/10">
-            <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-            EXCLUSIVE FOR LEGIT PRODUCERS, COMPOSERS &amp; SINGERS
-          </div>
-          
-          <h1 class="text-5xl md:text-6xl font-black tracking-[-3.2px] leading-none mb-3">
-            VIZALOK<br>
-            <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">NFT MUSIC</span><br>
-            TRADE SPACE
-          </h1>
-          
-          <p class="text-zinc-400 max-w-md text-lg">
-            An exclusive online trade space for verified producers, composers, singers &amp; music creators. Buy, sell and trade music as NFTs only.
-          </p>
-          
-          <div class="flex items-center gap-3 mt-6">
-            <button onclick="startBeltAutoPlay()" 
-                    class="px-6 py-3 bg-white text-zinc-950 font-semibold rounded-3xl flex items-center gap-2 hover:bg-zinc-200 transition">
-              <i class="fa-solid fa-play"></i>
-              <span>START AUTO-PLAY BELT</span>
-            </button>
-            <button onclick="document.getElementById('trade-floor').scrollIntoView({behavior:'smooth'})" 
-                    class="px-5 py-3 border border-white/20 hover:bg-white/5 rounded-3xl text-sm font-medium flex items-center gap-2">
-              <i class="fa-solid fa-exchange-alt"></i>
-              <span>BROWSE TRADE FLOOR</span>
-            </button>
+      <div class="flex items-center gap-4 flex-1 max-w-md">
+        <button onclick="togglePlay()" class="w-8 h-8 flex items-center justify-center text-xl">
+          <i id="player-play-icon" class="fa-solid fa-play"></i>
+        </button>
+        
+        <div class="flex-1">
+          <div class="h-1 bg-white/10 rounded-full overflow-hidden">
+            <div id="player-progress" class="h-1 bg-gradient-to-r from-cyan-400 to-purple-400 w-0 transition-all" style="width: 0%"></div>
           </div>
         </div>
         
-        <!-- Decorative like landing -->
-        <div class="absolute -right-6 -bottom-6 w-64 h-64 border border-cyan-400/10 rounded-full"></div>
-        <div class="absolute -right-2 -top-8 text-[120px] font-black opacity-[0.03] tracking-[-8px]">VIZ</div>
-      </div>
-    </div>
-
-    <!-- Center: Belt of Tracks (auto play) -->
-    <div class="max-w-screen-2xl mx-auto px-6 pb-10">
-      <div class="flex items-end justify-between mb-5">
-        <div>
-          <div class="uppercase text-xs tracking-[2px] text-purple-400 mb-1">LIVE FROM THE VAULT</div>
-          <h2 class="text-3xl font-bold tracking-tight">Auto-Play Trade Belt</h2>
-        </div>
-        <div class="flex items-center gap-2 text-xs">
-          <button onclick="startBeltAutoPlay()" 
-                  class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl flex items-center gap-2 text-sm">
-            <i class="fa-solid fa-play mr-1"></i> <span>PLAY BELT</span>
-          </button>
-          <button onclick="pauseBeltAutoPlay()" 
-                  class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl flex items-center gap-2 text-sm">
-            <i class="fa-solid fa-pause"></i> <span>PAUSE</span>
-          </button>
-          <button onclick="nextBeltTrack()" 
-                  class="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/10 rounded-2xl text-sm">
-            <i class="fa-solid fa-step-forward"></i>
-          </button>
-        </div>
+        <div id="player-time" class="text-[10px] tabular-nums w-9 text-right text-zinc-400">0:00</div>
       </div>
 
-      <!-- The Belt -->
-      <div id="trade-belt" 
-           class="flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory belt-container scroll-smooth"
-           style="scrollbar-width: thin; scrollbar-color: rgba(103,232,249,0.2) transparent;">
-        <!-- JS populated -->
-      </div>
-      <div class="text-[10px] text-center text-zinc-500 -mt-2 mb-8">Horizontal belt • Click cards to play • Use controls for auto-play sequence using real beats from the vault</div>
-    </div>
-
-    <!-- NFT Trade Floor -->
-    <div id="trade-floor" class="max-w-screen-2xl mx-auto px-6 pb-10">
-      <div class="flex items-end justify-between mb-4">
-        <div>
-          <span class="text-xs uppercase tracking-widest text-pink-400">OPEN MARKET</span>
-          <h2 class="text-2xl font-bold">NFT Trade Floor</h2>
-          <p class="text-sm text-zinc-400">Buy and trade music NFTs. Exclusive for legit producers, composers, singers and music producers.</p>
-        </div>
-        <button onclick="showMintModal()" 
-                class="text-xs flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-white/10 hover:from-purple-500/30 transition">
-          <i class="fa-solid fa-plus"></i> <span class="font-medium">MINT NEW TRACK AS NFT</span>
+      <div class="flex items-center gap-2 text-xs text-white/60">
+        <button onclick="sellCurrentTrack()" class="px-3 py-1 hover:bg-white/10 rounded-xl flex items-center gap-1 border border-white/10">
+          <i class="fa-solid fa-tag"></i> <span class="hidden md:inline">Sell NFT</span>
         </button>
-      </div>
-
-      <div id="trade-floor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <!-- JS populated -->
-      </div>
-    </div>
-
-    <!-- Your NFT Collection -->
-    <div class="max-w-screen-2xl mx-auto px-6 pb-14">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold">Your NFT Collection</h2>
-        <div class="text-xs bg-white/5 px-3 py-1 rounded-3xl border border-white/10">
-          <span id="owned-count">0</span> tracks owned
-        </div>
-      </div>
-
-      <div id="my-collection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <!-- JS populated -->
-      </div>
-    </div>
-
-    <!-- Bottom Mini Player (SoundCloud vibe) -->
-    <div id="mini-player" class="hidden fixed bottom-0 left-0 right-0 bg-zinc-950 border-t border-white/10 z-40">
-      <div class="max-w-screen-2xl mx-auto px-6 py-3 flex items-center gap-4">
-        <div class="flex items-center gap-3 min-w-0 flex-1">
-          <div id="player-cover" 
-               class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-400 flex-shrink-0 flex items-center justify-center text-xs font-bold text-zinc-950">
-          </div>
-          <div class="min-w-0">
-            <div id="player-title" class="font-semibold text-sm truncate"></div>
-            <div id="player-artist" class="text-xs text-zinc-400 truncate"></div>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-4 flex-1 max-w-md">
-          <button onclick="togglePlay()" class="w-8 h-8 flex items-center justify-center text-xl">
-            <i id="player-play-icon" class="fa-solid fa-play"></i>
-          </button>
-          
-          <div class="flex-1">
-            <div class="h-1 bg-white/10 rounded-full overflow-hidden">
-              <div id="player-progress" class="h-1 bg-gradient-to-r from-cyan-400 to-purple-400 w-0 transition-all" style="width: 0%"></div>
-            </div>
-          </div>
-          
-          <div id="player-time" class="text-[10px] tabular-nums w-9 text-right text-zinc-400">0:00</div>
-        </div>
-
-        <div class="flex items-center gap-2 text-xs text-white/60">
-          <button onclick="sellCurrentTrack()" class="px-3 py-1 hover:bg-white/10 rounded-xl flex items-center gap-1 border border-white/10">
-            <i class="fa-solid fa-tag"></i> <span class="hidden md:inline">Sell NFT</span>
-          </button>
-        </div>
       </div>
     </div>
   </div>
 
   <!-- Modals -->
+  <!-- Buy NFT Modal -->
   <div id="buy-modal" onclick="if (event.target.id === 'buy-modal') closeBuyModal()" class="hidden fixed inset-0 bg-black/80 z-[150] flex items-center justify-center p-4">
     <div onclick="event.stopImmediatePropagation()" class="glass border border-white/10 rounded-3xl p-6 w-full max-w-md">
       <div class="flex justify-between items-start mb-4">
@@ -427,17 +385,18 @@
         <button onclick="closeBuyModal()" class="flex-1 py-3 rounded-2xl border border-white/20 text-sm">Cancel</button>
         <button onclick="confirmBuyNFT()" class="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-semibold text-sm">Confirm NFT Purchase</button>
       </div>
-      <div class="text-center text-xs text-zinc-500 mt-3">Simulated NFT trade space. Real on-chain settlement for legit creators coming soon.</div>
+      <div class="text-center text-xs text-zinc-500 mt-3">This is a simulated trade space. Real blockchain settlement coming soon.</div>
     </div>
   </div>
 
+  <!-- Trade Modal -->
   <div id="trade-modal" onclick="if (event.target.id === 'trade-modal') closeTradeModal()" class="hidden fixed inset-0 bg-black/80 z-[150] flex items-center justify-center p-4">
     <div onclick="event.stopImmediatePropagation()" class="glass border border-white/10 rounded-3xl p-6 w-full max-w-lg">
       <h3 class="font-bold text-xl mb-1">Propose Trade</h3>
       <p class="text-sm text-zinc-400 mb-4">Select one of your NFTs to offer in exchange for <span id="trade-target-title" class="font-medium text-white"></span></p>
       
       <div id="trade-owned-list" class="max-h-[220px] overflow-auto mb-4 space-y-2 pr-1">
-        <!-- JS -->
+        <!-- Populated dynamically -->
       </div>
       
       <div class="flex gap-3">
@@ -448,10 +407,12 @@
   </div>
 
   <script>
-    // Tailwind
-    function initTailwind() {}
+    // Tailwind script
+    function initTailwind() {
+      // Already loaded via CDN
+    }
     
-    // Tracks from the page's beats folder
+    // Data
     const allTracks = [
       { id: 1, title: "Cookin", artist: "knoxzic", src: "beats/knoxzic - Cookin.wav", price: "0.35", nftId: "VIZNFT-001", duration: "3:42" },
       { id: 2, title: "BAXCAV3", artist: "knoxzic", src: "beats/knoxzic-  BAXCAV3.mp3", price: "0.48", nftId: "VIZNFT-002", duration: "2:58" },
@@ -468,7 +429,7 @@
     let ownedTracks = [];
     let tradeFloorListings = [];
     let userBalance = 1284;
-    const user = { name: "Knoxzic", role: "Verified Producer", avatar: "KX" };
+    let currentUser = { name: "Knoxzic", role: "Verified Producer", avatar: "KX" };
     
     let currentAudio = new Audio();
     let currentTrackId = null;
@@ -482,6 +443,7 @@
     const playerTime = document.getElementById('player-time');
     const playerPlayIcon = document.getElementById('player-play-icon');
     
+    // Load persisted state
     function loadState() {
       const savedOwned = localStorage.getItem('vizalok_owned');
       const savedBalance = localStorage.getItem('vizalok_balance');
@@ -491,6 +453,7 @@
       if (savedBalance) userBalance = parseInt(savedBalance);
       if (savedFloor) tradeFloorListings = JSON.parse(savedFloor);
       
+      // Seed some initial floor and owned if first time
       if (ownedTracks.length === 0) {
         ownedTracks = [allTracks[0], allTracks[2]];
       }
@@ -501,6 +464,7 @@
           {...allTracks[9], owner: "@RaidMaster", price: "0.55"}
         ];
       }
+      
       updateBalanceDisplay();
     }
     
@@ -511,15 +475,18 @@
     }
     
     function updateBalanceDisplay() {
-      document.querySelectorAll('#user-balance').forEach(el => el.textContent = userBalance.toLocaleString());
+      const els = document.querySelectorAll('#user-balance');
+      els.forEach(el => el.textContent = userBalance.toLocaleString());
     }
     
-    function renderBelt(filtered = null) {
+    // Render the Auto-Play Belt
+    function renderBelt(filteredTracks = null) {
       const belt = document.getElementById('trade-belt');
       belt.innerHTML = '';
-      const list = filtered || allTracks;
       
-      list.forEach(track => {
+      const toRender = filteredTracks || allTracks;
+      
+      toRender.forEach(track => {
         const isOwned = ownedTracks.some(t => t.id === track.id);
         const card = document.createElement('div');
         card.className = `track-card flex-shrink-0 w-64 snap-start glass border border-white/10 rounded-3xl p-3 cursor-pointer`;
@@ -534,10 +501,13 @@
               </div>
             </div>
             <div class="absolute top-2.5 right-2.5 nft-badge text-[9px] px-1.5 py-px">${track.nftId}</div>
-            <button onclick="event.stopImmediatePropagation(); toggleBeltPlay(${track.id}, this)" class="absolute bottom-2.5 right-2.5 w-9 h-9 bg-white/95 text-zinc-950 rounded-2xl flex items-center justify-center shadow">
+            
+            <button onclick="event.stopImmediatePropagation(); toggleBeltPlay(${track.id}, this)" 
+                    class="absolute bottom-2.5 right-2.5 w-9 h-9 bg-white/95 text-zinc-950 rounded-2xl flex items-center justify-center shadow">
               <i class="fa-solid fa-play text-sm ml-0.5"></i>
             </button>
           </div>
+          
           <div class="px-1">
             <div class="flex justify-between items-start">
               <div>
@@ -549,35 +519,54 @@
                 <div class="text-[9px] text-emerald-400">NFT</div>
               </div>
             </div>
-            <div class="mt-3 flex gap-2">
-              <button onclick="event.stopImmediatePropagation(); buyNFT(${track.id}, this)" class="flex-1 text-xs py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-[11px] font-medium">BUY NFT</button>
-              <button onclick="event.stopImmediatePropagation(); offerTrade(${track.id}, this)" class="flex-1 text-xs py-1.5 px-3 border border-white/30 hover:bg-white/5 rounded-2xl text-[11px]">TRADE</button>
+            
+            <div class="mt-3 flex items-center justify-between gap-2">
+              <button onclick="event.stopImmediatePropagation(); buyNFT(${track.id}, this)" 
+                      class="text-xs flex-1 py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-[11px] font-medium">
+                BUY NFT
+              </button>
+              <button onclick="event.stopImmediatePropagation(); offerTrade(${track.id}, this)" 
+                      class="text-xs flex-1 py-1.5 px-3 border border-white/30 hover:bg-white/5 rounded-2xl text-[11px]">
+                TRADE
+              </button>
             </div>
           </div>
         `;
         
+        // Add waveform preview
         const wave = document.createElement('div');
         wave.className = 'soundcloud-wave px-1 mt-2 opacity-40';
-        for (let i=0; i<12; i++) {
+        for (let i = 0; i < 12; i++) {
           const b = document.createElement('div');
           b.className = 'bar flex-1';
-          b.style.height = (Math.random()*12 + 4) + 'px';
+          b.style.height = (Math.random() * 12 + 4) + 'px';
           wave.appendChild(b);
         }
         card.querySelector('.relative').appendChild(wave);
         
+        // Click whole card to play
         card.onclick = () => playTrack(track.id);
+        
         belt.appendChild(card);
       });
     }
     
+    // Filter belt on search
     function setupSearch() {
       const input = document.getElementById('search-input');
       input.addEventListener('input', () => {
         const q = input.value.toLowerCase().trim();
-        if (!q) { renderBelt(); return; }
-        const f = allTracks.filter(t => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q) || t.nftId.toLowerCase().includes(q));
-        renderBelt(f);
+        if (!q) {
+          renderBelt();
+          return;
+        }
+        
+        const filtered = allTracks.filter(t => 
+          t.title.toLowerCase().includes(q) || 
+          t.artist.toLowerCase().includes(q) ||
+          t.nftId.toLowerCase().includes(q)
+        );
+        renderBelt(filtered);
       });
     }
     
@@ -587,56 +576,74 @@
       const track = allTracks.find(t => t.id === trackId);
       if (!track) return;
       
-      if (currentAudio.src) currentAudio.pause();
-      
-      currentAudio.src = track.src;
-      currentAudio.play().catch(()=>{});
-      
-      document.querySelectorAll('#trade-belt .track-card').forEach(c => c.classList.remove('active', 'border-cyan-400'));
-      const card = document.querySelector(`#trade-belt .track-card[data-id="${trackId}"]`);
-      if (card) {
-        card.classList.add('active', 'border-cyan-400');
-        currentPlayingCard = card;
-        card.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+      // Stop previous
+      if (currentAudio.src) {
+        currentAudio.pause();
       }
       
+      // Update mini player
+      currentAudio.src = track.src;
+      currentAudio.play().catch(() => {});
+      
+      // Highlight belt card
+      document.querySelectorAll('#trade-belt .track-card').forEach(c => c.classList.remove('active', 'border-cyan-400'));
+      const activeCard = document.querySelector(`#trade-belt .track-card[data-id="${trackId}"]`);
+      if (activeCard) {
+        activeCard.classList.add('active', 'border-cyan-400');
+        currentPlayingCard = activeCard;
+        // scroll into view nicely
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+      
+      // Mini player
       miniPlayer.classList.remove('hidden');
       document.getElementById('player-title').textContent = track.title;
       document.getElementById('player-artist').textContent = track.artist;
       document.getElementById('player-cover').innerHTML = `<i class="fa-solid fa-music"></i>`;
       
+      // Progress
       currentAudio.ontimeupdate = () => {
-        const pct = (currentAudio.currentTime / currentAudio.duration) * 100 || 0;
+        const pct = (currentAudio.currentTime / currentAudio.duration) * 100;
         playerProgress.style.width = pct + '%';
         playerTime.textContent = formatTime(currentAudio.currentTime);
       };
       
       currentAudio.onended = () => {
         playerProgress.style.width = '0%';
-        if (isBeltPlaying) nextBeltTrack();
-        else miniPlayer.classList.add('hidden');
+        if (isBeltPlaying) {
+          nextBeltTrack();
+        } else {
+          miniPlayer.classList.add('hidden');
+        }
       };
       
       playerPlayIcon.classList.remove('fa-play');
       playerPlayIcon.classList.add('fa-pause');
+      
       currentTrackId = trackId;
     }
     
     function togglePlay() {
       if (!currentAudio.src) return;
+      
       if (currentAudio.paused) {
         currentAudio.play();
-        playerPlayIcon.classList.remove('fa-play'); playerPlayIcon.classList.add('fa-pause');
+        playerPlayIcon.classList.remove('fa-play');
+        playerPlayIcon.classList.add('fa-pause');
       } else {
         currentAudio.pause();
-        playerPlayIcon.classList.remove('fa-pause'); playerPlayIcon.classList.add('fa-play');
+        playerPlayIcon.classList.remove('fa-pause');
+        playerPlayIcon.classList.add('fa-play');
       }
     }
     
-    function formatTime(s) {
-      const m = Math.floor(s/60); const sec = Math.floor(s%60); return m + ':' + (sec<10?'0':'') + sec;
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
     
+    // Belt Auto Play
     function startBeltAutoPlay() {
       if (isBeltPlaying) return;
       isBeltPlaying = true;
@@ -648,7 +655,8 @@
       isBeltPlaying = false;
       if (beltTimeout) clearTimeout(beltTimeout);
       if (currentAudio) currentAudio.pause();
-      playerPlayIcon.classList.remove('fa-pause'); playerPlayIcon.classList.add('fa-play');
+      playerPlayIcon.classList.remove('fa-pause');
+      playerPlayIcon.classList.add('fa-play');
       document.querySelectorAll('#trade-belt .track-card').forEach(c => c.classList.remove('active', 'border-cyan-400'));
     }
     
@@ -660,20 +668,24 @@
     
     function playNextBeltTrack() {
       if (!isBeltPlaying) return;
+      
       const track = allTracks[beltCurrentIndex];
       const belt = document.getElementById('trade-belt');
       
+      // Highlight
       document.querySelectorAll('#trade-belt .track-card').forEach(c => c.classList.remove('active', 'border-cyan-400'));
       const card = document.querySelector(`#trade-belt .track-card[data-id="${track.id}"]`);
       if (card) {
         card.classList.add('active', 'border-cyan-400');
-        card.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
       
+      // Play
       if (currentAudio.src) currentAudio.pause();
       currentAudio.src = track.src;
-      currentAudio.play().catch(()=>{});
+      currentAudio.play().catch(() => {});
       
+      // Mini player
       miniPlayer.classList.remove('hidden');
       document.getElementById('player-title').textContent = track.title;
       document.getElementById('player-artist').textContent = track.artist;
@@ -685,6 +697,7 @@
         }
       };
       
+      // Auto advance after duration or 12s max for demo
       beltTimeout = setTimeout(() => {
         if (isBeltPlaying) {
           beltCurrentIndex = (beltCurrentIndex + 1) % allTracks.length;
@@ -697,51 +710,79 @@
       event.stopImmediatePropagation();
       const track = allTracks.find(t => t.id === trackId);
       if (!track) return;
+      
       if (currentTrackId === trackId && !currentAudio.paused) {
         currentAudio.pause();
         btn.innerHTML = '<i class="fa-solid fa-play text-sm ml-0.5"></i>';
         return;
       }
+      
+      // Play this one
       playTrack(trackId);
-      document.querySelectorAll('#trade-belt .track-card button').forEach(b => b.innerHTML = '<i class="fa-solid fa-play text-sm ml-0.5"></i>');
+      
+      // Update button icon temporarily
+      document.querySelectorAll('#trade-belt .track-card button').forEach(b => {
+        b.innerHTML = '<i class="fa-solid fa-play text-sm ml-0.5"></i>';
+      });
       btn.innerHTML = '<i class="fa-solid fa-pause text-sm"></i>';
+      
       setTimeout(() => {
-        if (currentTrackId !== trackId || currentAudio.paused) btn.innerHTML = '<i class="fa-solid fa-play text-sm ml-0.5"></i>';
+        if (currentTrackId !== trackId || currentAudio.paused) {
+          btn.innerHTML = '<i class="fa-solid fa-play text-sm ml-0.5"></i>';
+        }
       }, 800);
     }
     
-    function buyNFT(trackId) {
+    // Buy NFT
+    function buyNFT(trackId, btnElement = null) {
       const track = allTracks.find(t => t.id === trackId);
       if (!track) return;
+      
       const priceNum = parseFloat(track.price);
-      if (userBalance < priceNum * 1000) {
-        alert("Not enough VIZ. Sell some NFTs or trade first.");
+      if (userBalance < priceNum * 1000) { // fake scaling
+        alert("Not enough VIZ balance. Trade or sell some NFTs first.");
         return;
       }
+      
+      // Open buy modal
       document.getElementById('buy-track-title').textContent = track.title;
       document.getElementById('buy-track-artist').textContent = track.artist;
       document.getElementById('buy-track-price').textContent = track.price;
+      
       document.getElementById('buy-current-balance').textContent = userBalance.toLocaleString() + ' VIZ';
-      document.getElementById('buy-new-balance').textContent = (userBalance - priceNum*1000).toLocaleString() + ' VIZ';
-      window.pendingBuy = {track, priceNum};
+      document.getElementById('buy-new-balance').textContent = (userBalance - priceNum * 1000).toLocaleString() + ' VIZ';
+      
+      // Store for confirm
+      window.pendingBuy = { track, priceNum, btnElement };
+      
       document.getElementById('buy-modal').classList.remove('hidden');
       document.getElementById('buy-modal').classList.add('flex');
     }
     
     function confirmBuyNFT() {
-      const p = window.pendingBuy;
-      if (!p) return;
-      const {track, priceNum} = p;
+      const pending = window.pendingBuy;
+      if (!pending) return;
+      
+      const { track, priceNum } = pending;
+      
       userBalance -= Math.floor(priceNum * 1000);
       ownedTracks.push({...track});
+      
+      // Remove from trade floor if present
       tradeFloorListings = tradeFloorListings.filter(l => l.id !== track.id);
+      
       saveState();
       updateBalanceDisplay();
+      
       closeBuyModal();
+      
+      // Re-render
       renderBelt();
       renderTradeFloor();
       renderMyCollection();
-      showToast(`Purchased ${track.title} NFT!`);
+      
+      // Toast
+      showToast(`Purchased ${track.title} NFT! Added to your collection.`);
     }
     
     function closeBuyModal() {
@@ -750,259 +791,313 @@
       window.pendingBuy = null;
     }
     
-    function offerTrade(trackId) {
+    // Trade / Offer
+    function offerTrade(trackId, btnElement) {
       const track = allTracks.find(t => t.id === trackId);
       if (!track) return;
+      
       document.getElementById('trade-target-title').textContent = `${track.title} by ${track.artist}`;
       window.pendingTradeTarget = track;
+      
       const list = document.getElementById('trade-owned-list');
       list.innerHTML = '';
+      
       if (ownedTracks.length === 0) {
-        list.innerHTML = `<div class="text-xs text-center py-4 text-zinc-400">No NFTs in collection to offer.</div>`;
+        list.innerHTML = `<div class="text-xs text-center py-4 text-zinc-400">You don't own any NFTs to offer yet.</div>`;
       } else {
-        ownedTracks.forEach(o => {
-          const d = document.createElement('div');
-          d.className = `flex justify-between px-3 py-2.5 bg-zinc-950 border border-white/10 rounded-2xl cursor-pointer hover:border-purple-400`;
-          d.innerHTML = `<div><div class="text-sm">${o.title}</div><div class="text-xs text-zinc-400">${o.artist}</div></div><div class="text-xs text-right"><div>${o.price}</div><div class="text-purple-300">Offer</div></div>`;
-          d.onclick = () => executeTrade(o);
-          list.appendChild(d);
+        ownedTracks.forEach(owned => {
+          const div = document.createElement('div');
+          div.className = `flex items-center justify-between px-3 py-2.5 bg-zinc-950 border border-white/10 rounded-2xl cursor-pointer hover:border-purple-400/40`;
+          div.innerHTML = `
+            <div>
+              <div class="text-sm">${owned.title}</div>
+              <div class="text-xs text-zinc-400">${owned.artist}</div>
+            </div>
+            <div class="text-xs text-right">
+              <div>${owned.price}</div>
+              <div class="text-purple-300">Offer this</div>
+            </div>
+          `;
+          div.onclick = () => executeTradeOffer(owned);
+          list.appendChild(div);
         });
       }
+      
       document.getElementById('trade-modal').classList.remove('hidden');
       document.getElementById('trade-modal').classList.add('flex');
     }
     
-    function executeTrade(offer) {
-      const tgt = window.pendingTradeTarget;
-      if (!tgt) return;
-      ownedTracks = ownedTracks.filter(t => t.id !== offer.id);
-      ownedTracks.push(tgt);
-      tradeFloorListings = tradeFloorListings.filter(l => l.id !== tgt.id);
+    function executeTradeOffer(offerTrack) {
+      const target = window.pendingTradeTarget;
+      if (!target) return;
+      
+      // Simple trade simulation: give the target, take the offered
+      ownedTracks = ownedTracks.filter(t => t.id !== offerTrack.id);
+      ownedTracks.push(target);
+      
+      // Remove target from floor if listed
+      tradeFloorListings = tradeFloorListings.filter(l => l.id !== target.id);
+      
       saveState();
       closeTradeModal();
+      
       renderBelt();
       renderTradeFloor();
       renderMyCollection();
-      showToast(`Trade done! You received ${tgt.title}.`);
+      
+      showToast(`Trade complete! You now own ${target.title} NFT.`);
     }
     
     function closeTradeModal() {
       document.getElementById('trade-modal').classList.add('hidden');
       document.getElementById('trade-modal').classList.remove('flex');
+      window.pendingTradeTarget = null;
     }
     
+    // Render Trade Floor
     function renderTradeFloor() {
-      const g = document.getElementById('trade-floor-grid');
-      g.innerHTML = '';
-      tradeFloorListings.forEach(l => {
-        const c = document.createElement('div');
-        c.className = `trade-card glass border border-white/10 rounded-3xl p-4`;
-        c.innerHTML = `
+      const grid = document.getElementById('trade-floor-grid');
+      grid.innerHTML = '';
+      
+      tradeFloorListings.forEach(listing => {
+        const card = document.createElement('div');
+        card.className = `trade-card glass border border-white/10 rounded-3xl p-4`;
+        
+        card.innerHTML = `
           <div class="flex justify-between">
-            <div><div class="font-semibold">${l.title}</div><div class="text-xs text-zinc-400">${l.artist} • ${l.owner}</div></div>
-            <div class="text-right"><div class="font-mono text-sm">${l.price}</div><div class="text-[9px] nft-badge">FOR SALE</div></div>
+            <div>
+              <div class="font-semibold">${listing.title}</div>
+              <div class="text-xs text-zinc-400">${listing.artist} • ${listing.owner || 'Verified Producer'}</div>
+            </div>
+            <div class="text-right text-sm">
+              <div class="font-mono">${listing.price}</div>
+              <div class="text-[9px] nft-badge">FOR SALE</div>
+            </div>
           </div>
+          
           <div class="mt-4 flex gap-2">
-            <button onclick="buyFromFloor(${l.id},this)" class="flex-1 text-xs py-2 bg-emerald-600 rounded-2xl">BUY NFT</button>
-            <button onclick="offerTrade(${l.id})" class="flex-1 text-xs py-2 border border-white/30 rounded-2xl">OFFER TRADE</button>
-          </div>`;
-        g.appendChild(c);
+            <button onclick="buyFromFloor(${listing.id}, this)" class="flex-1 text-xs py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500">BUY NFT</button>
+            <button onclick="offerTradeFromFloor(${listing.id}, this)" class="flex-1 text-xs py-2 rounded-2xl border border-white/30">OFFER TRADE</button>
+          </div>
+        `;
+        grid.appendChild(card);
       });
     }
     
-    function buyFromFloor(id, b) {
-      const idx = tradeFloorListings.findIndex(x => x.id == id);
-      if (idx < 0) return;
-      const l = tradeFloorListings[idx];
-      const p = parseFloat(l.price);
-      if (userBalance < p*1000) { alert("Low balance"); return; }
-      userBalance -= Math.floor(p*1000);
-      ownedTracks.push(l);
-      tradeFloorListings.splice(idx,1);
+    function buyFromFloor(trackId, btn) {
+      const listingIndex = tradeFloorListings.findIndex(l => l.id === trackId);
+      if (listingIndex === -1) return;
+      const listing = tradeFloorListings[listingIndex];
+      
+      const priceNum = parseFloat(listing.price);
+      if (userBalance < priceNum * 1000) {
+        alert("Insufficient balance.");
+        return;
+      }
+      
+      userBalance -= Math.floor(priceNum * 1000);
+      ownedTracks.push(listing);
+      tradeFloorListings.splice(listingIndex, 1);
+      
       saveState();
       updateBalanceDisplay();
       renderBelt();
       renderTradeFloor();
       renderMyCollection();
-      showToast("NFT acquired from floor!");
+      
+      showToast(`Acquired ${listing.title} from the Trade Floor!`);
     }
     
+    function offerTradeFromFloor(trackId) {
+      // Reuse offer modal but with floor target
+      offerTrade(trackId);
+    }
+    
+    // My Collection
     function renderMyCollection() {
-      const c = document.getElementById('my-collection');
-      c.innerHTML = '';
+      const container = document.getElementById('my-collection');
+      container.innerHTML = '';
+      
       if (ownedTracks.length === 0) {
-        c.innerHTML = `<div class="col-span-full text-center py-6 text-xs border border-white/10 rounded-3xl text-zinc-400">No NFTs yet. Buy from the Trade Floor or belt.</div>`;
-        document.getElementById('owned-count').textContent = '0';
+        container.innerHTML = `<div class="col-span-full text-center text-xs text-zinc-400 py-6 border border-white/10 rounded-3xl">Your collection is empty. Buy or trade on the floor to get started.</div>`;
         return;
       }
-      ownedTracks.forEach(t => {
-        const d = document.createElement('div');
-        d.className = `glass border border-white/10 rounded-3xl p-4`;
-        d.innerHTML = `
-          <div class="flex justify-between"><div><div class="font-semibold">${t.title}</div><div class="text-xs">${t.artist}</div></div><div class="nft-badge text-[8px]">OWNED</div></div>
-          <div class="mt-4 pt-3 border-t border-white/10 flex gap-2">
-            <button onclick="sellOwned(${t.id},this)" class="flex-1 text-xs py-1.5 border border-white/30 rounded-2xl">SELL / LIST</button>
-            <button onclick="playTrack(${t.id})" class="flex-1 text-xs py-1.5 bg-white/5 rounded-2xl">PLAY</button>
-          </div>`;
-        c.appendChild(d);
+      
+      ownedTracks.forEach(track => {
+        const div = document.createElement('div');
+        div.className = `glass border border-white/10 rounded-3xl p-4 flex flex-col`;
+        
+        div.innerHTML = `
+          <div class="flex-1">
+            <div class="flex justify-between">
+              <div>
+                <div class="font-semibold">${track.title}</div>
+                <div class="text-xs text-zinc-400">${track.artist}</div>
+              </div>
+              <div class="nft-badge self-start">OWNED</div>
+            </div>
+          </div>
+          
+          <div class="mt-4 pt-4 border-t border-white/10 flex gap-2">
+            <button onclick="sellOwnedNFT(${track.id}, this)" class="text-xs flex-1 py-1.5 border border-white/30 rounded-2xl hover:bg-white/5">SELL / LIST</button>
+            <button onclick="playOwned(${track.id})" class="text-xs flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-2xl">PLAY</button>
+          </div>
+        `;
+        container.appendChild(div);
       });
+      
       document.getElementById('owned-count').textContent = ownedTracks.length;
     }
     
-    function sellOwned(id, btn) {
-      const i = ownedTracks.findIndex(x => x.id == id);
-      if (i<0) return;
-      const t = ownedTracks[i];
-      const sellFor = Math.floor(parseFloat(t.price) * 800);
-      if (confirm(`Sell ${t.title} for ~${sellFor} VIZ?`)) {
-        userBalance += sellFor;
-        ownedTracks.splice(i,1);
-        tradeFloorListings.push({...t, owner:"You", price: t.price});
+    function playOwned(trackId) {
+      playTrack(trackId);
+    }
+    
+    function sellOwnedNFT(trackId, btn) {
+      const idx = ownedTracks.findIndex(t => t.id === trackId);
+      if (idx === -1) return;
+      
+      const track = ownedTracks[idx];
+      
+      // Option 1: Direct sell for price * 0.8
+      const sellPrice = Math.floor(parseFloat(track.price) * 800);
+      if (confirm(`Sell ${track.title} NFT for ~${sellPrice} VIZ?`)) {
+        userBalance += sellPrice;
+        ownedTracks.splice(idx, 1);
+        
+        // Optionally add to floor
+        tradeFloorListings.push({...track, owner: "You", price: track.price});
+        
         saveState();
         updateBalanceDisplay();
         renderBelt();
         renderTradeFloor();
         renderMyCollection();
-        showToast(`Sold for ${sellFor} VIZ`);
+        
+        showToast(`Sold ${track.title}! +${sellPrice} VIZ added.`);
       }
     }
     
-    function playOwned(id) { playTrack(id); }
-    
+    // Simple mint
     function showMintModal() {
-      const t = prompt("Track title?", "New VIZ Beat");
-      if (!t) return;
-      const a = prompt("Artist name?", user.name);
-      const nt = { id: Date.now(), title: t, artist: a, src: "beats/knoxzic-  LEVEL in.wav", price: "0.4", nftId: "VIZNFT-" + Math.floor(Math.random()*900) };
-      ownedTracks.push(nt);
+      const title = prompt("Track title for new NFT?", "New Cyber Beat");
+      if (!title) return;
+      const artist = prompt("Your artist name?", user.name || "You");
+      
+      const newTrack = {
+        id: Date.now(),
+        title: title,
+        artist: artist,
+        src: "beats/knoxzic-  LEVEL in.wav", // fallback existing track for demo
+        price: (Math.random() * 0.6 + 0.2).toFixed(2),
+        nftId: "VIZNFT-" + Math.floor(100 + Math.random() * 900)
+      };
+      
+      ownedTracks.push(newTrack);
       saveState();
       renderMyCollection();
       renderBelt();
-      showToast("Minted as NFT!");
+      
+      showToast(`Minted ${title} as NFT!`);
     }
     
+    // User menu
     function showUserMenu() {
-      const m = document.createElement('div');
-      m.className = `absolute right-6 top-[62px] z-[110] w-52 glass border border-white/10 rounded-3xl p-2 text-sm`;
-      m.innerHTML = `
-        <div class="px-3 py-1 text-xs text-zinc-400">Signed in as</div>
+      const menu = document.createElement('div');
+      menu.className = `absolute right-6 top-16 z-[100] w-52 glass border border-white/10 rounded-3xl p-2 text-sm`;
+      menu.innerHTML = `
+        <div class="px-3 py-2 text-xs text-zinc-400">Signed in as</div>
         <div class="px-3 pb-2 font-medium">${user.name} • ${user.role}</div>
+        
         <div class="border-t border-white/10 my-1"></div>
-        <div onclick="alert('Trade history (demo)'); m.remove()" class="px-3 py-2 hover:bg-white/5 rounded-2xl flex gap-2 cursor-pointer"><i class="fa-solid fa-exchange-alt w-4"></i> My Trades</div>
-        <div onclick="window.location.reload()" class="px-3 py-2 hover:bg-white/5 rounded-2xl flex gap-2 cursor-pointer text-red-400"><i class="fa-solid fa-sign-out w-4"></i> Sign Out</div>
+        
+        <div onclick="showMyTrades(); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-exchange-alt w-4"></i> My Active Trades
+        </div>
+        <div onclick="window.location.reload()" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-red-400">
+          <i class="fa-solid fa-sign-out-alt w-4"></i> Disconnect Wallet
+        </div>
       `;
-      const nav = document.querySelector('nav');
-      if (nav) nav.appendChild(m);
-      setTimeout(() => document.addEventListener('click', (ev) => { if (!m.contains(ev.target)) m.remove(); }, {once:true}), 10);
-    }
-    
-    function showToast(m) {
-      const t = document.createElement('div');
-      t.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-2 bg-emerald-600/90 text-white text-xs rounded-3xl flex items-center gap-2 z-[200]`;
-      t.innerHTML = `<i class="fa-solid fa-check"></i> <span>${m}</span>`;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2400);
-    }
-    
-    function formatTime(s) { const m=Math.floor(s/60); const sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
-    
-    function playTrack(id) { /* implemented above */ }
-    
-    // Gate logic
-    let isGateLogin = true;
-    function initGate() {
-      const gate = document.getElementById('auth-gate');
-      const form = document.getElementById('gate-auth-form');
-      const err = document.getElementById('gate-error');
-      const title = document.getElementById('gate-form-title');
-      const btn = document.getElementById('gate-auth-btn');
-      const switchL = document.getElementById('gate-switch-link');
-      const switchT = document.getElementById('gate-switch-text');
-      const uGroup = document.getElementById('gate-username-group');
       
-      if (!gate || !form) return;
-      
-      switchL.onclick = (e) => {
-        e.preventDefault();
-        isGateLogin = !isGateLogin;
-        err.classList.add('hidden');
-        if (isGateLogin) {
-          btn.textContent = 'Sign In';
-          title.textContent = 'Sign in to access your Dashboard';
-          uGroup.classList.add('hidden');
-          switchT.textContent = "Don't have an account?";
-          switchL.textContent = 'Sign Up';
-        } else {
-          btn.textContent = 'Create Account';
-          title.textContent = 'Create your Creator Account';
-          uGroup.classList.remove('hidden');
-          switchT.textContent = 'Already have an account?';
-          switchL.textContent = 'Sign In';
-        }
-      };
-      
-      form.onsubmit = async (e) => {
-        e.preventDefault();
-        err.classList.add('hidden');
-        const em = document.getElementById('gate-email').value.trim();
-        const pw = document.getElementById('gate-password').value;
-        const un = document.getElementById('gate-username') ? document.getElementById('gate-username').value.trim() : '';
-        
-        if (!em || !pw) { err.textContent = 'Email and password required.'; err.classList.remove('hidden'); return; }
-        if (!isGateLogin && !un) { err.textContent = 'Display name required for sign up.'; err.classList.remove('hidden'); return; }
-        
-        btn.disabled = true;
-        btn.textContent = isGateLogin ? 'Signing in...' : 'Creating...';
-        
-        // Simulate auth (for static demo; replace with real Supabase in prod)
-        await new Promise(r => setTimeout(r, 650));
-        
-        if (isGateLogin || un) {
-          // success
-          localStorage.setItem('vizalok_music_signed', 'true');
-          localStorage.setItem('vizalok_music_user', JSON.stringify({name: un || 'Producer', email: em}));
-          gate.style.display = 'none';
-          document.getElementById('portal-content').style.display = '';
-          initDashboardContent();
-        } else {
-          err.textContent = 'Sign up failed (demo). Try again.';
-          err.classList.remove('hidden');
-        }
-        btn.disabled = false;
-        btn.textContent = isGateLogin ? 'Sign In' : 'Create Account';
-      };
-      
-      // Check if already "signed"
-      if (localStorage.getItem('vizalok_music_signed') === 'true') {
-        gate.style.display = 'none';
-        document.getElementById('portal-content').style.display = '';
-        initDashboardContent();
+      // Position relative to nav
+      const navRight = document.querySelector('nav .flex.items-center.gap-3');
+      if (navRight) {
+        navRight.style.position = 'relative';
+        navRight.appendChild(menu);
+      } else {
+        document.body.appendChild(menu);
       }
+      
+      setTimeout(() => {
+        document.addEventListener('click', function handler(ev) {
+          if (!menu.contains(ev.target)) {
+            menu.remove();
+            document.removeEventListener('click', handler);
+          }
+        }, { once: true });
+      }, 50);
     }
     
-    function initDashboardContent() {
+    function showMyTrades() {
+      alert("Trade history modal would open here. You have 3 active listings and 1 incoming offer (demo).");
+    }
+    
+    // Initialize everything
+    function initDashboard() {
+      initTailwind();
+      
       loadState();
       updateBalanceDisplay();
+      
+      // Render belt
       renderBelt();
+      
+      // Render trade floor
       renderTradeFloor();
+      
+      // Render collection
       renderMyCollection();
+      
+      // Search
       setupSearch();
       
-      // Keyboard
-      document.addEventListener('keydown', e => {
-        if (e.key === ' ' ) { e.preventDefault(); if (currentTrackId) togglePlay(); else startBeltAutoPlay(); }
-        if (e.key.toLowerCase() === 'b') startBeltAutoPlay();
+      // User display
+      // already in HTML
+      
+      // Keyboard support for belt
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          if (currentTrackId) {
+            if (currentAudio.paused) currentAudio.play(); else currentAudio.pause();
+          } else {
+            startBeltAutoPlay();
+          }
+        }
+        if (e.key.toLowerCase() === 'b') {
+          startBeltAutoPlay();
+        }
       });
       
-      console.log('%c[VIZALOK Music] Dashboard rebuilt. SoundCloud-like with cyber VIZALOK elements. NFT trade space live. All beats from vault.', 'color:#64748b');
+      // Demo: make sure first few belt cards have nice initial waveforms
+      console.log('%c[VIZALOK Music Dashboard] Rebuilt. Belt ready with real beats. All NFT trades simulated locally. No sign-in gate on this dashboard.', 'color:#64748b');
     }
     
-    window.onload = function() {
-      initTailwind();
-      initGate();
+    // Boot - no gate, direct access
+    window.onload = () => {
+      // Direct access, no sign in required for the dashboard
+      initDashboard();
+      
+      // Optional: pre-load one track in player for demo
+      setTimeout(() => {
+        if (allTracks.length) {
+          // miniPlayer.classList.remove('hidden'); // optional
+        }
+      }, 300);
     };
     
-    window.VIZ_MUSIC_DASH = { startBeltAutoPlay, pauseBeltAutoPlay, renderBelt };
+    // Expose some for console tinkering
+    window.VIZ_MUSIC = { startBeltAutoPlay, pauseBeltAutoPlay, renderBelt };
   </script>
 </body>
 </html>
