@@ -233,6 +233,300 @@
       z-index: -1;
       pointer-events: none;
     }
+
+    /* ============================================
+       VIZALOK — 3D Space Grid + Cyberpunk Effects
+       (Extensive upgraded premium effects)
+       ============================================ */
+
+    /* Glassmorphism Viewport Frame */
+    .vizalok-space-viewport {
+      position: relative;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px 20px 40px; /* extra bottom for swipe controls */
+      border-radius: 28px;
+      background: rgba(15, 15, 25, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(103, 232, 249, 0.15);
+      box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    /* Subtle cyberpunk scanline + grid background */
+    .vizalok-space-viewport::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(rgba(103, 232, 249, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 232, 249, 0.035) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 1;
+      animation: scanlineDrift 22s linear infinite;
+    }
+
+    @keyframes scanlineDrift {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 56px; }
+    }
+
+
+
+    /* Dynamic Neon Spotlight (follows mouse) */
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      inset: -150%;
+      background: radial-gradient(
+        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(103, 232, 249, 0.18) 0%,
+        transparent 50%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 3;
+      mix-blend-mode: screen;
+    }
+
+    .platform-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Animated Neon Energy Border */
+    .platform-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 22px;
+      background: linear-gradient(
+        135deg,
+        rgba(103, 232, 249, 0.4) 0%,
+        rgba(167, 139, 250, 0.3) 25%,
+        rgba(251, 191, 36, 0.25) 50%,
+        rgba(244, 114, 182, 0.3) 75%,
+        rgba(103, 232, 249, 0.4) 100%
+      );
+      background-size: 300% 300%;
+      animation: neonFlow 8s linear infinite;
+      opacity: 0;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .platform-card:hover::after {
+      opacity: 0.6;
+    }
+
+    /* Active / Chosen tab visual (when clicked or centered via swipe/scroll) */
+    .platform-card.active-tab {
+      transform: scale(1.04) !important;
+      box-shadow: 0 0 0 2px currentColor, 0 25px 60px -10px rgba(0,0,0,0.6);
+      z-index: 5;
+      border-color: currentColor;
+      animation: platformPop 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes platformPop {
+      0% {
+        transform: scale(0.92) !important;
+        opacity: 0.6;
+      }
+      60% {
+        transform: scale(1.08) !important;
+      }
+      100% {
+        transform: scale(1.04) !important;
+        opacity: 1;
+      }
+    }
+
+    /* Tab header and brief explanation for single-icon view */
+    .tab-header {
+      margin-bottom: 0.75rem;
+    }
+    .tab-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      opacity: 0.85;
+    }
+    .brief {
+      font-size: 0.9rem;
+      line-height: 1.35;
+      margin-bottom: 1rem;
+      min-height: 2.8em;
+      color: #b8b8c0;
+    }
+
+    @keyframes neonFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 200% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Touch feedback on mobile */
+    @media (hover: none) and (pointer: coarse) {
+      .platform-card:active {
+        transform: scale(0.96) translateY(-2px) !important;
+        transition: transform 0.1s ease;
+      }
+    }
+
+    /* Swipe controls - buttons on left and right of the icon */
+    .swipe-controls {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 8px;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .swipe-btn {
+      pointer-events: auto;
+      background: rgba(15,15,25,0.85);
+      border: 1px solid rgba(103,232,249,0.3);
+      color: #67e8f9;
+      font-size: 1.6rem;
+      line-height: 1;
+      width: 38px;
+      height: 38px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 12px rgba(103,232,249,0.4);
+    }
+    .swipe-btn:hover {
+      background: rgba(103,232,249,0.2);
+      border-color: #67e8f9;
+      color: #fff;
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 0 20px rgba(103,232,249,0.7);
+    }
+    .swipe-btn:active {
+      transform: scale(0.9) rotate(-5deg);
+    }
+
+    /* Button animation - subtle pulse */
+    .swipe-btn {
+      animation: arrowPulse 2.5s ease-in-out infinite;
+    }
+    .swipe-btn:hover {
+      animation: none;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(103,232,249,0.4); }
+      50% { box-shadow: 0 0 22px rgba(103,232,249,0.8); }
+    }
+
+    /* Tab indicators for quick click to choose */
+    .tab-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 11;
+    }
+    .tab-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-dot.active {
+      background: #67e8f9;
+      box-shadow: 0 0 6px #67e8f9;
+      transform: scale(1.2);
+    }
+    .tab-dot:hover {
+      background: rgba(103,232,249,0.5);
+    }
+
+    /* Reduced motion accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .platform-card,
+      .vizalok-space-viewport::before {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* Only show one platform card at a time */
+    .vizalok-space-viewport {
+      overflow: hidden;
+    }
+
+    .platform-card {
+      display: none !important;
+    }
+
+    .platform-card.active {
+      display: flex !important;
+      animation: cardAppear 0.5s ease forwards;
+    }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Icon animation when cycling to this tab */
+    .platform-card.active .icon {
+      animation: iconPop 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes iconPop {
+      0% { transform: scale(0.6); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Center the icon prominently */
+    .platform-card > div:first-child {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+
+    .platform-card .icon {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    /* Ensure tab-header and brief are centered and readable */
+    .tab-header, .brief {
+      width: 100%;
+      text-align: center;
+    }
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen overflow-x-hidden">
@@ -266,17 +560,20 @@
 
     <p class="text-zinc-400 text-xl sm:text-2xl mb-8 sm:mb-10 tracking-wide text-center">Choose Your Platform</p>
 
-    <!-- Cards: fully flexible — 2-col on mobile (vertical scroll easy), scales to 4-col. No overflow clip. -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl w-full mx-auto">
+    <!-- VIZALOK Space Viewport with extensive cyberpunk/space effects -->
+    <div class="vizalok-space-viewport">
 
       <!-- FIXED Music Card -->
       <a href="music/" 
-         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer">
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-cyan-500/30 rounded-3xl p-8 text-center cursor-pointer music-card">
         <div class="h-14 flex justify-center mb-6">
           <i class="fa-solid fa-compact-disc text-5xl text-cyan-400 icon"></i>
         </div>
-        <h3 class="text-3xl font-bold mb-2">Music</h3>
-        <p class="text-zinc-400 text-sm mb-8">Stream • Upload • Live • Royalties</p>
+        <div class="tab-header">
+          <h3 class="text-2xl font-bold mb-1">Music</h3>
+          <span class="tab-label text-xs text-cyan-400 tracking-widest">MUSIC PORTAL</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Stream, upload beats, perform live, and track royalties in the VIZALOK music ecosystem.</p>
         <div class="enter-text text-cyan-400 font-medium flex items-center justify-center gap-2 text-sm">
           Enter Music Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
@@ -284,27 +581,30 @@
 
       <!-- Creators (now full portal: YT + Twitch hybrid with community feed first, studio, + points for Grok Imagine) -->
       <a href="creators/" 
-         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-purple-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer creators-card">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
           <i class="fa-solid fa-magic text-4xl sm:text-5xl text-purple-400 icon"></i>
         </div>
-        <h3 class="text-2xl sm:text-3xl font-bold mb-2">Creators</h3>
-        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8">Upload • Stream • Monetize • Imagine</p>
+        <div class="tab-header">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-1">Creators</h3>
+          <span class="tab-label text-xs text-purple-400 tracking-widest">CREATORS PORTAL</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Upload, stream, monetize content and harness AI imagine tools in the hybrid creators platform.</p>
         <div class="enter-text text-purple-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Creators Portal <i class="fa-solid fa-arrow-right"></i>
         </div>
       </a>
 
       <a href="logistics.html" 
-         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer logistics-card">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
           <i class="fa-solid fa-microchip text-4xl sm:text-5xl text-amber-400 icon"></i>
         </div>
-        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-amber-300">Vizalok Logistics</h3>
-        <p class="text-zinc-400 text-xs sm:text-sm mb-4 sm:mb-6">Medical Courier & Logistics in Maryland</p>
-        <p class="text-amber-400 text-[10px] sm:text-xs leading-tight mb-6 sm:mb-8">
-          Integrity-driven deliveries • Contractor opportunities
-        </p>
+        <div class="tab-header">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-1 text-amber-300">Vizalok Logistics</h3>
+          <span class="tab-label text-xs text-amber-400 tracking-widest">LOGISTICS PORTAL</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Become a driver for reliable medical courier & logistics services across the DMV with integrity-driven opportunities.</p>
         <div class="enter-text text-amber-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Vizalok Logistics <i class="fa-solid fa-arrow-right"></i>
         </div>
@@ -312,116 +612,177 @@
 
       <!-- New Nash Services Panel (Full Project from Attachments) -->
       <a href="nash-services/" 
-         class="platform-card bubble block bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer">
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-rose-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer nash-card">
         <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
           <i class="fa-solid fa-cogs text-4xl sm:text-5xl text-rose-400 icon"></i>
         </div>
-        <h3 class="text-2xl sm:text-3xl font-bold mb-2 text-rose-300">Nash Services</h3>
-        <p class="text-zinc-400 text-xs sm:text-sm mb-6 sm:mb-8"># Professional Removal and Cleanup with Precision</p>
+        <div class="tab-header">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-1 text-rose-300">Nash Services</h3>
+          <span class="tab-label text-xs text-rose-400 tracking-widest">NASH SERVICES PORTAL</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Professional property preservation, construction, cleanouts & community revitalization with precision craftsmanship.</p>
         <div class="enter-text text-rose-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
           Enter Full Nash Services Site <i class="fa-solid fa-arrow-right"></i>
         </div>
       </a>
+
+      <!-- Clickable swipe arrows for choosing tabs -->
+      <div class="swipe-controls">
+        <button class="swipe-btn prev" aria-label="Previous platform">‹</button>
+        <button class="swipe-btn next" aria-label="Next platform">›</button>
+      </div>
+
+      <!-- Tab indicators (click to jump) -->
+      <div class="tab-indicators">
+        <button class="tab-dot active" data-index="0" aria-label="Music"></button>
+        <button class="tab-dot" data-index="1" aria-label="Creators"></button>
+        <button class="tab-dot" data-index="2" aria-label="Logistics"></button>
+        <button class="tab-dot" data-index="3" aria-label="Nash"></button>
+      </div>
     </div>
 
     <div class="mt-12 sm:mt-16 text-zinc-500 text-xs text-center">VIZALOK • Independent music & creator ecosystem</div>
   </div>
 
-  <!-- Cyberpunk Platform Cards: tilt + ripple burst on click -->
+  <!-- VIZALOK 3D Space + Cyberpunk Effects (Desktop Tilt/Spotlight + Mobile Gyro/Touch) -->
   <script>
+    const viewport = document.querySelector('.vizalok-space-viewport');
     const cards = document.querySelectorAll('.platform-card');
 
-    cards.forEach(card => {
-      // 3D Tilt Effect toward mouse (cyberpunk premium feel)
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) - 0.5;
-        const y = ((e.clientY - rect.top) / rect.height) - 0.5;
+    // === Simple Cycle Slider (one at a time with animation) ===
+    const controls = document.querySelector('.swipe-controls');
+    const prevBtn = document.querySelector('.swipe-btn.prev');
+    const nextBtn = document.querySelector('.swipe-btn.next');
 
-        const rotateX = (-y * 12).toFixed(2);
-        const rotateY = (x * 16).toFixed(2);
+    let currentIndex = 0;
 
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-14px) scale(1.015)`;
+    function updateActive() {
+      cards.forEach((c, i) => {
+        c.classList.toggle('active', i === currentIndex);
+        c.classList.toggle('active-tab', i === currentIndex);
       });
+      const dots = document.querySelectorAll('.tab-dot');
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+    }
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
-        card.style.transform = 'translateY(0) scale(1)';
-        
-        // reset transition after animation
-        setTimeout(() => {
-          card.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease';
-        }, 600);
+    updateActive();
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + 4) % 4;
+        updateActive();
       });
+    }
 
-      // Ripple burst (cyberpunk electric) on click
-      card.addEventListener('click', (e) => {
-        createCyberRippleBurst(card, e);
-        // Let the <a href> navigation proceed normally
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % 4;
+        updateActive();
+      });
+    }
+
+    // Tab dots
+    const dots = document.querySelectorAll('.tab-dot');
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        currentIndex = i;
+        updateActive();
       });
     });
 
-    function createCyberRippleBurst(card, e) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    // Note: card clicks now purely navigate via href (no JS interference for reliable page loads)
 
-      // Determine accent color from the card's border (cyan/purple/amber/rose)
-      const accent = getComputedStyle(card).borderColor || '#67e8f9';
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        currentIndex = (currentIndex - 1 + 4) % 4;
+        updateActive();
+        e.preventDefault();
+      } else if (e.key === 'ArrowRight') {
+        currentIndex = (currentIndex + 1) % 4;
+        updateActive();
+        e.preventDefault();
+      }
+    });
 
-      // Main expanding neon ripple ring
-      const ripple = document.createElement('span');
-      ripple.className = 'cyber-ripple';
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-      ripple.style.width = '22px';
-      ripple.style.height = '22px';
-      ripple.style.marginLeft = '-11px';
-      ripple.style.marginTop = '-11px';
-      ripple.style.borderColor = accent;
-      ripple.style.boxShadow = `0 0 10px ${accent}, 0 0 22px ${accent}, 0 0 40px ${accent}`;
-      card.appendChild(ripple);
+    // Initial active
+    if (cards[0]) cards[0].classList.add('active-tab');
+    const initialDot = document.querySelector('.tab-dot');
+    if (initialDot) initialDot.classList.add('active');
 
-      // Burst sparks / particles for "electric burst" cyberpunk feel (6-7 sparks)
-      const sparkCount = 7;
-      for (let i = 0; i < sparkCount; i++) {
-        const spark = document.createElement('span');
-        spark.className = 'cyber-spark';
-        spark.style.left = `${x}px`;
-        spark.style.top = `${y}px`;
-        spark.style.background = accent;
-        spark.style.boxShadow = `0 0 5px ${accent}, 0 0 10px ${accent}`;
+    const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
-        const angle = (i * (360 / sparkCount)) + (Math.random() * 18 - 9);
-        const distance = 38 + Math.random() * 28;
+    // === DESKTOP: Per-card 3D Mouse Tilt + Spotlight (compatible with horizontal swipe) ===
+    if (!isMobile) {
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width) - 0.5;
+          const y = ((e.clientY - rect.top) / rect.height) - 0.5;
 
-        // Position instantly then animate outward + fade
-        const tx = Math.cos(angle * Math.PI / 180) * distance;
-        const ty = Math.sin(angle * Math.PI / 180) * distance;
+          const rotateX = (-y * 14).toFixed(2);
+          const rotateY = (x * 18).toFixed(2);
 
-        spark.style.transform = `translate(0,0) scale(1)`;
-        spark.style.opacity = '1';
+          card.style.transition = 'transform 0.1s ease-out';
+          card.style.transform = `
+            perspective(1200px) 
+            rotateX(${rotateX}deg) 
+            rotateY(${rotateY}deg) 
+            translateY(-6px) 
+            scale(1.015)
+          `;
 
-        card.appendChild(spark);
-
-        // Trigger the burst animation on next frame
-        requestAnimationFrame(() => {
-          spark.style.transition = 'transform 620ms cubic-bezier(0.23,1,0.32,1), opacity 620ms ease-out';
-          spark.style.transform = `translate(${tx}px, ${ty}px) scale(${0.2 + Math.random() * 0.3})`;
-          spark.style.opacity = '0';
+          // Dynamic spotlight
+          const relX = ((e.clientX - rect.left) / rect.width) * 100;
+          const relY = ((e.clientY - rect.top) / rect.height) * 100;
+          card.style.setProperty('--mouse-x', `${relX}%`);
+          card.style.setProperty('--mouse-y', `${relY}%`);
         });
 
-        // Cleanup
-        setTimeout(() => {
-          if (spark && spark.parentNode) spark.parentNode.removeChild(spark);
-        }, 800);
+        card.addEventListener('mouseleave', () => {
+          card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+          card.style.transform = '';
+          card.style.removeProperty('--mouse-x');
+          card.style.removeProperty('--mouse-y');
+        });
+      });
+    } 
+    else {
+      // === MOBILE: Touch + Optional Gyroscope ===
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (event) => {
+          const beta = event.beta || 0;
+          const gamma = event.gamma || 0;
+
+          cards.forEach((card, index) => {
+            const offset = (index - 1.5) * 0.35;
+            const rotX = (beta / 9) + offset;
+            const rotY = (gamma / 7) + offset * 0.5;
+
+            card.style.transition = 'transform 0.35s ease-out';
+            card.style.transform = `
+              perspective(900px) 
+              rotateX(${rotX}deg) 
+              rotateY(${rotY}deg) 
+              translateY(-5px)
+            `;
+          });
+        }, { passive: true });
       }
 
-      // Remove main ripple
-      setTimeout(() => {
-        if (ripple && ripple.parentNode) ripple.parentNode.removeChild(ripple);
-      }, 700);
+      // Touch spotlight
+      cards.forEach(card => {
+        card.addEventListener('touchmove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
+          const y = ((e.touches[0].clientY - rect.top) / rect.height) * 100;
+          
+          card.style.setProperty('--mouse-x', `${x}%`);
+          card.style.setProperty('--mouse-y', `${y}%`);
+        });
+      });
     }
+
   </script>
 
 </body>
