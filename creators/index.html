@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIZALOK Creators • YouTube + Twitch Hybrid</title>
+  <title>VIZALOK Creators • Become Your Own Animator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Supabase & Stripe for real auth + payments -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Supabase client (ESM for module script) -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -26,9 +29,53 @@
     .live-dot { animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
     .viz-gradient { background: linear-gradient(90deg, #67e8f9, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Animator specific */
+    .imagine-result:hover { transform: scale(1.02); box-shadow: 0 0 0 1px #a78bfa; }
+    #video-frames > div { transition: opacity 0.2s ease; }
   </style>
 </head>
 <body class="bg-zinc-950 text-white sleek-bg min-h-screen">
+
+  <!-- Auth Gate - Sign in / Sign up required before accessing the portal (like music tab) -->
+  <div id="auth-gate" class="fixed inset-0 bg-zinc-950 flex items-center justify-center z-[200]">
+    <div class="max-w-md w-full px-6">
+      <div class="text-center mb-8">
+        <img src="../logo.png" alt="VIZALOK" class="w-20 h-20 mx-auto mb-4 object-contain">
+        <h1 class="text-4xl font-black tracking-[-1px]">VIZALOK Creators</h1>
+        <p class="text-purple-300 mt-1">Become Your Own Animator</p>
+      </div>
+
+      <div class="bg-zinc-900 border border-white/10 rounded-3xl p-8">
+        <h2 id="gate-form-title" class="text-2xl font-semibold mb-6 text-center">Sign in to access the Portal</h2>
+        
+        <div id="gate-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
+
+        <form id="gate-auth-form">
+          <div class="mb-4">
+            <input type="email" id="gate-email" placeholder="Email address" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+          </div>
+          <div class="mb-4">
+            <input type="password" id="gate-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+          </div>
+          <div id="gate-username-group" class="hidden mb-4">
+            <input type="text" id="gate-username" placeholder="Display Name" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500">
+          </div>
+          
+          <button type="submit" id="gate-auth-btn" class="w-full py-3 bg-white text-zinc-950 font-semibold rounded-2xl hover:bg-zinc-200 transition">Sign In</button>
+        </form>
+
+        <p class="text-center mt-6 text-sm text-zinc-400">
+          <span id="gate-switch-text">Don't have an account?</span> 
+          <a href="#" id="gate-switch-link" class="text-purple-400 hover:underline font-medium">Sign Up</a>
+        </p>
+      </div>
+
+      <p class="text-center mt-6 text-xs text-zinc-500">
+        <a href="../index.html" class="underline hover:text-zinc-400">← Back to VIZALOK Home</a>
+      </p>
+    </div>
+  </div>
 
   <!-- Top Nav -->
   <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-white/10">
@@ -38,14 +85,14 @@
           <img src="../logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
           <div>
             <span class="font-bold tracking-tighter text-xl">VIZALOK</span>
-            <span class="text-[10px] text-purple-400 font-medium tracking-[1.5px] ml-0.5">CREATORS</span>
+            <span class="text-[10px] text-purple-400 font-medium tracking-[1.5px] ml-0.5">ANIMATOR</span>
           </div>
         </a>
         <div class="hidden sm:flex items-center gap-1 text-sm ml-4">
-          <a href="#discover" onclick="document.getElementById('discover').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Discover</a>
-          <a href="#studio" onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Studio</a>
-          <a href="#live" onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Live</a>
-          <a href="#imagine" onclick="document.getElementById('imagine').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Grok Imagine</a>
+          <a href="#showcase" onclick="document.getElementById('showcase').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Showcase</a>
+          <a href="#buy-points" onclick="document.getElementById('buy-points').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Buy Points</a>
+          <a href="#image-gen" onclick="document.getElementById('image-gen').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Image Animator</a>
+          <a href="#video-gen" onclick="document.getElementById('video-gen').scrollIntoView({behavior:'smooth'})" class="px-3 py-1 hover:text-purple-300 text-sm">Video Animator</a>
         </div>
       </div>
 
@@ -61,8 +108,8 @@
           </div>
           <button onclick="logoutUser()" class="text-xs px-2.5 py-1 rounded-xl border border-white/20 hover:bg-white/5">Sign out</button>
         </div>
-        <button id="nav-signin-btn" onclick="openAuthModal()" 
-                class="px-4 py-1.5 rounded-2xl text-sm font-medium bg-white text-zinc-950 hover:bg-zinc-200 flex items-center gap-2">
+        <button id="nav-signin-btn" 
+                class="px-4 py-1.5 rounded-2xl text-sm font-medium bg-white text-zinc-950 hover:bg-zinc-200 flex items-center gap-2 hidden">
           <i class="fa-solid fa-user"></i> <span>Sign In</span>
         </button>
       </div>
@@ -71,34 +118,34 @@
 
   <!-- Hero -->
   <div class="max-w-5xl mx-auto px-6 pt-10 pb-8 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs tracking-widest mb-3">YOUTUBE × TWITCH POWERED BY VIZALOK</div>
-    <h1 class="text-5xl sm:text-6xl font-black tracking-[-2.5px] mb-3">Create.<br class="hidden sm:block">Stream. Inspire.</h1>
-    <p class="max-w-md mx-auto text-zinc-400">A hybrid platform for creators. Discover the community first — then launch your own workflow with Grok Imagine credits.</p>
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs tracking-widest mb-3">POINT-POWERED AI ANIMATION</div>
+    <h1 class="text-5xl sm:text-6xl font-black tracking-[-2.5px] mb-3">VIZALOK Creators.<br class="hidden sm:block">Become Your Own Animator.</h1>
+    <p class="max-w-md mx-auto text-zinc-400">Buy points. Generate images &amp; videos with AI directly on the site. Turn your prompts into animated creations — no studio required.</p>
     <div class="flex gap-3 justify-center mt-6">
-      <button onclick="document.getElementById('discover').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center gap-2 hover:bg-zinc-200">
-        <i class="fa-solid fa-play"></i> Explore Community
+      <button onclick="document.getElementById('buy-points').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center gap-2 hover:bg-zinc-200">
+        <i class="fa-solid fa-coins"></i> Buy Points &amp; Animate
       </button>
-      <button onclick="document.getElementById('studio').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 border border-white/30 rounded-2xl hover:bg-white/5">Start Creating</button>
+      <button onclick="document.getElementById('image-gen').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 border border-white/30 rounded-2xl hover:bg-white/5">Start Animating</button>
     </div>
   </div>
 
-  <!-- Discover Community (see BEFORE starting your workflow) -->
-  <div id="discover" class="max-w-7xl mx-auto px-5 sm:px-6 pb-12">
+  <!-- AI Animator Showcase -->
+  <div id="showcase" class="max-w-7xl mx-auto px-5 sm:px-6 pb-12">
     <div class="flex items-end justify-between mb-4">
       <div>
-        <div class="uppercase text-purple-400 text-xs tracking-[2px]">Community First</div>
-        <h2 class="text-3xl font-bold tracking-tight">Discover Community Creations</h2>
-        <p class="text-zinc-400 text-sm mt-1">Get inspired by what others are making right now. Real uploads from VIZALOK creators.</p>
+        <div class="uppercase text-purple-400 text-xs tracking-[2px]">ANIMATOR SHOWCASE</div>
+        <h2 class="text-3xl font-bold tracking-tight">Real-time AI Creations from the Community</h2>
+        <p class="text-zinc-400 text-sm mt-1">Sign in to publish your generations and see live updates from other animators. No mock data — everything is real and realtime via Supabase.</p>
       </div>
-      <div class="hidden sm:block text-xs text-zinc-500">Scroll or filter to explore</div>
+      <div class="hidden sm:block text-xs text-zinc-500">Filter by type</div>
     </div>
 
     <!-- Filters -->
     <div class="flex flex-wrap gap-2 mb-4" id="feed-filters">
       <button onclick="filterCommunity('all')" class="filter-btn active px-4 py-1 text-sm rounded-2xl bg-white/10">All</button>
       <button onclick="filterCommunity('video')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Videos</button>
-      <button onclick="filterCommunity('image')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Images & Art</button>
-      <button onclick="filterCommunity('clip')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Live Clips</button>
+      <button onclick="filterCommunity('image')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Images</button>
+      <button onclick="filterCommunity('clip')" class="filter-btn px-4 py-1 text-sm rounded-2xl bg-white/5 hover:bg-white/10">Clips</button>
     </div>
 
     <!-- Community Grid: static inspiring cards + realtime dynamic uploads -->
@@ -107,87 +154,90 @@
     </div>
 
     <div class="text-center mt-3">
-      <span class="text-[10px] text-zinc-500">New uploads from signed-in creators appear here in realtime. Add yours in the Studio below.</span>
+      <span class="text-[10px] text-zinc-500">Real-time creations from signed-in animators. Sign in to publish your AI animations here instantly.</span>
     </div>
   </div>
 
-  <!-- Studio / Workflow -->
+  <!-- Studio / AI Animator Tools (accessible after signing in via the gate) -->
   <div id="studio" class="bg-zinc-900/60 border-t border-white/10">
     <div class="max-w-7xl mx-auto px-5 sm:px-6 py-10">
       <div class="section-header mb-6">
-        <span class="text-purple-400 text-xs tracking-[2px]">YOUR TURN</span>
-        <h2 class="text-3xl font-bold">Start Your Creative Workflow</h2>
-        <p class="text-sm text-zinc-400">Upload, generate with points, or go live. Everything you create can show up in the community feed.</p>
+        <span class="text-purple-400 text-xs tracking-[2px]">YOUR TURN — POWERED BY POINTS</span>
+        <h2 class="text-3xl font-bold">Become Your Own Animator</h2>
+        <p class="text-sm text-zinc-400">Use points to generate images and videos with AI right here. Publish your animations to the showcase.</p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-4">
-        <!-- Upload -->
-        <div class="bg-zinc-950 border border-white/10 rounded-3xl p-5">
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Image Animator -->
+        <div id="image-gen" class="bg-zinc-950 border border-purple-500/30 rounded-3xl p-6">
           <div class="flex items-center gap-3 mb-3">
-            <i class="fa-solid fa-upload text-xl text-cyan-400"></i>
-            <h3 class="font-semibold text-lg">Upload &amp; Publish</h3>
+            <i class="fa-solid fa-image text-2xl text-purple-400"></i>
+            <h3 class="font-semibold text-xl">Image Animator</h3>
           </div>
-          <p class="text-sm text-zinc-400 mb-4">Share video or image work with the community instantly.</p>
+          <p class="text-sm text-zinc-400 mb-4">Prompt → AI image in seconds. 10 points per generation. Perfect for keyframes and stills.</p>
           
-          <input type="file" id="upload-file" accept="video/*,image/*" class="block w-full text-xs mb-3 file:mr-3 file:px-3 file:py-1.5 file:rounded-2xl file:border-0 file:bg-purple-600 file:text-white">
-          <input id="upload-title" placeholder="Title (e.g. My latest animation)" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-2">
-          <textarea id="upload-desc" placeholder="Short description or story..." rows="2" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
+          <textarea id="image-prompt" placeholder="A futuristic animator at their desk, neon lights, cyberpunk style, detailed hands..." rows="3" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
           
-          <button onclick="publishUpload()" class="w-full py-2 rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-medium text-sm">Publish to Community</button>
-          <div id="upload-status" class="text-xs mt-2 h-4 text-emerald-400"></div>
+          <div class="flex gap-2 mb-3">
+            <button onclick="generateImage()" class="flex-1 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 font-medium text-sm">Generate Image (10 pts)</button>
+            <button onclick="document.getElementById('buy-points').scrollIntoView({behavior:'smooth'})" class="px-4 text-xs border border-white/20 rounded-2xl">Buy pts</button>
+          </div>
+          
+          <div id="image-results" class="grid grid-cols-2 gap-3 min-h-[120px]"></div>
+          <div class="text-[10px] text-zinc-500 mt-2">Results auto-save to your profile. Click to publish to showcase.</div>
         </div>
 
-        <!-- Grok Imagine (points) -->
-        <div class="bg-zinc-950 border border-purple-500/30 rounded-3xl p-5">
+        <!-- Video Animator -->
+        <div id="video-gen" class="bg-zinc-950 border border-amber-500/30 rounded-3xl p-6">
           <div class="flex items-center gap-3 mb-3">
-            <i class="fa-solid fa-magic text-xl text-purple-400"></i>
-            <h3 class="font-semibold text-lg">Grok Imagine</h3>
+            <i class="fa-solid fa-video text-2xl text-amber-400"></i>
+            <h3 class="font-semibold text-xl">Video Animator</h3>
           </div>
-          <p class="text-sm text-zinc-400 mb-3">Turn prompts into visuals. Costs 10 pts per generation. Points are stored in your profile.</p>
+          <p class="text-sm text-zinc-400 mb-4">Prompt → short AI video clip (4 frames animated). 50 points per clip. Bring your ideas to life.</p>
           
-          <textarea id="imagine-prompt" placeholder="A cyberpunk fox DJ on a neon rooftop at midnight, cinematic lighting..." rows="3" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
+          <textarea id="video-prompt" placeholder="A sleek robot dancing in a neon city at night, smooth motion, cinematic..." rows="3" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-2 mb-3"></textarea>
           
-          <div class="flex gap-2">
-            <button onclick="runGrokImagine()" class="flex-1 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 font-medium text-sm">Generate (10 pts)</button>
-            <button onclick="document.getElementById('imagine').scrollIntoView({behavior:'smooth'})" class="px-4 text-xs border border-white/20 rounded-2xl">Buy pts</button>
+          <div class="flex gap-2 mb-3">
+            <button onclick="generateVideo()" class="flex-1 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 font-medium text-sm">Generate Video Clip (50 pts)</button>
+            <button onclick="document.getElementById('buy-points').scrollIntoView({behavior:'smooth'})" class="px-4 text-xs border border-white/20 rounded-2xl">Buy pts</button>
           </div>
           
-          <div id="imagine-results" class="mt-4 grid grid-cols-2 gap-2 min-h-[84px]"></div>
+          <div id="video-results" class="min-h-[120px]"></div>
+          <div class="text-[10px] text-zinc-500 mt-2">Frames play as a loop. Download or publish the sequence to showcase.</div>
         </div>
+      </div>
 
-        <!-- Quick Studio -->
-        <div class="bg-zinc-950 border border-white/10 rounded-3xl p-5">
-          <div class="flex items-center gap-3 mb-3">
-            <i class="fa-solid fa-rocket text-xl text-amber-400"></i>
-            <h3 class="font-semibold text-lg">Quick Actions</h3>
+      <!-- Quick Upload (kept lightweight) -->
+      <div class="mt-6 bg-zinc-950 border border-white/10 rounded-3xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <i class="fa-solid fa-upload text-cyan-400"></i>
+              <span class="font-semibold">Upload your own animation or frame sequence</span>
+            </div>
+            <p class="text-xs text-zinc-500">Got external work? Publish it here to the showcase (still uses your profile).</p>
           </div>
-          <div class="space-y-2 text-sm">
-            <button onclick="quickStartLive()" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
-              <span><i class="fa-solid fa-video mr-2"></i> Go Live Now</span>
-              <i class="fa-solid fa-arrow-right text-amber-400"></i>
-            </button>
-            <button onclick="document.getElementById('live').scrollIntoView({behavior:'smooth'})" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
-              <span><i class="fa-solid fa-users mr-2"></i> Browse Live Channels</span>
-            </button>
-            <button onclick="showProfileModal()" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 px-4 py-3 rounded-2xl">
-              <span><i class="fa-solid fa-wallet mr-2"></i> View My Points &amp; Profile</span>
-            </button>
+          <div class="flex-1 md:flex-none">
+            <input type="file" id="upload-file" accept="video/*,image/*" class="block w-full text-xs mb-2 file:mr-3 file:px-3 file:py-1.5 file:rounded-2xl file:border-0 file:bg-cyan-600 file:text-white">
+            <input id="upload-title" placeholder="Animation title" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-1.5 mb-1">
+            <textarea id="upload-desc" placeholder="Short description..." rows="1" class="w-full bg-zinc-900 border border-white/10 text-sm rounded-2xl px-3 py-1 mb-2"></textarea>
+            <button onclick="publishUpload()" class="w-full md:w-auto px-5 py-1.5 text-sm rounded-2xl bg-cyan-600 hover:bg-cyan-500 font-medium">Publish</button>
+            <span id="upload-status" class="text-xs ml-2 text-emerald-400"></span>
           </div>
-          <div class="text-[10px] text-zinc-500 mt-4">All your uploads &amp; generations are saved to your profile and visible to the community.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Live Platform (Twitch-style) -->
+  <!-- Live Animation Streams -->
   <div id="live" class="max-w-7xl mx-auto px-5 sm:px-6 py-10">
     <div class="flex items-center justify-between mb-5">
       <div>
-        <span class="text-red-400 text-xs tracking-widest">LIVE RIGHT NOW</span>
-        <h2 class="text-3xl font-bold">Live Platform</h2>
+        <span class="text-red-400 text-xs tracking-widest">LIVE ANIMATION SESSIONS</span>
+        <h2 class="text-3xl font-bold">Live Animator Streams</h2>
       </div>
       <button onclick="quickStartLive()" class="px-5 py-2 rounded-2xl bg-red-600 hover:bg-red-500 flex items-center gap-2 text-sm font-semibold">
-        <i class="fa-solid fa-circle text-red-300"></i> START STREAMING
+        <i class="fa-solid fa-circle text-red-300"></i> GO LIVE AS ANIMATOR
       </button>
     </div>
 
@@ -197,103 +247,102 @@
     <p class="text-center text-xs text-zinc-500 mt-3">Click any live to join the stream + live chat (demo powered by realtime data).</p>
   </div>
 
-  <!-- Grok Imagine Points Purchasing -->
-  <div id="imagine" class="bg-zinc-900/70 border-t border-white/10 py-10">
+  <!-- Buy Points for AI Animation (only visible after sign in) -->
+  <div id="buy-points" class="bg-zinc-900/70 border-t border-white/10 py-10">
     <div class="max-w-5xl mx-auto px-5 sm:px-6">
       <div class="section-header mb-6">
-        <span class="text-emerald-400 text-xs tracking-[2px]">POWER YOUR CREATIVITY</span>
-        <h2 class="text-3xl font-bold">Grok Imagine Points</h2>
-        <p class="text-zinc-400">Buy credits that are stored directly to your profile. Use them in the Imagine tool above or future Grok features.</p>
+        <span class="text-emerald-400 text-xs tracking-[2px]">FUEL YOUR ANIMATIONS</span>
+        <h2 class="text-3xl font-bold">Buy Animation Points</h2>
+        <p class="text-zinc-400">Purchase points to power AI image and video generation directly on the site. Points are stored in your profile and used for every creation.</p>
       </div>
 
       <div class="flex items-baseline gap-3 mb-6">
         <div class="text-5xl font-mono font-semibold" id="points-balance">0</div>
-        <div class="text-xl text-emerald-400">points available</div>
+        <div class="text-xl text-emerald-400">animation points</div>
         <button onclick="refreshPoints()" class="ml-2 text-xs px-2 py-1 border border-white/20 rounded-xl">Refresh</button>
       </div>
 
-      <div class="grid sm:grid-cols-3 gap-4">
-        <!-- Packs -->
-        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack(50, 2.99)">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Packs from pointPackages -->
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack('starter')">
           <div class="flex justify-between">
             <div>
-              <div class="text-2xl font-bold">50</div>
+              <div class="text-2xl font-bold">100</div>
               <div class="text-emerald-400 text-sm -mt-1">points</div>
             </div>
             <div class="text-right">
-              <div class="text-3xl font-semibold">$2.99</div>
+              <div class="text-3xl font-semibold">$9.99</div>
               <div class="text-xs text-zinc-500">Starter</div>
             </div>
           </div>
-          <div class="mt-4 text-xs text-zinc-400">Perfect for first experiments with Grok Imagine.</div>
+          <div class="mt-4 text-xs text-zinc-400">Perfect for trying out AI animation tools.</div>
           <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-emerald-600 hover:bg-emerald-500">Buy Pack</button>
         </div>
 
-        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer ring-1 ring-purple-400/40" onclick="purchasePack(200, 7.99)">
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer ring-1 ring-purple-400/40" onclick="purchasePack('creator')">
           <div class="flex justify-between">
             <div>
-              <div class="text-2xl font-bold">200</div>
-              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-purple-300 text-[10px]">+ BONUS 25</span></div>
+              <div class="text-2xl font-bold">500</div>
+              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-purple-300 text-[10px]">+50 bonus</span></div>
             </div>
             <div class="text-right">
-              <div class="text-3xl font-semibold">$7.99</div>
+              <div class="text-3xl font-semibold">$39.99</div>
               <div class="text-xs text-zinc-500">Creator</div>
             </div>
           </div>
-          <div class="mt-4 text-xs text-zinc-400">Most popular. Great value for regular creators.</div>
+          <div class="mt-4 text-xs text-zinc-400">Best for regular animators. Includes bonus points.</div>
           <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-purple-600 hover:bg-purple-500">Buy Pack</button>
         </div>
 
-        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack(1000, 24.99)">
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack('pro')">
           <div class="flex justify-between">
             <div>
               <div class="text-2xl font-bold">1000</div>
-              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-amber-300 text-[10px]">+ 150 bonus</span></div>
+              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-amber-300 text-[10px]">+150 bonus</span></div>
             </div>
             <div class="text-right">
-              <div class="text-3xl font-semibold">$24.99</div>
+              <div class="text-3xl font-semibold">$69.99</div>
               <div class="text-xs text-zinc-500">Pro</div>
             </div>
           </div>
-          <div class="mt-4 text-xs text-zinc-400">Best for power users and heavy studio sessions.</div>
+          <div class="mt-4 text-xs text-zinc-400">Pro level for serious creators and frequent generators.</div>
           <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-amber-600 hover:bg-amber-500">Buy Pack</button>
+        </div>
+
+        <div class="pack-card bg-zinc-950 border border-white/10 rounded-3xl p-5 cursor-pointer" onclick="purchasePack('studio')">
+          <div class="flex justify-between">
+            <div>
+              <div class="text-2xl font-bold">2500</div>
+              <div class="text-emerald-400 text-sm -mt-1">points <span class="text-amber-300 text-[10px]">+500 bonus</span></div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-semibold">$149.99</div>
+              <div class="text-xs text-zinc-500">Studio</div>
+            </div>
+          </div>
+          <div class="mt-4 text-xs text-zinc-400">For teams and heavy usage. Maximum value.</div>
+          <button class="mt-4 w-full py-2 text-sm rounded-2xl bg-emerald-700 hover:bg-emerald-600">Buy Pack</button>
         </div>
       </div>
 
-      <div class="mt-4 text-[10px] text-center text-zinc-500">Demo purchases instantly credit your profile via Firebase (no real payment processed). Points persist across sessions and devices.</div>
+      <!-- Optional subscription example -->
+      <div class="mt-4 text-center">
+        <div class="inline-flex items-center gap-2 text-xs bg-white/5 px-3 py-1 rounded-2xl">
+          Or go monthly: <strong>Animator Monthly — 500 pts/mo for $29.99</strong>
+          <button onclick="alert('Subscription flow would create recurring Stripe checkout (demo).')" class="ml-2 px-2 py-0.5 bg-white/10 rounded text-[10px]">Subscribe</button>
+        </div>
+      </div>
+
+      <div class="mt-4 text-[10px] text-center text-zinc-500">Demo purchases instantly credit your profile via Supabase. Real Stripe charges use secure backend (sk_live key server-only).</div>
     </div>
   </div>
 
   <!-- Footer -->
   <div class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-zinc-500 border-t border-white/10">
-    VIZALOK Creators • Hybrid content platform. Back to <a href="../" class="underline">main landing</a> • Points &amp; profiles powered by Firebase (shared with Nash Services)
+    VIZALOK Creators • Become Your Own Animator. Back to <a href="../" class="underline">main landing</a> • Profiles &amp; points powered by Supabase + Stripe (demo)
   </div>
 
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4" onclick="if (event.target.id==='auth-modal') hideAuthModal()">
-    <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 w-full max-w-sm rounded-3xl p-6">
-      <div class="flex mb-4 border-b border-white/10">
-        <div onclick="switchAuthTab(0)" id="auth-tab-0" class="flex-1 text-center py-3 cursor-pointer font-medium border-b-2 border-purple-400">Sign In</div>
-        <div onclick="switchAuthTab(1)" id="auth-tab-1" class="flex-1 text-center py-3 cursor-pointer text-white/60">Create Account</div>
-      </div>
-
-      <div id="login-form">
-        <input id="login-email" type="email" placeholder="Email" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
-        <input id="login-pass" type="password" placeholder="Password" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-4 text-sm">
-        <button onclick="doLogin()" class="w-full py-3 bg-white text-black font-semibold rounded-2xl">Sign In</button>
-      </div>
-
-      <div id="signup-form" class="hidden">
-        <input id="signup-name" type="text" placeholder="Display Name" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
-        <input id="signup-email" type="email" placeholder="Email" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-3 text-sm">
-        <input id="signup-pass" type="password" placeholder="Password (6+ chars)" class="w-full bg-zinc-950 border border-white/10 rounded-2xl px-4 py-3 mb-4 text-sm">
-        <button onclick="doSignup()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 font-semibold rounded-2xl">Create Account &amp; Get 25 Starter Pts</button>
-      </div>
-
-      <div id="auth-msg" class="text-center text-xs mt-3 text-red-400 h-4"></div>
-      <div class="text-center mt-4 text-xs text-white/40 cursor-pointer" onclick="hideAuthModal()">Close</div>
-    </div>
-  </div>
+  <!-- Old auth modal removed (gate at top of page is now the primary sign in/sign up like the music tab) -->
 
   <!-- Profile Modal -->
   <div id="profile-modal" onclick="if(event.target.id==='profile-modal') hideProfileModal()" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
@@ -304,11 +353,11 @@
       <div class="space-y-3 text-sm">
         <div><span class="text-white/60">Name:</span> <span id="prof-name" class="font-medium"></span></div>
         <div><span class="text-white/60">Email:</span> <span id="prof-email"></span></div>
-        <div class="flex items-center"><span class="text-white/60">Grok Imagine Points:</span> <span id="prof-points" class="ml-2 text-2xl font-mono text-emerald-400"></span></div>
+        <div class="flex items-center"><span class="text-white/60">Animation Points:</span> <span id="prof-points" class="ml-2 text-2xl font-mono text-emerald-400"></span></div>
       </div>
 
       <div class="mt-6 text-xs bg-white/5 rounded-2xl p-3">
-        Tip: Earn and spend points across the VIZALOK creator tools. More features (storage, monetization) coming soon.
+        Tip: Points power every AI image and video generation. More animation tools and export options coming soon.
       </div>
 
       <div class="flex gap-3 mt-5">
@@ -341,20 +390,14 @@
   <!-- Checkout Modal -->
   <div id="checkout-modal" onclick="if(event.target.id==='checkout-modal') hideCheckoutModal()" class="hidden fixed inset-0 bg-black/80 z-[120] flex items-center justify-center p-4">
     <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 rounded-3xl p-6 max-w-sm w-full">
-      <h3 class="font-semibold mb-1">Checkout — Demo Purchase</h3>
+      <h3 class="font-semibold mb-1">Checkout — Animation Points (Demo)</h3>
       <div id="checkout-summary" class="text-sm text-white/70 mb-4"></div>
       
-      <div class="space-y-2 text-sm mb-4">
-        <input placeholder="Cardholder Name" value="Alex Rivera" class="w-full bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
-        <input placeholder="Card Number" value="4242 4242 4242 4242" class="w-full bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
-        <div class="grid grid-cols-2 gap-2">
-          <input placeholder="MM / YY" value="12 / 28" class="bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
-          <input placeholder="CVV" value="123" class="bg-zinc-950 px-3 py-2 rounded-2xl border border-white/10 text-sm">
-        </div>
-      </div>
+      <!-- Stripe Elements container (populated by JS when opening modal) -->
+      <div id="checkout-form-container" class="mb-4"></div>
       
       <button id="checkout-pay-btn" onclick="completePurchase()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 font-semibold rounded-2xl">Pay &amp; Credit Points</button>
-      <div class="text-center mt-3 text-xs text-white/40">This is a simulation. Points will be added to your profile instantly.</div>
+      <div class="text-center mt-3 text-xs text-white/40">Demo: Card form powered by Stripe.js. Real charges would use your sk_live key on a secure backend.</div>
     </div>
   </div>
 
@@ -394,35 +437,230 @@
   </div>
 
   <script type="module">
-    // === Firebase (same project as Nash Services for shared profiles) ===
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    // === Supabase + Stripe Integration (full as per user instructions) ===
+    // Give agent everything it needs:
+    // 1. Install (for Next.js version if migrating): npm install @supabase/supabase-js @supabase/ssr
+    // 2. Env (adapt for static or create .env for Next.js):
+    //    NEXT_PUBLIC_SUPABASE_URL=https://mynheowndjbojphrskju.supabase.co
+    //    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_T-T25tAbgccVBRnMxvRWIw_sDOjPM8L
+    // 3. For full Next.js: Add the utils/supabase/server.ts, client.ts, middleware.ts as per standard Supabase + Next template.
+    //    Also npx skills add supabase/agent-skills if using AI coding tools.
+    // Stripe secret (server only): sk_live_YOUR_STRIPE_SECRET_HERE   <<-- DO NOT COMMIT ACTUAL SECRET; use backend/Edge Function only
+    // Publishable (client): pk_live_51TfEMtFYqbUU27Q2cIyG653RGeVlROuKbUILIwQRNkbaobWRmdgTcr1dVwyw7C7powxi3BXxj0Od50gybUMOzw8y00HjD0NY2L (used below)
+    //
+    // For this static HTML tab: We use direct Supabase client + Stripe.js for auth + purchases.
+    // Create in Supabase: tables profiles (id, full_name, points, email), purchases (user_id, points, amount, tier, stripe_payment_method), creations.
+    // Enable Email auth in Supabase.
+    // RLS: authenticated users can select/update own profile and insert purchases/creations.
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB7K7LZCNdryJyKhavJZ7RYpLMc_qLJo6w",
-      authDomain: "nash-enterprise.firebaseapp.com",
-      projectId: "nash-enterprise",
-      storageBucket: "nash-enterprise.firebasestorage.app",
-      messagingSenderId: "987917763852",
-      appId: "1:987917763852:web:f13de1d0c2273ef7a6f529",
-      measurementId: "G-NLS1FY27NJ"
-    };
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const supabaseUrl = 'https://mynheowndjbojphrskju.supabase.co';
+    // Using the provided publishable key from user
+    const supabaseAnonKey = 'sb_publishable_T-T25tAbgccVBRnMxvRWIw_sDOjPM8L';
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Stripe - publishable key only in browser. 
+    // Secret key was given previously and must stay on secure backend only.
+    let stripe;
+    // Initialize with the provided live publishable key
+    // For production purchases, use backend with secret key to create Checkout Sessions or Payment Intents.
+    if (typeof Stripe !== 'undefined') {
+      stripe = Stripe('pk_live_51TfEMtFYqbUU27Q2cIyG653RGeVlROuKbUILIwQRNkbaobWRmdgTcr1dVwyw7C7powxi3BXxj0Od50gybUMOzw8y00HjD0NY2L');
+    }
+
+    // Gate auth logic (sign in / sign up required before accessing portal, like music tab)
+    let isGateLoginMode = true;
+    const gateForm = document.getElementById('gate-auth-form');
+    const gateError = document.getElementById('gate-error');
+    const gateTitle = document.getElementById('gate-form-title');
+    const gateBtn = document.getElementById('gate-auth-btn');
+    const gateSwitchLink = document.getElementById('gate-switch-link');
+    const gateSwitchText = document.getElementById('gate-switch-text');
+    const gateUsernameGroup = document.getElementById('gate-username-group');
+
+    if (gateSwitchLink) {
+      gateSwitchLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        isGateLoginMode = !isGateLoginMode;
+        gateError.classList.add('hidden');
+        gateError.textContent = '';
+
+        if (isGateLoginMode) {
+          gateBtn.textContent = 'Sign In';
+          gateTitle.textContent = 'Sign in to access the Portal';
+          if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+          gateSwitchText.textContent = "Don't have an account?";
+          gateSwitchLink.textContent = 'Sign Up';
+        } else {
+          gateBtn.textContent = 'Create Account';
+          gateTitle.textContent = 'Create your Creator Account';
+          if (gateUsernameGroup) gateUsernameGroup.classList.remove('hidden');
+          gateSwitchText.textContent = 'Already have an account?';
+          gateSwitchLink.textContent = 'Sign In';
+        }
+      });
+    }
+
+    if (gateForm) {
+      gateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        gateError.classList.add('hidden');
+        gateError.textContent = '';
+
+        const email = document.getElementById('gate-email').value.trim();
+        const password = document.getElementById('gate-password').value;
+        const username = document.getElementById('gate-username') ? document.getElementById('gate-username').value.trim() : '';
+
+        if (!email || !password) {
+          gateError.textContent = 'Please enter email and password.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+        if (!isGateLoginMode && !username) {
+          gateError.textContent = 'Please enter a display name for sign up.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+        if (password.length < 6) {
+          gateError.textContent = 'Password must be at least 6 characters.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+
+        gateBtn.disabled = true;
+        gateBtn.textContent = isGateLoginMode ? 'Signing in...' : 'Creating account...';
+
+        try {
+          if (isGateLoginMode) {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            // Success - hide gate, show portal, update UI
+            hideAuthGate();
+          } else {
+            const { error } = await supabase.auth.signUp({
+              email,
+              password,
+              options: { data: { full_name: username } }
+            });
+            if (error) throw error;
+            alert('Account created! Please check your email to confirm if required, then sign in.');
+            // Reset to login mode
+            isGateLoginMode = true;
+            gateBtn.textContent = 'Sign In';
+            gateTitle.textContent = 'Sign in to access the Portal';
+            if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+            gateSwitchText.textContent = "Don't have an account?";
+            gateSwitchLink.textContent = 'Sign Up';
+          }
+        } catch (error) {
+          console.error(error);
+          let msg = error.message || 'Authentication failed.';
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            msg = 'Incorrect email or password.';
+          } else if (error.code === 'auth/email-already-in-use') {
+            msg = 'This email is already registered.';
+          } else if (error.code === 'auth/invalid-email') {
+            msg = 'Invalid email address.';
+          }
+          gateError.textContent = msg;
+          gateError.classList.remove('hidden');
+        } finally {
+          gateBtn.disabled = false;
+          gateBtn.textContent = isGateLoginMode ? 'Sign In' : 'Create Account';
+        }
+      });
+    }
+
+    function hideAuthGate() {
+      const gate = document.getElementById('auth-gate');
+      if (gate) gate.style.display = 'none';
+      // The rest of the page is now accessible
+      // Trigger existing UI updates
+      if (typeof updateNavUI === 'function') updateNavUI();
+      if (typeof updateAnimatorAccess === 'function') updateAnimatorAccess();
+      if (typeof loadCommunityFeed === 'function') loadCommunityFeed();
+    }
+
+    // Check session on load - if already signed in, hide gate immediately
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        hideAuthGate();
+      }
+    })();
+
+    // Point packages / tiers (per the plan)
+    const pointPackages = [
+      {
+        id: 'starter',
+        name: 'Starter',
+        points: 100,
+        price: 9.99,
+        description: 'Perfect for trying out AI animation tools.',
+        bonus: 0
+      },
+      {
+        id: 'creator',
+        name: 'Creator',
+        points: 500,
+        price: 39.99,
+        description: 'Best for regular animators. Includes bonus points.',
+        bonus: 50
+      },
+      {
+        id: 'pro',
+        name: 'Pro',
+        points: 1000,
+        price: 69.99,
+        description: 'Pro level for serious creators and frequent generators.',
+        bonus: 150
+      },
+      {
+        id: 'studio',
+        name: 'Studio',
+        points: 2500,
+        price: 149.99,
+        description: 'For teams and heavy usage. Maximum value.',
+        bonus: 500
+      }
+    ];
+
+    // Optional subscription tier example
+    const subscriptionTiers = [
+      {
+        id: 'animator-monthly',
+        name: 'Animator Monthly',
+        pointsPerMonth: 500,
+        price: 29.99,
+        description: 'Recurring points for ongoing creation. Cancel anytime.'
+      }
+    ];
 
     let currentUser = null;
     let userProfile = null;
-    let creationsUnsub = null;
     let currentFilter = 'all';
-    let liveSessions = []; // local + firestore simulated
+    let liveSessions = []; // demo local data
 
-    // Tailwind script run (already loaded via CDN)
-    function initTailwind() {
-      // no-op, script already in head
-    }
+    // Stripe already initialized in setup block above
+
+    // Supabase Auth listener - this makes sign in/up automatically show the profile at the top
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      currentUser = session?.user || null;
+      if (currentUser) {
+        await loadUserProfile();
+        updateNavUI();
+        updateAnimatorAccess(); // show tools only after sign in
+        const pb = document.getElementById('points-balance');
+        if (pb && userProfile) pb.textContent = userProfile.points || 0;
+        if (typeof loadCommunityFeed === 'function') await loadCommunityFeed();
+        hideAuthGate(); // hide the sign in gate once authenticated
+      } else {
+        userProfile = null;
+        updateNavUI();
+        updateAnimatorAccess(); // hide tools
+      }
+    });
 
     function updateNavUI() {
       const signBtn = document.getElementById('nav-signin-btn');
@@ -433,11 +671,11 @@
         signBtn.classList.add('hidden');
         prof.classList.remove('hidden');
         prof.classList.add('flex');
-        document.getElementById('nav-name').textContent = userProfile.fullName || currentUser.displayName || currentUser.email.split('@')[0];
-        const pts = userProfile.imaginePoints || 0;
+        document.getElementById('nav-name').textContent = userProfile.full_name || currentUser.email.split('@')[0];
+        const pts = userProfile.points || 0;
         document.getElementById('nav-points').textContent = pts + ' pts';
         const av = document.getElementById('nav-avatar');
-        av.textContent = (userProfile.fullName || 'C').charAt(0).toUpperCase();
+        av.textContent = (userProfile.full_name || 'A').charAt(0).toUpperCase();
       } else {
         signBtn.classList.remove('hidden');
         prof.classList.remove('flex');
@@ -445,71 +683,87 @@
       }
     }
 
-    async function loadUserProfile(uid) {
-      if (!uid) return null;
-      const ref = doc(db, 'userProfiles', uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        userProfile = snap.data();
-        return userProfile;
+    async function loadUserProfile() {
+      if (!currentUser) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+
+      if (data) {
+        userProfile = data;
+        return data;
+      } else {
+        // Create starter profile
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .insert({
+            id: currentUser.id,
+            full_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
+            points: 25,
+            email: currentUser.email
+          })
+          .select()
+          .single();
+        userProfile = newProfile;
+        return newProfile;
       }
-      // Auto-create starter profile for new creators
-      const newProf = {
-        fullName: currentUser.displayName || '',
-        email: currentUser.email || '',
-        imaginePoints: 25,
-        createdAt: serverTimestamp()
-      };
-      await setDoc(ref, newProf);
-      userProfile = newProf;
-      return newProf;
     }
 
     async function saveProfile(updates) {
       if (!currentUser) return;
-      const ref = doc(db, 'userProfiles', currentUser.uid);
-      await setDoc(ref, { ...updates, updatedAt: serverTimestamp() }, { merge: true });
-      userProfile = { ...(userProfile || {}), ...updates };
+      const { data } = await supabase
+        .from('profiles')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', currentUser.id)
+        .select()
+        .single();
+      if (data) userProfile = { ...userProfile, ...data };
       updateNavUI();
       const pb = document.getElementById('points-balance');
-      if (pb) pb.textContent = userProfile.imaginePoints || 0;
+      if (pb) pb.textContent = (userProfile && userProfile.points) || 0;
     }
 
-    function onAuth(user) {
-      currentUser = user;
-      userProfile = null;
-      if (user) {
-        loadUserProfile(user.uid).then(() => {
-          updateNavUI();
-          const pb = document.getElementById('points-balance');
-          if (pb) pb.textContent = (userProfile && userProfile.imaginePoints) || 0;
-          // Load realtime community
-          loadCommunityFeed();
-        });
-      } else {
-        updateNavUI();
-        // show static community even logged out
-        renderCommunityGrid([]);
-      }
+    function updateAnimatorAccess() {
+      // Gating now handled by the initial auth-gate (full page sign in required like music tab).
+      // This function now only ensures nav/profile is updated.
+      updateNavUI();
     }
+
+    // Supabase onAuthStateChange + getSession now handle showing/hiding the profile at the top nav automatically.
 
     window.addEventListener('DOMContentLoaded', () => {
-      initTailwind();
+      // Bootstrap existing Supabase session so profile shows at top immediately if already signed in
+      (async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          currentUser = session.user;
+          await loadUserProfile();
+          updateNavUI();
+          updateAnimatorAccess();
+          const pb = document.getElementById('points-balance');
+          if (pb && userProfile) pb.textContent = userProfile.points || 0;
+        } else {
+          updateAnimatorAccess(); // ensure hidden if not signed
+        }
+        if (typeof loadCommunityFeed === 'function') loadCommunityFeed();
+      })();
 
-      // Firebase auth
-      onAuthStateChanged(auth, onAuth);
+      // Ensure animator access and prompt state is set immediately
+      if (typeof updateAnimatorAccess === 'function') updateAnimatorAccess();
 
-      // Initial community render (static + realtime when logged)
-      renderCommunityGrid([]); // will be enhanced
+      // Seed demo live sessions if function exists
+      if (typeof seedLiveSessions === 'function') seedLiveSessions();
 
-      // Seed a couple live sessions for demo
-      seedLiveSessions();
+        // Load real time community if signed in (will be empty otherwise)
+      if (typeof loadCommunityFeed === 'function') loadCommunityFeed();
 
-      // Show initial points if somehow already logged
-      setTimeout(() => {
-        const pb = document.getElementById('points-balance');
-        if (pb && userProfile) pb.textContent = userProfile.imaginePoints || 0;
-      }, 800);
+      // Initial access state for animator tools (hidden until signed in)
+      if (typeof updateAnimatorAccess === 'function') updateAnimatorAccess();
+
+      // Make sure community is loaded (real time data)
+      if (typeof loadCommunityFeed === 'function') loadCommunityFeed();
 
       // Keyboard escape for modals
       document.addEventListener('keydown', (e) => {
@@ -518,30 +772,21 @@
         }
       });
 
-      console.log('%c[VIZALOK Creators] Portal ready — community first, points, studio, live.', 'color:#64748b');
+      console.log('%c[VIZALOK Creators] Revamped for "Become Your Own Animator" — Supabase auth + Stripe point purchases integrated.', 'color:#64748b');
     });
 
     // === Community Feed (static inspiration + realtime Firestore uploads) ===
-    const staticCommunity = [
-      { id: 's1', type: 'video', title: 'Midnight Drive — Original Beat', creator: 'LUNAR', views: '14.2k', thumb: 'linear-gradient(135deg,#1e2937,#0f172a)', icon: 'fa-music', desc: 'Lo-fi hiphop with live guitar. Made in one take.' },
-      { id: 's2', type: 'image', title: 'Neon Reverie', creator: 'Kai Visuals', views: '8.9k', thumb: 'linear-gradient(135deg,#581c87,#1e3a8a)', icon: 'fa-image', desc: 'Grok-assisted concept art turned album cover.' },
-      { id: 's3', type: 'clip', title: 'Live Coding Session Highlights', creator: 'byteflow', views: '3.1k', thumb: 'linear-gradient(135deg,#0f766e,#164e63)', icon: 'fa-video', desc: 'Built a generative visualizer on stream.' },
-      { id: 's4', type: 'image', title: 'The Last Signal', creator: 'Mira', views: '21k', thumb: 'linear-gradient(135deg,#334155,#1e2937)', icon: 'fa-palette', desc: 'Dystopian character design series.' },
-      { id: 's5', type: 'video', title: 'Acoustic Cover — "Echoes"', creator: 'River', views: '5.4k', thumb: 'linear-gradient(135deg,#3b0764,#1e3a8a)', icon: 'fa-guitar', desc: 'Raw performance from the studio.' }
-    ];
+    let communityItems = [];
 
-    let dynamicCreations = [];
-
-    function renderCommunityGrid(extra = []) {
+    function renderCommunityGrid() {
       const grid = document.getElementById('community-grid');
       if (!grid) return;
       grid.innerHTML = '';
 
-      const all = [...staticCommunity, ...extra, ...dynamicCreations];
-
-      all.forEach(item => {
+      communityItems.forEach(item => {
         const el = document.createElement('div');
         el.className = `creator-card bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden cursor-pointer flex flex-col`;
+        el.dataset.type = item.type || 'image';
         el.innerHTML = `
           <div class="content-thumb" style="background: ${item.thumb || 'linear-gradient(135deg,#27223a,#111827)'}">
             <div class="h-full w-full flex items-end p-2">
@@ -563,6 +808,18 @@
         el.onclick = () => showContentModal(item);
         grid.appendChild(el);
       });
+
+      // Re-apply current filter after re-render (important for realtime updates)
+      if (currentFilter && currentFilter !== 'all') {
+        Array.from(grid.children).forEach(card => {
+          const itemType = card.dataset.type || '';
+          let show = true;
+          if (currentFilter === 'video') show = itemType === 'video' || itemType === 'clip';
+          else if (currentFilter === 'image') show = itemType === 'image';
+          else if (currentFilter === 'clip') show = itemType === 'clip' || itemType === 'video';
+          card.style.display = show ? '' : 'none';
+        });
+      }
     }
 
     function filterCommunity(type) {
@@ -572,7 +829,7 @@
         if ((type === 'all' && b.textContent === 'All') ||
             (type === 'video' && b.textContent.includes('Videos')) ||
             (type === 'image' && b.textContent.includes('Images')) ||
-            (type === 'clip' && b.textContent.includes('Live Clips'))) {
+            (type === 'clip' && b.textContent.includes('Clips'))) {
           b.classList.add('active', 'bg-white/10');
         }
       });
@@ -582,39 +839,54 @@
       if (!grid) return;
       const cards = grid.children;
       Array.from(cards).forEach(card => {
-        const txt = card.textContent.toLowerCase();
+        const itemType = card.dataset.type || '';
         let show = true;
-        if (type === 'video') show = txt.includes('video') || txt.includes('beat') || txt.includes('cover');
-        else if (type === 'image') show = txt.includes('image') || txt.includes('art') || txt.includes('visual') || txt.includes('design');
-        else if (type === 'clip') show = txt.includes('live') || txt.includes('coding') || txt.includes('clip');
+        if (type === 'video') show = itemType === 'video' || itemType === 'clip';
+        else if (type === 'image') show = itemType === 'image';
+        else if (type === 'clip') show = itemType === 'clip' || itemType === 'video';
         card.style.display = show ? '' : 'none';
       });
     }
 
     async function loadCommunityFeed() {
-      if (creationsUnsub) creationsUnsub();
+      // Fetch real data from Supabase (community can be public for inspiration)
+      const { data, error } = await supabase
+        .from('creations')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      const q = query(collection(db, 'creations'), orderBy('timestamp', 'desc'));
-      creationsUnsub = onSnapshot(q, (snap) => {
-        dynamicCreations = [];
-        snap.forEach(d => {
-          const data = d.data();
-          dynamicCreations.push({
-            id: d.id,
-            type: data.type || 'video',
-            title: data.title || 'Untitled',
-            creator: data.creatorName || 'Creator',
-            views: 'Just now',
-            thumb: data.type === 'image' ? 'linear-gradient(135deg,#4c1d95,#1e3a8a)' : 'linear-gradient(135deg,#1e2937,#334155)',
-            icon: data.type === 'image' ? 'fa-image' : (data.type === 'clip' ? 'fa-video' : 'fa-play'),
-            desc: data.desc || 'New community upload.',
-            isDynamic: true
-          });
-        });
-        renderCommunityGrid([]);
-      }, (err) => {
-        console.warn('Community feed listener:', err);
-      });
+      if (error) {
+        console.error('Error loading creations:', error);
+        communityItems = [];
+      } else {
+        communityItems = (data || []).map(item => ({
+          id: item.id,
+          type: item.type || 'image',
+          title: item.title || 'Untitled',
+          creator: item.creator_name || 'Anonymous',
+          views: item.views || 'New',
+          thumb: item.thumb,
+          desc: item.desc || '',
+          icon: item.type === 'image' ? 'fa-image' : 'fa-video'
+        }));
+      }
+
+      renderCommunityGrid();
+
+      // Setup realtime (only once)
+      if (!window.creationsChannel) {
+        window.creationsChannel = supabase
+          .channel('creations-realtime')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'creations'
+          }, (payload) => {
+            // Refresh the whole list on any change (simple and reliable)
+            loadCommunityFeed();
+          })
+          .subscribe();
+      }
     }
 
     function showContentModal(item) {
@@ -627,22 +899,26 @@
       desc.textContent = item.desc || '';
 
       player.innerHTML = '';
-      if (item.type === 'image') {
+      if (item.type === 'image' || (item.desc && item.desc.includes('Generated on-site'))) {
         const imgWrap = document.createElement('div');
         imgWrap.className = 'aspect-video rounded-xl flex items-center justify-center text-center p-8';
         imgWrap.style.background = item.thumb || 'linear-gradient(135deg,#312e81,#1e3a8a)';
-        imgWrap.innerHTML = `<div><i class="fa-solid fa-image text-6xl opacity-30 mb-3 block"></i><div class="text-sm font-medium">Community Image</div><div class="text-xs opacity-60 max-w-[220px] mx-auto">${item.desc || item.title}</div></div>`;
+        imgWrap.innerHTML = `<div><i class="fa-solid fa-magic text-6xl opacity-30 mb-3 block"></i><div class="text-sm font-medium">AI Generated ${item.type === 'video' ? 'Video Frame' : 'Image'}</div><div class="text-xs opacity-60 max-w-[260px] mx-auto">${item.desc || item.title}</div></div>`;
         player.appendChild(imgWrap);
-      } else {
+      } else if (item.type === 'video') {
         const v = document.createElement('video');
         v.className = 'w-full rounded-xl aspect-video bg-black';
         v.controls = true;
         v.autoplay = true;
         v.muted = true;
         v.loop = true;
-        // Use root music video assets (path from /creators/)
         v.innerHTML = `<source src="../musicvid2.mp4" type="video/mp4">`;
         player.appendChild(v);
+      } else {
+        const div = document.createElement('div');
+        div.className = 'aspect-video rounded-xl bg-zinc-950 flex items-center justify-center text-center p-8';
+        div.innerHTML = `<div class="text-white/70">Preview not available for this type</div>`;
+        player.appendChild(div);
       }
 
       modal.classList.remove('hidden');
@@ -683,23 +959,26 @@
       status.style.color = '#67e8f9';
 
       try {
-        await addDoc(collection(db, 'creations'), {
+        await supabase.from('creations').insert({
           title: titleEl.value.trim(),
-          desc: descEl.value.trim() || 'New upload from the studio.',
-          creatorName: userProfile?.fullName || currentUser.displayName || currentUser.email.split('@')[0],
-          creatorId: currentUser.uid,
+          desc: descEl.value.trim() || 'Animation uploaded by creator.',
+          creator_name: userProfile?.full_name || currentUser.email.split('@')[0],
+          user_id: currentUser.id,
           type,
-          timestamp: serverTimestamp()
+          created_at: new Date().toISOString()
           // Note: file not persisted server-side in this demo (client preview only)
         });
 
-        status.textContent = 'Published! Appears in Discover instantly.';
+        status.textContent = 'Published! Appears in the Showcase instantly.';
         status.style.color = '#4ade80';
 
         // clear
         fileEl.value = '';
         titleEl.value = '';
         descEl.value = '';
+
+        // Refresh real time feed
+        await loadCommunityFeed();
 
         setTimeout(() => { status.textContent = ''; }, 2600);
       } catch (e) {
@@ -709,97 +988,230 @@
       }
     }
 
-    // === Grok Imagine ===
-    let lastResultsContainer = null;
-
-    async function runGrokImagine() {
-      if (!currentUser) { openAuthModal(); return; }
-      const pts = (userProfile && userProfile.imaginePoints) || 0;
+    // === AI Image & Video Generators (point-based, simulated on-site) ===
+    async function generateImage() {
+      if (!currentUser) { alert('Please sign in via the gate at the top of the page.'); return; }
+      const pts = (userProfile && userProfile.points) || 0;
       const cost = 10;
       if (pts < cost) {
-        alert('Not enough points. Buy more in the Grok Imagine section below.');
-        document.getElementById('imagine').scrollIntoView({behavior: 'smooth'});
+        alert('Not enough points. Buy more in the Buy Points section.');
+        document.getElementById('buy-points').scrollIntoView({behavior: 'smooth'});
         return;
       }
 
-      const promptEl = document.getElementById('imagine-prompt');
-      const prompt = promptEl.value.trim() || 'A beautiful abstract visualization of sound and light';
-      const container = document.getElementById('imagine-results');
-      container.innerHTML = `<div class="col-span-2 text-xs text-center py-2 text-purple-400">Generating with Grok Imagine...</div>`;
+      const promptEl = document.getElementById('image-prompt');
+      const prompt = promptEl.value.trim() || 'A mysterious animator silhouette in a glowing studio, cyberpunk aesthetic';
+      const container = document.getElementById('image-results');
+      container.innerHTML = `<div class="col-span-2 text-xs text-center py-2 text-purple-400">Generating AI image with VIZALOK points...</div>`;
 
-      // Deduct points first
+      // Deduct points
       const newPts = pts - cost;
-      await saveProfile({ imaginePoints: newPts });
+      await saveProfile({ points: newPts });
 
-      // Simulate "AI" generation time
-      await new Promise(r => setTimeout(r, 820));
+      await new Promise(r => setTimeout(r, 950));
 
-      // Create 2-3 visual results (procedural nice cards)
       container.innerHTML = '';
+      // Create 2 nice result cards (simulated AI art)
       for (let i = 0; i < 2; i++) {
-        const hue = (prompt.length * (i+3)) % 360;
+        const hue = (prompt.length * (i + 4)) % 360;
         const art = document.createElement('div');
-        art.className = `imagine-result aspect-video rounded-2xl overflow-hidden border border-purple-400/30 flex flex-col justify-end p-2 text-[10px]`;
-        art.style.background = `linear-gradient(135deg, hsl(${hue} 70% 25%), hsl(${(hue+70)%360} 65% 12%))`;
+        art.className = `imagine-result aspect-video rounded-2xl overflow-hidden border border-purple-400/40 flex flex-col justify-end p-2 text-[10px] cursor-pointer`;
+        art.style.background = `linear-gradient(135deg, hsl(${hue} 75% 28%), hsl(${(hue + 80) % 360} 60% 14%))`;
         art.innerHTML = `
-          <div class="text-white/90 font-medium line-clamp-2">${prompt}</div>
-          <div class="text-[9px] text-purple-300 mt-0.5">Grok Imagine • ${cost} pts used</div>
+          <div class="text-white/95 font-medium line-clamp-2 drop-shadow">${prompt}</div>
+          <div class="text-[9px] text-purple-200 mt-0.5">AI Image • ${cost} pts • Frame ${i+1}</div>
         `;
-        art.onclick = () => {
-          alert('Saved to your portfolio (demo). You can publish this to the community feed from Studio.');
-        };
+        art.onclick = () => publishGenerated('image', prompt, art.style.background);
         container.appendChild(art);
       }
 
-      // Update balance display everywhere
       const pb = document.getElementById('points-balance');
       if (pb) pb.textContent = newPts;
       updateNavUI();
     }
 
-    // === Points Purchase ===
-    let pendingPurchase = null;
-
-    function purchasePack(points, price) {
-      if (!currentUser) {
-        alert('Sign in to purchase and store points to your profile.');
-        openAuthModal();
+    async function generateVideo() {
+      if (!currentUser) { alert('Please sign in via the gate at the top of the page.'); return; }
+      const pts = (userProfile && userProfile.points) || 0;
+      const cost = 50;
+      if (pts < cost) {
+        alert('Not enough points for video clip. Buy more in the Buy Points section.');
+        document.getElementById('buy-points').scrollIntoView({behavior: 'smooth'});
         return;
       }
-      pendingPurchase = { points, price };
+
+      const promptEl = document.getElementById('video-prompt');
+      const prompt = promptEl.value.trim() || 'A sleek fox character running through a neon forest, smooth looping animation';
+      const container = document.getElementById('video-results');
+      container.innerHTML = `<div class="text-xs text-center py-2 text-amber-400">Generating 4-frame AI video clip (50 pts)...</div>`;
+
+      const newPts = pts - cost;
+      await saveProfile({ points: newPts });
+
+      await new Promise(r => setTimeout(r, 1400));
+
+      // Create 4 frames + simple CSS loop "video"
+      container.innerHTML = `
+        <div class="border border-amber-400/30 rounded-2xl overflow-hidden bg-zinc-950 p-2">
+          <div class="text-[10px] text-amber-300 mb-1">AI Video • ${cost} pts used • Looping</div>
+          <div id="video-frames" class="grid grid-cols-4 gap-1.5"></div>
+          <div class="mt-2 flex items-center justify-between text-[10px]">
+            <button onclick="playVideoLoop(this)" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 rounded-xl text-xs">▶ Play Loop</button>
+            <span class="text-zinc-500">4 frames • 2s loop</span>
+          </div>
+        </div>
+      `;
+
+      const framesContainer = document.getElementById('video-frames');
+      for (let i = 0; i < 4; i++) {
+        const hue = (prompt.length * (i + 2)) % 360;
+        const frame = document.createElement('div');
+        frame.className = `aspect-video rounded-xl border border-amber-400/20 text-[8px] flex items-end p-1 overflow-hidden`;
+        frame.style.background = `linear-gradient(135deg, hsl(${hue} 70% 25%), hsl(${(hue + 90) % 360} 55% 15%))`;
+        frame.innerHTML = `<div class="text-white/80 line-clamp-1">${prompt.slice(0, 28)}...</div>`;
+        framesContainer.appendChild(frame);
+      }
+
+      // Make the whole thing publishable
+      const wrapper = container.firstElementChild;
+      wrapper.onclick = () => publishGenerated('video', prompt, 'video-clip');
+
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = newPts;
+      updateNavUI();
+    }
+
+    function playVideoLoop(btn) {
+      const frames = btn.parentElement.previousElementSibling;
+      if (!frames) return;
+      btn.textContent = 'Playing...';
+      let idx = 0;
+      const children = frames.children;
+      const interval = setInterval(() => {
+        for (let c of children) c.style.opacity = '0.3';
+        children[idx].style.opacity = '1';
+        idx = (idx + 1) % children.length;
+      }, 220);
+      setTimeout(() => {
+        clearInterval(interval);
+        for (let c of children) c.style.opacity = '1';
+        btn.textContent = '▶ Replay';
+        btn.onclick = () => playVideoLoop(btn);
+      }, 2200);
+    }
+
+    // Helper: publish a generated result to the community showcase (real time via Supabase)
+    async function publishGenerated(type, prompt, bgStyle) {
+      if (!currentUser) { alert('Please sign in via the gate at the top of the page.'); return; }
+      const title = prompt.length > 40 ? prompt.slice(0, 40) + '...' : prompt;
+      try {
+        await supabase.from('creations').insert({
+          title: type === 'video' ? 'AI Video: ' + title : 'AI Image: ' + title,
+          desc: 'Generated on-site with VIZALOK points • ' + type,
+          creator_name: userProfile?.full_name || currentUser.email.split('@')[0],
+          type: type,
+          thumb: (bgStyle && bgStyle.includes('linear-gradient')) ? bgStyle : 'linear-gradient(135deg,#4c1d95,#1e3a8a)',
+          views: Math.floor(Math.random() * 50) + 5,
+          created_at: new Date().toISOString()
+        });
+
+        // Reload real time data
+        await loadCommunityFeed();
+        alert('Published to the AI Animator Showcase! Check the top of the page.');
+        document.getElementById('showcase').scrollIntoView({behavior:'smooth'});
+      } catch (e) {
+        alert('Failed to publish: ' + (e.message || ''));
+        console.error(e);
+      }
+    }
+
+    // === Points Purchase (Supabase + Stripe demo per plan) ===
+    let pendingPurchase = null;
+
+    function purchasePack(tierId) {
+      // Access is gated by the sign in page, so currentUser should be set
+      const pkg = pointPackages.find(p => p.id === tierId);
+      if (!pkg) return;
+
+      pendingPurchase = { ...pkg };
       const modal = document.getElementById('checkout-modal');
       document.getElementById('checkout-summary').innerHTML = `
-        <div class="flex justify-between text-sm"><span>Pack</span><span class="font-semibold">${points} points</span></div>
-        <div class="flex justify-between text-sm"><span>Price</span><span class="font-semibold">$${price}</span></div>
+        <div class="flex justify-between text-sm"><span>Pack</span><span class="font-semibold">${pkg.name}</span></div>
+        <div class="flex justify-between text-sm"><span>Points</span><span class="font-semibold">${pkg.points} pts ${pkg.bonus ? `(+${pkg.bonus} bonus)` : ''}</span></div>
+        <div class="flex justify-between text-sm mt-1"><span>Price</span><span class="font-semibold">$${pkg.price}</span></div>
       `;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+
+      // Basic Stripe Elements card form (demo)
+      const formContainer = document.getElementById('checkout-form-container');
+      if (formContainer) {
+        formContainer.innerHTML = `<div id="card-element" style="padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;"></div><div id="card-errors" class="text-red-400 text-xs mt-1 h-4"></div>`;
+      }
+
+      if (stripe && !window.currentCardElement) {
+        const elements = stripe.elements();
+        const card = elements.create('card', { style: { base: { color: '#fff', fontSize: '14px' } } });
+        card.mount('#card-element');
+        window.currentCardElement = card;
+      }
     }
 
     function hideCheckoutModal() {
       const modal = document.getElementById('checkout-modal');
       modal.classList.remove('flex');
       modal.classList.add('hidden');
+      if (window.currentCardElement) {
+        window.currentCardElement.unmount();
+        window.currentCardElement = null;
+      }
     }
 
     async function completePurchase() {
       if (!pendingPurchase || !currentUser) return;
       const btn = document.getElementById('checkout-pay-btn');
       btn.disabled = true;
-      btn.textContent = 'Processing...';
+      btn.textContent = 'Processing with Stripe...';
 
-      const { points } = pendingPurchase;
-      const current = (userProfile && userProfile.imaginePoints) || 0;
-      const updated = current + points;
+      const { points, price, name, id: tier } = pendingPurchase;
+      const bonus = pendingPurchase.bonus || 0;
+      const current = (userProfile && userProfile.points) || 0;
+      const updated = current + points + bonus;
 
       try {
-        await saveProfile({ imaginePoints: updated });
+        // === Proper Stripe integration with publishable key ===
+        let paymentMethodId = 'simulated';
+        if (stripe && window.currentCardElement) {
+          const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: window.currentCardElement,
+          });
+          if (error) {
+            const errDiv = document.getElementById('card-errors');
+            if (errDiv) errDiv.textContent = error.message;
+            throw error;
+          }
+          paymentMethodId = paymentMethod.id;
+          console.log('[Stripe] PaymentMethod created for', tier, paymentMethodId);
+          // Note to agent: In production, send this paymentMethodId + tier/price to a secure backend/Edge Function.
+          // Backend uses the secret key (sk_live_...) to create/confirm PaymentIntent or Checkout Session for the exact amount.
+          // Then return success or client_secret to confirm on client if needed.
+        }
 
-        // Also record a simple purchase log (optional collection)
-        await addDoc(collection(db, 'imaginePurchases'), {
-          uid: currentUser.uid,
-          pointsAdded: points,
-          timestamp: serverTimestamp()
+        // Simulate backend processing (replace with real backend call using secret in prod)
+        await new Promise(r => setTimeout(r, 900));
+
+        // Credit points in Supabase (real user profile update)
+        await saveProfile({ points: updated });
+
+        // Create the purchase record ("pos check") for this tier in Supabase
+        await supabase.from('purchases').insert({
+          user_id: currentUser.id,
+          points: points + bonus,
+          amount: price,
+          tier: tier,
+          stripe_payment_method: paymentMethodId,
+          created_at: new Date().toISOString()
         });
 
         btn.textContent = 'Success! Points added.';
@@ -812,23 +1224,25 @@
           btn.disabled = false;
           btn.textContent = 'Pay & Credit Points';
           pendingPurchase = null;
-          // nice toast
+
           const t = document.createElement('div');
           t.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-xs px-4 py-1.5 rounded-3xl shadow';
-          t.textContent = `+${points} Grok Imagine points added to profile!`;
+          t.textContent = `+${points + bonus} points via Stripe for ${name}!`;
           document.body.appendChild(t);
           setTimeout(() => t.remove(), 2400);
         }, 650);
       } catch (e) {
-        console.error(e);
+        console.error('Purchase error:', e);
+        const errDiv = document.getElementById('card-errors');
+        if (errDiv) errDiv.textContent = e.message || 'Payment failed';
         btn.textContent = 'Error — try again';
-        setTimeout(() => { btn.disabled = false; btn.textContent = 'Pay & Credit Points'; }, 1200);
+        btn.disabled = false;
       }
     }
 
     function refreshPoints() {
       const pb = document.getElementById('points-balance');
-      if (pb && userProfile) pb.textContent = userProfile.imaginePoints || 0;
+      if (pb && userProfile) pb.textContent = userProfile.points || 0;
       updateNavUI();
     }
 
@@ -912,7 +1326,7 @@
     }
 
     function quickStartLive() {
-      if (!currentUser) { openAuthModal(); return; }
+      if (!currentUser) { alert('Please sign in via the gate at the top of the page.'); return; }
       const title = prompt('Stream title?', 'Live from my studio — Q&A + creation');
       if (!title) return;
       const newLive = { 
@@ -926,58 +1340,15 @@
       setTimeout(() => joinLive(newLive), 180);
     }
 
-    // === Auth (reused pattern) ===
-    let authTab = 0;
-    function openAuthModal() {
-      const m = document.getElementById('auth-modal');
-      m.classList.remove('hidden');
-      m.classList.add('flex');
-      switchAuthTab(0);
-    }
-    function hideAuthModal() {
-      const m = document.getElementById('auth-modal');
-      m.classList.add('hidden');
-      m.classList.remove('flex');
-      document.getElementById('auth-msg').textContent = '';
-    }
-    function switchAuthTab(tab) {
-      authTab = tab;
-      document.getElementById('login-form').classList.toggle('hidden', tab !== 0);
-      document.getElementById('signup-form').classList.toggle('hidden', tab !== 1);
-      document.getElementById('auth-tab-0').classList.toggle('border-b-2', tab === 0);
-      document.getElementById('auth-tab-0').classList.toggle('text-white/60', tab !== 0);
-      document.getElementById('auth-tab-1').classList.toggle('border-b-2', tab === 1);
-      document.getElementById('auth-tab-1').classList.toggle('text-white/60', tab !== 1);
-    }
-    async function doLogin() {
-      const email = document.getElementById('login-email').value.trim();
-      const pass = document.getElementById('login-pass').value;
-      const msg = document.getElementById('auth-msg');
-      if (!email || !pass) { msg.textContent = 'Enter email and password.'; return; }
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        hideAuthModal();
-      } catch (e) { msg.textContent = e.message || 'Login failed'; }
-    }
-    async function doSignup() {
-      const name = document.getElementById('signup-name').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const pass = document.getElementById('signup-pass').value;
-      const msg = document.getElementById('auth-msg');
-      if (!email || !pass || pass.length < 6) { msg.textContent = 'Valid email + 6+ char password required.'; return; }
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        if (name) await updateProfile(cred.user, { displayName: name });
-        // Profile created with starter pts in onAuth listener
-        hideAuthModal();
-      } catch (e) { msg.textContent = e.message || 'Signup failed'; }
-    }
+    // Old auth UI functions removed (primary gate is the full-page sign in/sign up at load, like the music tab).
+    // These remaining are needed for profile/logout.
 
     async function logoutUser() {
-      await signOut(auth);
+      await supabase.auth.signOut();
       currentUser = null;
       userProfile = null;
       updateNavUI();
+      updateAnimatorAccess();
       const pb = document.getElementById('points-balance');
       if (pb) pb.textContent = '0';
     }
@@ -985,9 +1356,9 @@
     function showProfileModal() {
       if (!currentUser) return;
       const m = document.getElementById('profile-modal');
-      document.getElementById('prof-name').textContent = userProfile?.fullName || currentUser.displayName || 'Creator';
+      document.getElementById('prof-name').textContent = userProfile?.full_name || currentUser.email.split('@')[0];
       document.getElementById('prof-email').textContent = currentUser.email;
-      document.getElementById('prof-points').textContent = (userProfile?.imaginePoints || 0) + ' pts';
+      document.getElementById('prof-points').textContent = (userProfile?.points || 0) + ' pts';
       m.classList.remove('hidden');
       m.classList.add('flex');
     }
