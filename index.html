@@ -256,15 +256,15 @@
       overflow: hidden;
     }
 
-    /* Subtle cyberpunk scanline + grid background */
+    /* Subtle cyberpunk scanline + grid background (finer for professional scale with small centered icons) */
     .vizalok-space-viewport::before {
       content: '';
       position: absolute;
       inset: 0;
       background: 
-        linear-gradient(rgba(103, 232, 249, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(103, 232, 249, 0.035) 1px, transparent 1px);
-      background-size: 28px 28px;
+        linear-gradient(rgba(103, 232, 249, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 232, 249, 0.03) 1px, transparent 1px);
+      background-size: 10px 10px;
       pointer-events: none;
       z-index: 1;
       animation: scanlineDrift 22s linear infinite;
@@ -520,6 +520,14 @@
       height: 4.5rem;
       margin: 0 auto 0.75rem;
       position: relative;
+      /* Fitted relic background banner/grid exactly sized to the icon for professional look */
+      background: 
+        linear-gradient(rgba(103, 232, 249, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103, 232, 249, 0.07) 1px, transparent 1px),
+        rgba(15, 15, 25, 0.75);
+      background-size: 5px 5px;
+      border-radius: 9999px;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6), 0 0 4px rgba(103, 232, 249, 0.1);
     }
 
     .platform-card .icon {
