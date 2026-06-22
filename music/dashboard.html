@@ -6,6 +6,8 @@
   <title>VIZALOK Music • NFT Trade Space</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Supabase for auth and points (shared with Creators) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
     
@@ -170,6 +172,47 @@
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen cyber-bg">
+
+  <!-- Auth Gate - Sign in / Sign up required (Supabase, like creators) -->
+  <div id="auth-gate" class="fixed inset-0 bg-zinc-950 flex items-center justify-center z-[200]">
+    <div class="max-w-md w-full px-6">
+      <div class="text-center mb-8">
+        <img src="../logo.png" alt="VIZALOK" class="w-20 h-20 mx-auto mb-4 object-contain">
+        <h1 class="text-4xl font-black tracking-[-1px]">VIZALOK Music</h1>
+        <p class="text-purple-300 mt-1">NFT Trade Space for Producers</p>
+      </div>
+
+      <div class="bg-zinc-900 border border-white/10 rounded-3xl p-8">
+        <h2 id="gate-form-title" class="text-2xl font-semibold mb-6 text-center">Sign in to access your Dashboard</h2>
+        
+        <div id="gate-error" class="text-red-400 text-sm mb-4 text-center hidden"></div>
+
+        <form id="gate-auth-form">
+          <div class="mb-4">
+            <input type="email" id="gate-email" placeholder="Email address" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+          </div>
+          <div class="mb-4">
+            <input type="password" id="gate-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500" required>
+          </div>
+          <div id="gate-username-group" class="hidden mb-4">
+            <input type="text" id="gate-username" placeholder="Display Name (for producers)" class="w-full px-4 py-3 rounded-2xl bg-zinc-950 border border-white/10 text-sm focus:outline-none focus:border-purple-500">
+          </div>
+          
+          <button type="submit" id="gate-auth-btn" class="w-full py-3 bg-white text-zinc-950 font-semibold rounded-2xl hover:bg-zinc-200 transition">Sign In</button>
+        </form>
+
+        <p class="text-center mt-6 text-sm text-zinc-400">
+          <span id="gate-switch-text">Don't have an account?</span> 
+          <a href="#" id="gate-switch-link" class="text-purple-400 hover:underline font-medium">Sign Up</a>
+        </p>
+      </div>
+
+      <p class="text-center mt-6 text-xs text-zinc-500">
+        <a href="../index.html" class="underline hover:text-zinc-400">← Back to VIZALOK</a>
+      </p>
+    </div>
+  </div>
+
   <!-- Top Navigation -->
   <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-screen-2xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -215,42 +258,70 @@
     </div>
   </nav>
 
-  <!-- Hero Banner (cyberpunk like landing) -->
-  <div class="max-w-screen-2xl mx-auto px-6 pt-8 pb-6">
-    <div class="glass border border-white/10 rounded-3xl p-8 md:p-10 relative overflow-hidden">
-      <div class="max-w-2xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs tracking-[1.5px] mb-4 border border-white/10">
-          <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-          EXCLUSIVE FOR LEGIT PRODUCERS, COMPOSERS &amp; SINGERS
-        </div>
+  <!-- Open Market (replacing previous hero) -->
+  <div id="open-market" class="max-w-screen-2xl mx-auto px-6 pt-8 pb-6">
+    <div class="mb-4">
+      <h2 class="text-3xl font-bold tracking-tight">Open Market</h2>
+      <p class="text-sm text-zinc-400">Top tracks available for trade</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Top Track 1: Cookin -->
+      <div class="glass border border-white/10 rounded-3xl p-4 hover:border-cyan-400/30 transition">
+        <div class="font-semibold text-lg">Cookin</div>
+        <div class="text-xs text-zinc-400 mb-2">by knoxzic • 3:42 • VIZNFT-001</div>
         
-        <h1 class="text-5xl md:text-6xl font-black tracking-[-3.2px] leading-none mb-3">
-          VIZALOK<br>
-          <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">NFT MUSIC</span><br>
-          TRADE SPACE
-        </h1>
-        
-        <p class="text-zinc-400 max-w-md text-lg">
-          An exclusive online trade space for verified producers, composers, singers &amp; music creators. Buy, sell and trade music as NFTs only.
-        </p>
-        
-        <div class="flex items-center gap-3 mt-6">
-          <button onclick="startBeltAutoPlay()" 
-                  class="px-6 py-3 bg-white text-zinc-950 font-semibold rounded-3xl flex items-center gap-2 hover:bg-zinc-200 transition">
-            <i class="fa-solid fa-play"></i>
-            <span>START AUTO-PLAY BELT</span>
-          </button>
-          <button onclick="document.getElementById('trade-floor').scrollIntoView({behavior:'smooth'})" 
-                  class="px-5 py-3 border border-white/20 hover:bg-white/5 rounded-3xl text-sm font-medium flex items-center gap-2">
-            <i class="fa-solid fa-exchange-alt"></i>
-            <span>BROWSE TRADE FLOOR</span>
-          </button>
+        <div class="flex items-end justify-between">
+          <div>
+            <div class="text-xs text-zinc-400">Price</div>
+            <div class="font-mono text-xl font-semibold">40 points</div>
+            <div class="text-[10px] text-emerald-400">~ $4.00 (based on Starter pack)</div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="playTrack(1)" class="px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-xl">Play</button>
+            <button onclick="buyNFT(1)" class="px-3 py-1 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl">Buy (40 pts)</button>
+          </div>
         </div>
       </div>
-      
-      <!-- Decorative cyber elements like landing -->
-      <div class="absolute -right-6 -bottom-6 w-64 h-64 border border-cyan-400/10 rounded-full"></div>
-      <div class="absolute -right-2 -top-8 text-[120px] font-black opacity-[0.03] tracking-[-8px]">VIZ</div>
+
+      <!-- Top Track 2: BAXCAV3 -->
+      <div class="glass border border-white/10 rounded-3xl p-4 hover:border-cyan-400/30 transition">
+        <div class="font-semibold text-lg">BAXCAV3</div>
+        <div class="text-xs text-zinc-400 mb-2">by knoxzic • 2:58 • VIZNFT-002</div>
+        
+        <div class="flex items-end justify-between">
+          <div>
+            <div class="text-xs text-zinc-400">Price</div>
+            <div class="font-mono text-xl font-semibold">60 points</div>
+            <div class="text-[10px] text-emerald-400">~ $6.00 (based on Starter pack)</div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="playTrack(2)" class="px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-xl">Play</button>
+            <button onclick="buyNFT(2)" class="px-3 py-1 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl">Buy (60 pts)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Track 3: LEVEL IN -->
+      <div class="glass border border-white/10 rounded-3xl p-4 hover:border-cyan-400/30 transition">
+        <div class="font-semibold text-lg">LEVEL IN</div>
+        <div class="text-xs text-zinc-400 mb-2">by knoxzic • 4:11 • VIZNFT-003</div>
+        
+        <div class="flex items-end justify-between">
+          <div>
+            <div class="text-xs text-zinc-400">Price</div>
+            <div class="font-mono text-xl font-semibold">30 points</div>
+            <div class="text-[10px] text-emerald-400">~ $3.00 (based on Starter pack)</div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="playTrack(3)" class="px-3 py-1 text-xs bg-white/10 hover:bg-white/20 rounded-xl">Play</button>
+            <button onclick="buyNFT(3)" class="px-3 py-1 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl">Buy (30 pts)</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-span-1 md:col-span-3 text-xs text-zinc-400 mt-2">
+        Point Exchange: Starter Pack 100 points = $9.99 (~$0.10/point) | Creator Pack 500 points = $39.99 (~$0.08/point). Use the same points across Creators and Music dashboards (shared Supabase profile).
+      </div>
     </div>
   </div>
 
@@ -286,36 +357,19 @@
     <div class="text-[10px] text-center text-zinc-500 -mt-2 mb-8">Scroll horizontally • Click any track to play individually • Belt auto-plays on demand</div>
   </div>
 
-  <!-- NFT Trade Floor -->
-  <div id="trade-floor" class="max-w-screen-2xl mx-auto px-6 pb-10">
-    <div class="flex items-end justify-between mb-4">
-      <div>
-        <span class="text-xs uppercase tracking-widest text-pink-400">OPEN MARKET</span>
-        <h2 class="text-2xl font-bold">NFT Trade Floor</h2>
-        <p class="text-sm text-zinc-400">Buy and trade music NFTs. Exclusive for legit producers, composers, singers and music producers.</p>
-      </div>
-      <button onclick="showMintModal()" 
-              class="text-xs flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-white/10 hover:from-purple-500/30 transition">
-        <i class="fa-solid fa-plus"></i> <span class="font-medium">MINT NEW TRACK AS NFT</span>
-      </button>
-    </div>
+  <!-- (Open Market moved to top with 3 top tracks as requested) -->
 
-    <div id="trade-floor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-
-  <!-- Your NFT Collection -->
-  <div class="max-w-screen-2xl mx-auto px-6 pb-14">
+  <!-- Your Music Library -->
+  <div id="music-library" class="max-w-screen-2xl mx-auto px-6 pb-14">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl font-bold">Your NFT Collection</h2>
+      <h2 class="text-2xl font-bold">Your Music Library</h2>
       <div class="text-xs bg-white/5 px-3 py-1 rounded-3xl border border-white/10">
-        <span id="owned-count">0</span> tracks owned
+        <span id="owned-count">0</span> tracks
       </div>
     </div>
 
     <div id="my-collection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      <!-- Populated by JS -->
+      <!-- Populated by JS with poster.jpg icons -->
     </div>
   </div>
 
@@ -407,11 +461,207 @@
   </div>
 
   <script>
+    // Supabase setup (shared with Creators for points and auth)
+    const supabaseUrl = 'https://mynheowndjbojphrskju.supabase.co';
+    const supabaseAnonKey = 'sb_publishable_T-T25tAbgccVBRnMxvRWIw_sDOjPM8L';
+    const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
     // Tailwind script
     function initTailwind() {
       // Already loaded via CDN
     }
     
+    // Gate auth logic (Supabase sign in / sign up)
+    let isGateLoginMode = true;
+    const gateForm = document.getElementById('gate-auth-form');
+    const gateError = document.getElementById('gate-error');
+    const gateTitle = document.getElementById('gate-form-title');
+    const gateBtn = document.getElementById('gate-auth-btn');
+    const gateSwitchLink = document.getElementById('gate-switch-link');
+    const gateSwitchText = document.getElementById('gate-switch-text');
+    const gateUsernameGroup = document.getElementById('gate-username-group');
+
+    if (gateSwitchLink) {
+      gateSwitchLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        isGateLoginMode = !isGateLoginMode;
+        gateError.classList.add('hidden');
+        gateError.textContent = '';
+
+        if (isGateLoginMode) {
+          gateBtn.textContent = 'Sign In';
+          gateTitle.textContent = 'Sign in to access your Dashboard';
+          if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+          gateSwitchText.textContent = "Don't have an account?";
+          gateSwitchLink.textContent = 'Sign Up';
+        } else {
+          gateBtn.textContent = 'Create Account';
+          gateTitle.textContent = 'Create your Creator Account';
+          if (gateUsernameGroup) gateUsernameGroup.classList.remove('hidden');
+          gateSwitchText.textContent = 'Already have an account?';
+          gateSwitchLink.textContent = 'Sign In';
+        }
+      });
+    }
+
+    if (gateForm) {
+      gateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        gateError.classList.add('hidden');
+        gateError.textContent = '';
+
+        const email = document.getElementById('gate-email').value.trim();
+        const password = document.getElementById('gate-password').value;
+        const username = document.getElementById('gate-username') ? document.getElementById('gate-username').value.trim() : '';
+
+        if (!email || !password) {
+          gateError.textContent = 'Please enter email and password.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+        if (!isGateLoginMode && !username) {
+          gateError.textContent = 'Please enter a display name for sign up.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+        if (password.length < 6) {
+          gateError.textContent = 'Password must be at least 6 characters.';
+          gateError.classList.remove('hidden');
+          return;
+        }
+
+        gateBtn.disabled = true;
+        gateBtn.textContent = isGateLoginMode ? 'Signing in...' : 'Creating account...';
+
+        try {
+          if (isGateLoginMode) {
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            hideAuthGate();
+          } else {
+            const { error } = await supabase.auth.signUp({
+              email,
+              password,
+              options: { data: { full_name: username } }
+            });
+            if (error) throw error;
+            alert('Account created! Check your email for confirmation if required, then sign in.');
+            isGateLoginMode = true;
+            gateBtn.textContent = 'Sign In';
+            gateTitle.textContent = 'Sign in to access your Dashboard';
+            if (gateUsernameGroup) gateUsernameGroup.classList.add('hidden');
+            gateSwitchText.textContent = "Don't have an account?";
+            gateSwitchLink.textContent = 'Sign Up';
+          }
+        } catch (error) {
+          console.error(error);
+          let msg = error.message || 'Authentication failed.';
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            msg = 'Incorrect email or password.';
+          } else if (error.code === 'auth/email-already-in-use') {
+            msg = 'This email is already registered.';
+          } else if (error.code === 'auth/invalid-email') {
+            msg = 'Invalid email address.';
+          }
+          gateError.textContent = msg;
+          gateError.classList.remove('hidden');
+        } finally {
+          gateBtn.disabled = false;
+          gateBtn.textContent = isGateLoginMode ? 'Sign In' : 'Create Account';
+        }
+      });
+    }
+
+    function hideAuthGate() {
+      const gate = document.getElementById('auth-gate');
+      if (gate) gate.style.display = 'none';
+      // Load user profile and init dashboard
+      if (typeof loadUserProfile === 'function') loadUserProfile();
+      if (typeof updateNavUI === 'function') updateNavUI();
+      if (typeof initDashboardContent === 'function') initDashboardContent();
+    }
+
+    // Bootstrap session
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        hideAuthGate();
+      }
+    })();
+
+    // Global auth listener to hide gate
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        hideAuthGate();
+      }
+    });
+
+    // Supabase profile functions
+    let userProfile = null;
+
+    async function loadUserProfile() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (data) {
+        userProfile = data;
+      } else {
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.email.split('@')[0],
+            points: 25,
+            email: user.email,
+            music_library: []
+          })
+          .select()
+          .single();
+        userProfile = newProfile;
+      }
+      updateNavUI();
+    }
+
+    async function saveProfile(updates) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('profiles')
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq('id', user.id)
+        .select()
+        .single();
+      if (data) userProfile = { ...userProfile, ...data };
+      updateNavUI();
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = (userProfile && userProfile.points) || 0;
+    }
+
+    function initDashboardContent() {
+      loadState();
+      updateBalanceDisplay();
+      renderBelt();
+      renderTradeFloor();
+      renderMyCollection();
+      setupSearch();
+      console.log('%c[VIZALOK Music Dashboard] Supabase integrated. Purchases use points. Library uses poster.jpg icons. Profile menu for market/library.');
+    }
+
+    function updateNavUI() {
+      // Update top right user info
+      const balanceEls = document.querySelectorAll('#user-balance');
+      balanceEls.forEach(el => el.textContent = (userProfile && userProfile.points) || 0);
+      // Update name if profile
+      const nameEls = document.querySelectorAll('.text-xs.font-medium');
+      if (nameEls.length && userProfile) {
+        nameEls[0].textContent = userProfile.full_name || 'User';
+      }
+    }
+
     // Data
     const allTracks = [
       { id: 1, title: "Cookin", artist: "knoxzic", src: "beats/knoxzic - Cookin.wav", price: "0.35", nftId: "VIZNFT-001", duration: "3:42" },
@@ -734,55 +984,46 @@
     }
     
     // Buy NFT
-    function buyNFT(trackId, btnElement = null) {
+    async function buyNFT(trackId) {
+      if (!userProfile) {
+        alert('Please sign in to make purchases.');
+        return;
+      }
       const track = allTracks.find(t => t.id === trackId);
       if (!track) return;
       
-      const priceNum = parseFloat(track.price);
-      if (userBalance < priceNum * 1000) { // fake scaling
-        alert("Not enough VIZ balance. Trade or sell some NFTs first.");
+      // For the open market 3 tracks, use point prices (correlated to starter packs ~$0.10/point)
+      let cost = 0;
+      if (trackId === 1) cost = 40; // Cookin ~$4
+      else if (trackId === 2) cost = 60; // BAXCAV3 ~$6
+      else if (trackId === 3) cost = 30; // LEVEL IN ~$3
+      else cost = 50; // default
+      
+      const currentPoints = userProfile.points || 0;
+      if (currentPoints < cost) {
+        alert(`Not enough points. You have ${currentPoints}. Need ${cost}. Buy more in Creators or here (future).`);
         return;
       }
       
-      // Open buy modal
-      document.getElementById('buy-track-title').textContent = track.title;
-      document.getElementById('buy-track-artist').textContent = track.artist;
-      document.getElementById('buy-track-price').textContent = track.price;
+      // Deduct and add to library
+      const newPoints = currentPoints - cost;
+      let library = userProfile.music_library || [];
+      if (!library.includes(trackId)) library.push(trackId);
       
-      document.getElementById('buy-current-balance').textContent = userBalance.toLocaleString() + ' VIZ';
-      document.getElementById('buy-new-balance').textContent = (userBalance - priceNum * 1000).toLocaleString() + ' VIZ';
+      await saveProfile({ points: newPoints, music_library: library });
       
-      // Store for confirm
-      window.pendingBuy = { track, priceNum, btnElement };
+      // Update local
+      userProfile.points = newPoints;
+      userProfile.music_library = library;
       
-      document.getElementById('buy-modal').classList.remove('hidden');
-      document.getElementById('buy-modal').classList.add('flex');
-    }
-    
-    function confirmBuyNFT() {
-      const pending = window.pendingBuy;
-      if (!pending) return;
-      
-      const { track, priceNum } = pending;
-      
-      userBalance -= Math.floor(priceNum * 1000);
-      ownedTracks.push({...track});
-      
-      // Remove from trade floor if present
-      tradeFloorListings = tradeFloorListings.filter(l => l.id !== track.id);
-      
-      saveState();
-      updateBalanceDisplay();
-      
-      closeBuyModal();
-      
-      // Re-render
-      renderBelt();
-      renderTradeFloor();
+      // Re render library
       renderMyCollection();
       
-      // Toast
-      showToast(`Purchased ${track.title} NFT! Added to your collection.`);
+      showToast(`Purchased ${track.title} for ${cost} points! Added to Your Music Library.`);
+      
+      // Update balance display if any
+      const pb = document.getElementById('points-balance');
+      if (pb) pb.textContent = newPoints;
     }
     
     function closeBuyModal() {
@@ -918,35 +1159,38 @@
       const container = document.getElementById('my-collection');
       container.innerHTML = '';
       
-      if (ownedTracks.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center text-xs text-zinc-400 py-6 border border-white/10 rounded-3xl">Your collection is empty. Buy or trade on the floor to get started.</div>`;
+      const libraryIds = (userProfile && userProfile.music_library) || [];
+      const owned = allTracks.filter(t => libraryIds.includes(t.id));
+      
+      if (owned.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center text-xs text-zinc-400 py-6 border border-white/10 rounded-3xl">Your Music Library is empty. Make purchases on the Open Market to add tracks.</div>`;
+        document.getElementById('owned-count').textContent = '0';
         return;
       }
       
-      ownedTracks.forEach(track => {
+      owned.forEach(track => {
         const div = document.createElement('div');
         div.className = `glass border border-white/10 rounded-3xl p-4 flex flex-col`;
         
         div.innerHTML = `
           <div class="flex-1">
-            <div class="flex justify-between">
+            <div class="flex items-center gap-3">
+              <img src="place.png" class="w-10 h-10 rounded-2xl object-cover border border-white/10" alt="track icon">
               <div>
                 <div class="font-semibold">${track.title}</div>
-                <div class="text-xs text-zinc-400">${track.artist}</div>
+                <div class="text-xs text-zinc-400">${track.artist} • ${track.duration || ''}</div>
               </div>
-              <div class="nft-badge self-start">OWNED</div>
             </div>
           </div>
           
           <div class="mt-4 pt-4 border-t border-white/10 flex gap-2">
-            <button onclick="sellOwnedNFT(${track.id}, this)" class="text-xs flex-1 py-1.5 border border-white/30 rounded-2xl hover:bg-white/5">SELL / LIST</button>
             <button onclick="playOwned(${track.id})" class="text-xs flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-2xl">PLAY</button>
           </div>
         `;
         container.appendChild(div);
       });
       
-      document.getElementById('owned-count').textContent = ownedTracks.length;
+      document.getElementById('owned-count').textContent = owned.length;
     }
     
     function playOwned(trackId) {
@@ -1007,15 +1251,21 @@
       menu.className = `absolute right-6 top-16 z-[100] w-52 glass border border-white/10 rounded-3xl p-2 text-sm`;
       menu.innerHTML = `
         <div class="px-3 py-2 text-xs text-zinc-400">Signed in as</div>
-        <div class="px-3 pb-2 font-medium">${user.name} • ${user.role}</div>
+        <div class="px-3 pb-2 font-medium">${(userProfile && userProfile.full_name) || 'User'} • Verified Producer</div>
         
         <div class="border-t border-white/10 my-1"></div>
         
+        <div onclick="document.getElementById('open-market').scrollIntoView({behavior:'smooth'}); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-store w-4"></i> View Market
+        </div>
+        <div onclick="document.getElementById('music-library').scrollIntoView({behavior:'smooth'}); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-music w-4"></i> View My Library
+        </div>
         <div onclick="showMyTrades(); document.body.removeChild(this.parentElement)" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2">
           <i class="fa-solid fa-exchange-alt w-4"></i> My Active Trades
         </div>
         <div onclick="window.location.reload()" class="px-3 py-2 hover:bg-white/5 rounded-2xl cursor-pointer flex items-center gap-2 text-red-400">
-          <i class="fa-solid fa-sign-out-alt w-4"></i> Disconnect Wallet
+          <i class="fa-solid fa-sign-out-alt w-4"></i> Sign Out
         </div>
       `;
       
