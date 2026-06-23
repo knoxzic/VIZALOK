@@ -36,6 +36,7 @@
       </div>
       <div class="flex items-center gap-4">
         <a href="../" class="text-sm text-zinc-400 hover:text-white">← Back to VIZALOK</a>
+        <a href="#admin" class="text-sm text-emerald-400 hover:text-emerald-300">Admin (Open Access)</a>
         <button onclick="showInputModal()" class="px-4 py-1.5 text-sm rounded-2xl bg-white text-zinc-950 hover:bg-zinc-200 font-medium flex items-center gap-2">
           <i class="fa-solid fa-keyboard"></i> <span>Portal Input</span>
         </button>
@@ -53,6 +54,9 @@
         <i class="fa-solid fa-user-friends"></i> BFF Client
       </button>
       <button onclick="document.getElementById('public-main').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 border border-white/30 rounded-2xl hover:bg-white/5">Public Main</button>
+      <button onclick="document.getElementById('admin').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold flex items-center gap-2 text-sm">
+        <i class="fa-solid fa-shield-halved"></i> Admin Dashboard (Open)
+      </button>
     </div>
   </div>
 
@@ -172,6 +176,26 @@
     </div>
   </div>
 
+  <!-- Admin Dashboard for BFF (direct access, NO password/user required - public admin view) -->
+  <div id="admin" class="max-w-7xl mx-auto px-6 py-10 border-t border-white/10">
+    <div class="section-header mb-6">
+      <span class="text-emerald-400 text-xs tracking-[2px]">ADMIN VIEW (OPEN ACCESS)</span>
+      <h2 class="text-3xl font-bold">BFF &amp; Public Admin Dashboard</h2>
+      <p class="text-sm text-zinc-400">View and manage all submitted inputs from BFF Client and Public Main. No login or password required — direct access portal.</p>
+    </div>
+
+    <div class="glass border border-white/10 rounded-3xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Submitted Inputs</h3>
+        <button onclick="clearBFFAdminData()" class="text-xs px-4 py-1.5 border border-white/20 hover:bg-white/5 rounded-2xl">Clear All</button>
+      </div>
+      <div id="admin-submission-list" class="space-y-3 max-h-[400px] overflow-auto pr-2">
+        <!-- Populated by JS from localStorage -->
+      </div>
+      <div class="text-[10px] text-center text-zinc-500 mt-4">Inputs persist in browser for demo. Real integration would use shared backend/Supabase.</div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-zinc-500 border-t border-white/10">
     BFF Client &amp; Public Main • Fully integrated with <a href="../" class="underline">VIZALOK</a>. All inputs flow to the main ecosystem.
@@ -251,8 +275,107 @@
       }
     }
 
+    // === Admin functions for BFF (direct access, NO password/user - as requested) ===
+    // Persist submissions in localStorage for demo (simulates shared DB)
+    function saveSubmissionToAdmin(type, data) {
+      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
+      subs.unshift({
+        id: Date.now(),
+        type: type,  // 'BFF Client' or 'Public Main'
+        ...data,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('viz_bff_admin_subs', JSON.stringify(subs));
+      renderAdminSubmissions();
+    }
+
+    function renderAdminSubmissions() {
+      const container = document.getElementById('admin-submission-list');
+      if (!container) return;
+      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
+      if (subs.length === 0) {
+        container.innerHTML = '<div class="p-4 text-center text-sm text-zinc-400 border border-white/10 rounded-2xl">No submissions yet. Submit via the BFF Client or Public Main forms above.</div>';
+        return;
+      }
+      container.innerHTML = subs.map(sub => `
+        <div class="p-4 bg-zinc-900/70 border border-white/10 rounded-2xl text-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="font-semibold text-emerald-400">${sub.type}</span>
+              <span class="text-xs text-zinc-500 ml-2">${new Date(sub.timestamp).toLocaleString()}</span>
+            </div>
+            <button onclick="deleteAdminSub(${sub.id}); event.stopImmediatePropagation();" class="text-xs text-red-400 hover:underline">Delete</button>
+          </div>
+          ${sub.clientId ? `<div><strong>Client ID:</strong> ${sub.clientId}</div>` : ''}
+          ${sub.name ? `<div><strong>From:</strong> ${sub.name}</div>` : ''}
+          <div class="mt-1"><strong>Message/Request:</strong> ${sub.message || sub.details || sub.input || 'N/A'}</div>
+          ${sub.requestType ? `<div class="text-xs mt-1"><strong>Type:</strong> ${sub.requestType} | <strong>Priority:</strong> ${sub.priority || 'N/A'}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function deleteAdminSub(id) {
+      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
+      subs = subs.filter(s => s.id !== id);
+      localStorage.setItem('viz_bff_admin_subs', JSON.stringify(subs));
+      renderAdminSubmissions();
+    }
+
+    function clearBFFAdminData() {
+      if (!confirm('Clear all BFF admin submissions?')) return;
+      localStorage.removeItem('viz_bff_admin_subs');
+      renderAdminSubmissions();
+    }
+
+    // Update submit functions to also feed the admin dashboard
+    const originalSubmitBFF = submitBFFInput;
+    window.submitBFFInput = function(e) {
+      e.preventDefault();
+      const clientId = document.getElementById('client-id') ? document.getElementById('client-id').value : 'N/A';
+      const reqType = document.getElementById('request-type') ? document.getElementById('request-type').value : '';
+      const details = document.getElementById('client-input') ? document.getElementById('client-input').value : '';
+      const priorityEls = document.querySelectorAll('input[name="priority"]:checked');
+      const priority = priorityEls.length ? priorityEls[0].value : 'Low';
+
+      saveSubmissionToAdmin('BFF Client', {
+        clientId,
+        requestType: reqType,
+        details,
+        priority,
+        input: details
+      });
+
+      // Call original for status message
+      originalSubmitBFF(e);
+    };
+
+    const originalSubmitPublic = submitPublicInput;
+    window.submitPublicInput = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('public-name') ? document.getElementById('public-name').value : '';
+      const message = document.getElementById('public-message') ? document.getElementById('public-message').value : '';
+
+      saveSubmissionToAdmin('Public Main', {
+        name: name || 'Anonymous',
+        message,
+        input: message
+      });
+
+      originalSubmitPublic(e);
+    };
+
+    // Load admin list on page ready
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure admin list renders (in case after other scripts)
+      setTimeout(() => {
+        if (document.getElementById('admin-submission-list')) {
+          renderAdminSubmissions();
+        }
+      }, 100);
+    });
+
     // Tailwind + basic ready state
-    console.log('%c[VIZALOK] BFF Client & Public Main portal loaded and integrated with main site.', 'color:#64748b');
+    console.log('%c[VIZALOK] BFF Client & Public Main portal loaded and integrated with main site. Admin view is direct (no password).', 'color:#64748b');
   </script>
 </body>
 </html>
