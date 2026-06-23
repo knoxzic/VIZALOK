@@ -20,27 +20,12 @@
         <nav class="topnav">
             <a href="index.html">Landing Page</a>
             <button class="button button-primary" onclick="clearAllData()">Clear All Submissions</button>
-            <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Logout</button>
         </nav>
     </header>
 
-    <!-- Admin Login Portal -->
-    <div id="login-screen" class="login-screen">
-        <div class="login-container">
-            <div style="margin-bottom: 2rem;">
-                <img src="logo.png" alt="Nash Services Logo" class="brand-logo" style="width: 72px; height: 72px; margin: 0 auto 1rem;">
-            </div>
-            <h2>Admin Portal</h2>
-            <p class="tagline">Secure access for operations and intake management</p>
-            <input type="text" id="username" placeholder="Username" autocomplete="off">
-            <input type="password" id="password" placeholder="Password" autocomplete="off">
-            <button class="login-btn" onclick="attemptLogin()">Sign In</button>
-            <div id="login-error" class="login-error"></div>
-            <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--muted); line-height: 1.5;">Demo login:<br><strong>username:</strong> admin999<br><strong>password:</strong> nash1998</p>
-        </div>
-    </div>
+    <!-- Admin Login removed per request - direct access to portal (no password/user required) -->
 
-    <main id="dashboard" class="admin-shell" style="display: none;">
+    <main id="dashboard" class="admin-shell">
         <section class="section-header admin-header">
             <span class="eyebrow">Admin Dashboard</span>
             <h1>Manage Submissions, Services, and Intake Requests</h1>

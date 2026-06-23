@@ -97,7 +97,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const isAdminPage = document.querySelector('.admin-shell') || document.getElementById('dashboard');
     if (isAdminPage) {
-        // Admin dashboard login (custom) will call initAdminPortal after successful custom login
+        // Admin portal: direct access, no password/user - initialize immediately
+        initAdminPortal();
     } else {
         setupClientAuthUI();
     }
@@ -721,51 +722,8 @@ async function clearAllData() {
     }
 }
 
-function attemptLogin() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const errorEl = document.getElementById('login-error');
-    
-    if (username === 'admin999' && password === 'nash1998') {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        document.getElementById('logout-btn').style.display = 'inline-flex';
-        errorEl.textContent = '';
-        currentSubmissionFilter = 'all';
-        initAdminPortal();
-        showToast('Successfully logged in as Administrator.');
-    } else {
-        errorEl.textContent = 'Invalid username or password. Please try again.';
-        document.getElementById('password').value = '';
-        const container = document.querySelector('.login-container');
-        container.style.animation = 'shake 0.4s';
-        setTimeout(() => { container.style.animation = ''; }, 500);
-    }
-}
-
-function logout() {
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('logout-btn').style.display = 'none';
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('login-error').textContent = '';
-    showToast('Logged out successfully.');
-}
-
-// Shake style (keep)
-if (!document.getElementById('shake-style')) {
-    const style = document.createElement('style');
-    style.id = 'shake-style';
-    style.textContent = `
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-    `;
-    document.head.appendChild(style);
-}
+// Admin login removed - direct access, no password/user required.
+// attemptLogin and logout functions removed. Dashboard initializes directly.
 
 // AI Widget (kept, fallback already improved for new branding)
 function toggleAIChat() {
@@ -917,8 +875,6 @@ window.selectQuickService = selectQuickService;
 window.initAdminPortal = initAdminPortal;
 window.clearAllData = clearAllData;
 window.filterSubmissions = filterSubmissions;
-window.attemptLogin = attemptLogin;
-window.logout = logout;
 window.togglePaidStatus = togglePaidStatus;
 window.completeSubmission = completeSubmission;
 window.saveServicePackage = saveServicePackage;
