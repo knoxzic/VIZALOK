@@ -95,6 +95,7 @@
     .platform-card:nth-child(2) { animation-delay: 0.2s; }
     .platform-card:nth-child(3) { animation-delay: 0.3s; }
     .platform-card:nth-child(4) { animation-delay: 0.4s; }
+    .platform-card:nth-child(5) { animation-delay: 0.5s; }
 
     /* Cyberpunk extras */
     .platform-card {
@@ -639,6 +640,22 @@
         </div>
       </a>
 
+      <!-- NEW: BFF Client & Public Main Portal (integrated tab) -->
+      <a href="bff-client-and-public-main/" 
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-sky-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer bff-card">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-user-friends text-4xl sm:text-5xl text-sky-400 icon"></i>
+        </div>
+        <div class="tab-header">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-1 text-sky-300">BFF Client &amp; Public Main</h3>
+          <span class="tab-label text-xs text-sky-400 tracking-widest">BFF + PUBLIC PORTAL</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Client input portal + public main interface. Fully synced with VIZALOK Music, Creators, Logistics &amp; Nash.</p>
+        <div class="enter-text text-sky-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+          Enter BFF &amp; Public Main <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
       <!-- Clickable swipe arrows for choosing tabs -->
       <div class="swipe-controls">
         <button class="swipe-btn prev" aria-label="Previous platform">‹</button>
@@ -651,6 +668,7 @@
         <button class="tab-dot" data-index="1" aria-label="Creators"></button>
         <button class="tab-dot" data-index="2" aria-label="Logistics"></button>
         <button class="tab-dot" data-index="3" aria-label="Nash"></button>
+        <button class="tab-dot" data-index="4" aria-label="BFF Client"></button>
       </div>
     </div>
   </div>
@@ -683,7 +701,7 @@
     function resetAutoCycle() {
       clearTimeout(autoCycleTimer);
       autoCycleTimer = setTimeout(() => {
-        currentIndex = (currentIndex + 1) % 4;
+        currentIndex = (currentIndex + 1) % 5;
         updateActive();
         resetAutoCycle();
       }, 6000);
@@ -698,7 +716,7 @@
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + 4) % 4;
+        currentIndex = (currentIndex - 1 + 5) % 5;
         updateActive();
         resetAutoCycle();
       });
@@ -706,7 +724,7 @@
 
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % 4;
+        currentIndex = (currentIndex + 1) % 5;
         updateActive();
         resetAutoCycle();
       });
@@ -727,12 +745,12 @@
     // Keyboard support
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
-        currentIndex = (currentIndex - 1 + 4) % 4;
+        currentIndex = (currentIndex - 1 + 5) % 5;
         updateActive();
         resetAutoCycle();
         e.preventDefault();
       } else if (e.key === 'ArrowRight') {
-        currentIndex = (currentIndex + 1) % 4;
+        currentIndex = (currentIndex + 1) % 5;
         updateActive();
         resetAutoCycle();
         e.preventDefault();
