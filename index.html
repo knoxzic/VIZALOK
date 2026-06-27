@@ -96,6 +96,7 @@
     .platform-card:nth-child(3) { animation-delay: 0.3s; }
     .platform-card:nth-child(4) { animation-delay: 0.4s; }
     .platform-card:nth-child(5) { animation-delay: 0.5s; }
+    .platform-card:nth-child(6) { animation-delay: 0.6s; }
 
     /* Cyberpunk extras */
     .platform-card {
@@ -656,6 +657,22 @@
         </div>
       </a>
 
+      <!-- NEW: Music Products -->
+      <a href="music/products.html" 
+         class="platform-card block bg-zinc-900/95 hover:bg-zinc-800 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 text-center cursor-pointer products-card">
+        <div class="h-12 sm:h-14 flex justify-center mb-4 sm:mb-6">
+          <i class="fa-solid fa-compact-disc text-4xl sm:text-5xl text-emerald-400 icon"></i>
+        </div>
+        <div class="tab-header">
+          <h3 class="text-2xl sm:text-3xl font-bold mb-1 text-emerald-300">Music Products</h3>
+          <span class="tab-label text-xs text-emerald-400 tracking-widest">EXCLUSIVE ASSETS</span>
+        </div>
+        <p class="brief text-zinc-400 text-sm mb-6">Premium beats, sample packs, and full production vaults. High-end, minimal, professional.</p>
+        <div class="enter-text text-emerald-400 font-medium flex items-center justify-center gap-2 text-xs sm:text-sm">
+          Enter Music Products <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
       <!-- Clickable swipe arrows for choosing tabs -->
       <div class="swipe-controls">
         <button class="swipe-btn prev" aria-label="Previous platform">‹</button>
@@ -669,6 +686,7 @@
         <button class="tab-dot" data-index="2" aria-label="Logistics"></button>
         <button class="tab-dot" data-index="3" aria-label="Nash"></button>
         <button class="tab-dot" data-index="4" aria-label="BFF Client"></button>
+      <button class="tab-dot" data-index="5" aria-label="Music Products"></button>
       </div>
     </div>
   </div>
@@ -701,7 +719,7 @@
     function resetAutoCycle() {
       clearTimeout(autoCycleTimer);
       autoCycleTimer = setTimeout(() => {
-        currentIndex = (currentIndex + 1) % 5;
+        currentIndex = (currentIndex + 1) % 6;
         updateActive();
         resetAutoCycle();
       }, 6000);
@@ -716,7 +734,7 @@
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + 5) % 5;
+        currentIndex = (currentIndex - 1 + 6) % 6;
         updateActive();
         resetAutoCycle();
       });
@@ -724,7 +742,7 @@
 
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % 5;
+        currentIndex = (currentIndex + 1) % 6;
         updateActive();
         resetAutoCycle();
       });
@@ -745,12 +763,12 @@
     // Keyboard support
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
-        currentIndex = (currentIndex - 1 + 5) % 5;
+        currentIndex = (currentIndex - 1 + 6) % 6;
         updateActive();
         resetAutoCycle();
         e.preventDefault();
       } else if (e.key === 'ArrowRight') {
-        currentIndex = (currentIndex + 1) % 5;
+        currentIndex = (currentIndex + 1) % 6;
         updateActive();
         resetAutoCycle();
         e.preventDefault();

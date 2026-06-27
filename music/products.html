@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIZALOK Music • Exclusive Products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+    }
+    
+    .premium-heading {
+      font-family: 'Space Grotesk', 'Inter', system_ui, sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .product-card {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    .hero-logo {
+      animation: logo-breathe 5s ease-in-out infinite;
+    }
+
+    @keyframes logo-breathe {
+      0%, 100% { 
+        transform: scale(1); 
+        filter: drop-shadow(0 0 15px rgba(167, 139, 250, 0.4));
+      }
+      50% { 
+        transform: scale(1.03); 
+        filter: drop-shadow(0 0 30px rgba(167, 139, 250, 0.7));
+      }
+    }
+
+    .video-bg {
+      filter: brightness(0.65) contrast(1.1);
+    }
+
+    .section-header {
+      letter-spacing: -0.025em;
+    }
+
+    .minimal-button {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .minimal-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    .audio-controls {
+      background: #18181b;
+    }
+
+    .progress-bar {
+      transition: width 0.05s linear;
+    }
+
+    .play-button {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .play-button:hover {
+      transform: scale(1.08);
+    }
+
+    .vizalok-subtle {
+      color: #71717a;
+    }
+
+    .carousel-inner {
+      transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white">
+  <!-- 1. Hero / Top Section -->
+  <div class="relative h-[70vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
+    <!-- Background Video -->
+    <video 
+      id="hero-video" 
+      class="video-bg absolute inset-0 w-full h-full object-cover" 
+      autoplay 
+      muted 
+      playsinline
+    ></video>
+    
+    <!-- Dark Gradient Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
+    
+    <!-- Centered Content -->
+    <div class="relative z-10 text-center px-6 max-w-4xl">
+      <!-- Animated Logo -->
+      <div class="mb-8 flex justify-center">
+        <img 
+          src="../logo.png" 
+          alt="VIZALOK" 
+          class="hero-logo w-24 h-24 md:w-32 md:h-32 object-contain"
+          onerror="this.onerror=null; this.outerHTML='<div class=\'hero-logo text-6xl md:text-7xl font-bold tracking-[-3px] text-white\'>VIZALOK</div>'"
+        >
+      </div>
+      
+      <h1 class="text-5xl md:text-6xl font-semibold tracking-tighter premium-heading mb-4">
+        Exclusive Music Products
+      </h1>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    
+    <!-- 2. Featured Products Carousel -->
+    <div class="mb-16">
+      <div class="flex items-baseline justify-between mb-8">
+        <div>
+          <h2 class="text-3xl font-semibold tracking-tight premium-heading">Featured Collections</h2>
+          <p class="text-zinc-400 mt-1">Our most exclusive and sought-after releases</p>
+        </div>
+        <div class="hidden md:flex items-center gap-2">
+          <button onclick="prevFeatured()" 
+                  class="w-10 h-10 flex items-center justify-center border border-zinc-800 hover:bg-zinc-900 rounded-full text-zinc-400 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button onclick="nextFeatured()" 
+                  class="w-10 h-10 flex items-center justify-center border border-zinc-800 hover:bg-zinc-900 rounded-full text-zinc-400 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carousel -->
+      <div class="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900">
+        <div id="featured-carousel" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+          <!-- Featured Card 1 -->
+          <div class="min-w-full p-8 md:p-10">
+            <div class="grid md:grid-cols-5 gap-8 items-center">
+              <div class="md:col-span-3">
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 text-xs font-medium tracking-[1.5px] mb-4">
+                  SIGNATURE COLLECTION
+                </div>
+                <h3 class="text-4xl md:text-5xl font-semibold tracking-tighter premium-heading mb-4">Vizalok Pack Albums Vol1.</h3>
+                <p class="text-3xl font-semibold text-violet-400 mb-5">$780.00</p>
+                <p class="text-zinc-400 max-w-md leading-relaxed">
+                  A meticulously curated selection of 12 premium instrumentals representing the pinnacle of VIZALOK sound design.
+                </p>
+                <a href="https://payhip.com/b/EbTRI" target="_blank" 
+                   class="mt-6 inline-flex items-center px-8 py-3.5 bg-white hover:bg-zinc-100 text-zinc-950 font-semibold rounded-2xl text-sm transition-all">
+                  Purchase on Payhip
+                </a>
+              </div>
+              <div class="md:col-span-2">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-sm">
+                  <div class="uppercase text-xs tracking-widest text-zinc-500 mb-3">Includes</div>
+                  <ul class="space-y-2 text-zinc-300">
+                    <li class="flex items-center gap-2">• 12 exclusive beats</li>
+                    <li class="flex items-center gap-2">• High-resolution stems</li>
+                    <li class="flex items-center gap-2">• Full mixing &amp; arrangement notes</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Card 2 -->
+          <div class="min-w-full p-8 md:p-10">
+            <div class="grid md:grid-cols-5 gap-8 items-center">
+              <div class="md:col-span-3">
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 text-xs font-medium tracking-[1.5px] mb-4">
+                  ULTIMATE VAULT
+                </div>
+                <h3 class="text-4xl md:text-5xl font-semibold tracking-tighter premium-heading mb-4">The Complete Vizalok Vol 1. Production Vault</h3>
+                <p class="text-3xl font-semibold text-amber-400 mb-5">$13,350.00</p>
+                <p class="text-zinc-400 max-w-md leading-relaxed">
+                  The definitive archive: every beat and every complete FL Studio project file from Vizalok Vol. 1. A rare, comprehensive resource.
+                </p>
+                <a href="https://payhip.com/b/85fHB" target="_blank" 
+                   class="mt-6 inline-flex items-center px-8 py-3.5 bg-white hover:bg-zinc-100 text-zinc-950 font-semibold rounded-2xl text-sm transition-all">
+                  Purchase on Payhip
+                </a>
+              </div>
+              <div class="md:col-span-2">
+                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 text-sm">
+                  <div class="uppercase text-xs tracking-widest text-zinc-500 mb-3">Complete Archive Includes</div>
+                  <ul class="space-y-2 text-zinc-300">
+                    <li class="flex items-center gap-2">• All Vol. 1 beats</li>
+                    <li class="flex items-center gap-2">• Full FLP project files</li>
+                    <li class="flex items-center gap-2">• Stems, MIDI &amp; presets</li>
+                    <li class="flex items-center gap-2">• Lifetime access &amp; updates</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. All Digital Assets -->
+    <div>
+      <div class="flex items-baseline justify-between mb-8">
+        <div>
+          <h2 class="text-3xl font-semibold tracking-tight premium-heading">All Digital Assets</h2>
+          <p class="text-sm text-zinc-400">Browse our complete collection of premium production tools</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <!-- Card: ProD. Knoxzic Sample -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col">
+          <div class="p-6 flex-1">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 class="font-semibold text-xl tracking-tight">ProD. Knoxzic Sample</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-3xl font-semibold">$55</span>
+                  <span class="text-xs text-zinc-500 ml-1">USD</span>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium bg-zinc-800 text-zinc-400 rounded-full tracking-wider">SAMPLE PACK</span>
+            </div>
+            <p class="text-sm text-zinc-400 leading-relaxed mb-5">
+              A refined selection of signature Knoxzic samples. Designed for producers seeking distinctive, high-fidelity textures and percussion elements.
+            </p>
+            
+            <!-- Audio Preview -->
+            <div class="mt-2 mb-6">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleAudio('audio-1', 'play-btn-1', 'progress-1', 'time-1')" 
+                        id="play-btn-1"
+                        class="play-button w-9 h-9 flex-shrink-0 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-play-1" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-pause-1" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="flex-1">
+                  <div onclick="seekAudio('audio-1', event, 'progress-1')" class="h-1.5 bg-zinc-800 rounded-full cursor-pointer relative">
+                    <div id="progress-1" class="progress-bar absolute top-0 left-0 h-1.5 bg-white rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div id="time-1" class="text-[10px] font-mono text-zinc-500 w-16 text-right tabular-nums">0:00 / 0:00</div>
+              </div>
+              <audio id="audio-1" preload="metadata" ontimeupdate="updateProgress('audio-1', 'progress-1', 'time-1')" onended="onAudioEnded('audio-1', 'play-btn-1', 'progress-1', 'time-1')">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+              </audio>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <a href="https://payhip.com/b/fpZOM" target="_blank" 
+               class="minimal-button w-full flex items-center justify-center px-5 py-3 bg-white hover:bg-zinc-100 text-zinc-950 text-sm font-semibold rounded-2xl transition-all">
+              Purchase on Payhip
+            </a>
+          </div>
+        </div>
+
+        <!-- Card: Prod. Knoxzic - Bill -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col">
+          <div class="p-6 flex-1">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 class="font-semibold text-xl tracking-tight">Prod. Knoxzic - Bill</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-3xl font-semibold">$50</span>
+                  <span class="text-xs text-zinc-500 ml-1">USD</span>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium bg-zinc-800 text-zinc-400 rounded-full tracking-wider">INSTRUMENTAL</span>
+            </div>
+            <p class="text-sm text-zinc-400 leading-relaxed mb-5">
+              A commanding, atmospheric beat featuring crisp percussion and brooding melodic layers. Built for impactful storytelling.
+            </p>
+            
+            <!-- Audio Preview -->
+            <div class="mt-2 mb-6">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleAudio('audio-2', 'play-btn-2', 'progress-2', 'time-2')" 
+                        id="play-btn-2"
+                        class="play-button w-9 h-9 flex-shrink-0 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-play-2" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-pause-2" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="flex-1">
+                  <div onclick="seekAudio('audio-2', event, 'progress-2')" class="h-1.5 bg-zinc-800 rounded-full cursor-pointer relative">
+                    <div id="progress-2" class="progress-bar absolute top-0 left-0 h-1.5 bg-white rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div id="time-2" class="text-[10px] font-mono text-zinc-500 w-16 text-right tabular-nums">0:00 / 0:00</div>
+              </div>
+              <audio id="audio-2" preload="metadata" ontimeupdate="updateProgress('audio-2', 'progress-2', 'time-2')" onended="onAudioEnded('audio-2', 'play-btn-2', 'progress-2', 'time-2')">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+              </audio>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <a href="https://payhip.com/b/7x8Qc" target="_blank" 
+               class="minimal-button w-full flex items-center justify-center px-5 py-3 bg-white hover:bg-zinc-100 text-zinc-950 text-sm font-semibold rounded-2xl transition-all">
+              Purchase on Payhip
+            </a>
+          </div>
+        </div>
+
+        <!-- Card: Vizalok Pack Albums Vol1. -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col">
+          <div class="p-6 flex-1">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 class="font-semibold text-xl tracking-tight">Vizalok Pack Albums Vol1.</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-3xl font-semibold">$780</span>
+                  <span class="text-xs text-zinc-500 ml-1">USD</span>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium bg-zinc-800 text-zinc-400 rounded-full tracking-wider">BEAT PACK</span>
+            </div>
+            <p class="text-sm text-zinc-400 leading-relaxed mb-5">
+              A premium, limited-edition collection of 12 meticulously engineered beats spanning atmospheric, hard-hitting, and melodic territories.
+            </p>
+            
+            <!-- Audio Preview -->
+            <div class="mt-2 mb-6">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleAudio('audio-3', 'play-btn-3', 'progress-3', 'time-3')" 
+                        id="play-btn-3"
+                        class="play-button w-9 h-9 flex-shrink-0 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-play-3" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-pause-3" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="flex-1">
+                  <div onclick="seekAudio('audio-3', event, 'progress-3')" class="h-1.5 bg-zinc-800 rounded-full cursor-pointer relative">
+                    <div id="progress-3" class="progress-bar absolute top-0 left-0 h-1.5 bg-white rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div id="time-3" class="text-[10px] font-mono text-zinc-500 w-16 text-right tabular-nums">0:00 / 0:00</div>
+              </div>
+              <audio id="audio-3" preload="metadata" ontimeupdate="updateProgress('audio-3', 'progress-3', 'time-3')" onended="onAudioEnded('audio-3', 'play-btn-3', 'progress-3', 'time-3')">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+              </audio>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <a href="https://payhip.com/b/EbTRI" target="_blank" 
+               class="minimal-button w-full flex items-center justify-center px-5 py-3 bg-white hover:bg-zinc-100 text-zinc-950 text-sm font-semibold rounded-2xl transition-all">
+              Purchase on Payhip
+            </a>
+          </div>
+        </div>
+
+        <!-- Card: The Complete Vizalok Vol 1. Production Vault -->
+        <div class="product-card bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col">
+          <div class="p-6 flex-1">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4 class="font-semibold text-xl tracking-tight">The Complete Vizalok Vol 1. Production Vault</h4>
+                <div class="mt-1 flex items-baseline">
+                  <span class="text-3xl font-semibold">$13,350</span>
+                  <span class="text-xs text-zinc-500 ml-1">USD</span>
+                </div>
+              </div>
+              <span class="px-3 py-1 text-xs font-medium bg-zinc-800 text-zinc-400 rounded-full tracking-wider">FULL VAULT</span>
+            </div>
+            <p class="text-sm text-zinc-400 leading-relaxed mb-5">
+              The definitive archive. Every beat and every full FL Studio project file from Vizalok Vol. 1. A rare, comprehensive resource for serious producers.
+            </p>
+            
+            <!-- Audio Preview -->
+            <div class="mt-2 mb-6">
+              <div class="flex items-center gap-3">
+                <button onclick="toggleAudio('audio-4', 'play-btn-4', 'progress-4', 'time-4')" 
+                        id="play-btn-4"
+                        class="play-button w-9 h-9 flex-shrink-0 rounded-full bg-white text-zinc-950 flex items-center justify-center shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-play-4" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="icon-pause-4" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="flex-1">
+                  <div onclick="seekAudio('audio-4', event, 'progress-4')" class="h-1.5 bg-zinc-800 rounded-full cursor-pointer relative">
+                    <div id="progress-4" class="progress-bar absolute top-0 left-0 h-1.5 bg-white rounded-full" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div id="time-4" class="text-[10px] font-mono text-zinc-500 w-16 text-right tabular-nums">0:00 / 0:00</div>
+              </div>
+              <audio id="audio-4" preload="metadata" ontimeupdate="updateProgress('audio-4', 'progress-4', 'time-4')" onended="onAudioEnded('audio-4', 'play-btn-4', 'progress-4', 'time-4')">
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+              </audio>
+            </div>
+          </div>
+          <div class="px-6 pb-6">
+            <a href="https://payhip.com/b/85fHB" target="_blank" 
+               class="minimal-button w-full flex items-center justify-center px-5 py-3 bg-white hover:bg-zinc-100 text-zinc-950 text-sm font-semibold rounded-2xl transition-all">
+              Purchase on Payhip
+            </a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Professional Note -->
+    <div class="mt-16 text-center border-t border-zinc-800 pt-8">
+      <p class="text-xs text-zinc-500 max-w-md mx-auto">
+        All assets are exclusive to the Vizalok Music ecosystem and sold securely through Payhip.
+      </p>
+    </div>
+    
+  </div>
+
+  <script>
+    // Tailwind script
+    function initTailwind() {
+      // Already loaded via CDN
+    }
+
+    // ==================== VIDEO BACKGROUND CYCLER ====================
+    const videoSources = [
+      "https://grok.com/imagine/post/057f8436-ee06-4e77-9005-838cbf99bda5",
+      "https://grok.com/imagine/post/9fdbc452-fb63-4e31-a336-fda574c714ba",
+      "https://grok.com/imagine/post/f6ee76b9-65ae-4a34-9be3-6a8ffd08b5ca"
+    ];
+    
+    let videoIndex = 0;
+    let heroVideo;
+
+    function initVideoBackground() {
+      heroVideo = document.getElementById('hero-video');
+      if (!heroVideo) return;
+
+      // Note: The provided Grok links may point to post pages rather than direct MP4 files.
+      // For production, replace with direct hosted MP4 URLs (e.g. from your server or CDN).
+      heroVideo.src = videoSources[0];
+      heroVideo.muted = true;
+      heroVideo.playsInline = true;
+
+      heroVideo.play().catch(() => {
+        // Autoplay might be blocked in some browsers; user can interact
+      });
+
+      heroVideo.addEventListener('ended', () => {
+        videoIndex = (videoIndex + 1) % videoSources.length;
+        heroVideo.src = videoSources[videoIndex];
+        heroVideo.play().catch(() => {});
+      });
+    }
+
+    // ==================== FEATURED CAROUSEL ====================
+    let currentFeatured = 0;
+    const featuredTotal = 2;
+
+    function updateFeaturedCarousel() {
+      const track = document.getElementById('featured-carousel');
+      if (!track) return;
+      const translate = currentFeatured * -100;
+      track.style.transform = `translateX(${translate}%)`;
+    }
+
+    function nextFeatured() {
+      currentFeatured = (currentFeatured + 1) % featuredTotal;
+      updateFeaturedCarousel();
+    }
+
+    function prevFeatured() {
+      currentFeatured = (currentFeatured - 1 + featuredTotal) % featuredTotal;
+      updateFeaturedCarousel();
+    }
+
+    function initCarousel() {
+      // Auto-advance every 8 seconds (optional)
+      setInterval(() => {
+        if (document.getElementById('featured-carousel')) {
+          nextFeatured();
+        }
+      }, 8000);
+    }
+
+    // ==================== AUDIO PLAYER SYSTEM ====================
+    let currentAudio = null;
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds === Infinity) return '0:00';
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function updateProgress(audioId, progressId, timeId) {
+      const audio = document.getElementById(audioId);
+      const progressBar = document.getElementById(progressId);
+      const timeDisplay = document.getElementById(timeId);
+      if (!audio || !progressBar || !timeDisplay) return;
+
+      const percent = (audio.currentTime / (audio.duration || 1)) * 100;
+      progressBar.style.width = `${percent}%`;
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    }
+
+    function seekAudio(audioId, event, progressContainerId) {
+      const audio = document.getElementById(audioId);
+      const container = document.getElementById(progressContainerId);
+      if (!audio || !container) return;
+
+      const rect = container.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const percent = clickX / rect.width;
+      audio.currentTime = percent * (audio.duration || 0);
+    }
+
+    function toggleAudio(audioId, btnId, progressId, timeId) {
+      const audio = document.getElementById(audioId);
+      const button = document.getElementById(btnId);
+      if (!audio || !button) return;
+
+      // Pause any currently playing audio
+      if (currentAudio && currentAudio !== audio) {
+        currentAudio.pause();
+        // Reset previous button icon
+        resetButtonIcon(currentAudio);
+      }
+
+      if (audio.paused) {
+        audio.play().then(() => {
+          currentAudio = audio;
+          updateButtonIcon(button, true);
+          audio.ontimeupdate = () => updateProgress(audioId, progressId, timeId);
+        }).catch(() => {});
+      } else {
+        audio.pause();
+        currentAudio = null;
+        updateButtonIcon(button, false);
+      }
+    }
+
+    function resetButtonIcon(audio) {
+      // Find the button for this audio and reset its icon
+      const buttons = document.querySelectorAll('[id^="play-btn-"]');
+      buttons.forEach(btn => {
+        const playIcon = btn.querySelector('[id^="icon-play-"]');
+        const pauseIcon = btn.querySelector('[id^="icon-pause-"]');
+        if (playIcon && pauseIcon) {
+          playIcon.classList.remove('hidden');
+          pauseIcon.classList.add('hidden');
+        }
+      });
+    }
+
+    function updateButtonIcon(button, isPlaying) {
+      const playIcon = button.querySelector('[id^="icon-play-"]');
+      const pauseIcon = button.querySelector('[id^="icon-pause-"]');
+      if (!playIcon || !pauseIcon) return;
+
+      if (isPlaying) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+      } else {
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+      }
+    }
+
+    function onAudioEnded(audioId, btnId, progressId, timeId) {
+      const button = document.getElementById(btnId);
+      const progressBar = document.getElementById(progressId);
+      if (button) updateButtonIcon(button, false);
+      if (progressBar) progressBar.style.width = '0%';
+      if (currentAudio && currentAudio.id === audioId) currentAudio = null;
+    }
+
+    function initAudioPlayers() {
+      const audioIds = ['audio-1', 'audio-2', 'audio-3', 'audio-4'];
+      audioIds.forEach(id => {
+        const audio = document.getElementById(id);
+        if (audio) {
+          audio.preload = 'metadata';
+          // Ensure initial progress is zero
+          const progressBar = document.getElementById(id.replace('audio', 'progress'));
+          if (progressBar) progressBar.style.width = '0%';
+        }
+      });
+    }
+
+    // Initialize everything
+    function initializeProductsSection() {
+      initTailwind();
+      initVideoBackground();
+      initCarousel();
+      initAudioPlayers();
+      
+      // Keyboard support for carousel
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') prevFeatured();
+        if (e.key === 'ArrowRight') nextFeatured();
+      });
+
+      console.log('%c[VIZALOK] Premium Music Products section initialized.', 'color:#52525b');
+    }
+
+    // Boot
+    window.addEventListener('DOMContentLoaded', initializeProductsSection);
+
+    // ==================== VIDEO CYCLER (called from init) ====================
+    function initVideoBackground() {
+      const video = document.getElementById('hero-video');
+      if (!video) return;
+
+      // IMPORTANT: The provided Grok imagine links are post URLs, not direct MP4 files.
+      // For local preview they may not play. Download the videos or replace with direct .mp4 URLs.
+      video.src = videoSources[0];
+      video.muted = true;
+      video.playsInline = true;
+
+      video.play().catch(() => {});
+
+      video.addEventListener('ended', () => {
+        videoIndex = (videoIndex + 1) % videoSources.length;
+        video.src = videoSources[videoIndex];
+        video.play().catch(() => {});
+      });
+    }
+
+    // Expose for future additions
+    window.VIZALOK_MUSIC_PRODUCTS = {
+      addNewBeat: (cardHTML) => {
+        console.log('To add a new beat card, copy an existing .product-card and update its content, audio src, and button links. Then append to the grid.');
+      }
+    };
+  </script>
+</body>
+</html>
