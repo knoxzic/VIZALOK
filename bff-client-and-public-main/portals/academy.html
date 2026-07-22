@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Academy · Best Face Forward</title>
+  <link rel="icon" href="../assets/icon-software.jpeg" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/transitions.css" />
+  <link rel="stylesheet" href="../css/portals.css" />
+  <link rel="stylesheet" href="../css/academy.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-nav">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="../landing.html">
+          <img src="../assets/icon-software.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Business Academy<span>BFF Learning</span></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="site-nav__links">
+          <li><a href="../landing.html">Home</a></li>
+          <li><a href="software.html">Software</a></li>
+          <li><a href="academy.html" class="is-active">Academy</a></li>
+          <li><a href="../pages/contact.html">Contact</a></li>
+        </ul>
+        <div class="site-nav__cta">
+          <a class="btn btn--sm btn--primary" href="software.html">Products</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="portal-hero">
+      <div class="container portal-hero__inner">
+        <div class="portal-hero__brand">
+          <img class="portal-hero__icon" src="../assets/icon-software.jpeg" alt="G&amp;G Software · Academy" />
+          <div>
+            <p class="eyebrow">Business Academy · G&amp;G Software</p>
+            <h1>Learn beautifully</h1>
+            <p class="script">Game-based. Feminine. Serious.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GATE: not enrolled -->
+    <section class="section" id="academy-gate">
+      <div class="container">
+        <div class="steps" aria-label="Enrollment steps">
+          <div class="step is-active"><span class="step__num">1</span> Enroll</div>
+          <span class="step__sep"></span>
+          <div class="step"><span class="step__num">2</span> Play modules</div>
+          <span class="step__sep"></span>
+          <div class="step"><span class="step__num">3</span> Unlock products</div>
+        </div>
+
+        <div class="academy-enroll">
+          <div class="academy-enroll__card">
+            <h2>Enrollment</h2>
+            <p style="color:var(--charcoal-soft)">
+              One enrollment opens the full curriculum: interactive quizzes,
+              progress tracking, and graduate product unlocks.
+            </p>
+            <div class="academy-price">$497 <small>one-time · demo</small></div>
+            <ul class="academy-benefits">
+              <li>Three core modules with Kahoot-style quizzes</li>
+              <li>Elegant rose &amp; emerald learning UI</li>
+              <li>Standalone Graduate Playbook unlock after enrollment</li>
+              <li>Structure ready for Stripe + admin email webhooks</li>
+            </ul>
+            <button type="button" class="btn btn--gold btn--block" id="enroll-academy">
+              Enroll with guided checkout
+            </button>
+            <button type="button" class="btn btn--outline btn--block" id="demo-enroll" style="margin-top:0.65rem">
+              Instant demo unlock (skip modal)
+            </button>
+            <p style="margin-top:1rem;font-size:0.95rem;color:var(--charcoal-muted);text-align:center">
+              Questions? Open Gigi — bottom right.
+            </p>
+          </div>
+
+          <aside class="academy-preview">
+            <p class="script">Inside the Academy</p>
+            <h3>Play. Learn. Unlock.</h3>
+            <p>
+              Each module feels like a refined game night for business operators â€”
+              clear questions, instant feedback, and a progress path that rewards completion.
+            </p>
+            <span class="badge badge--rose">Feminine business styling</span>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP: enrolled -->
+    <section class="section" id="academy-app" hidden>
+      <div class="container">
+        <div class="demo-banner">
+          <strong>You are enrolled</strong><br />
+          Complete modules in order. Progress is saved in this browser (demo).
+        </div>
+
+        <div id="curriculum-section">
+          <div style="text-align:center;margin-bottom:2rem">
+            <p class="eyebrow">Curriculum</p>
+            <h2 class="display" style="font-size:1.5rem;color:var(--emerald);letter-spacing:0.1em;text-transform:uppercase">
+              Your learning path
+            </h2>
+            <hr class="gold-line" />
+          </div>
+          <div class="curriculum" id="curriculum-grid"></div>
+          <div id="academy-unlocks" style="margin-top:2.5rem"></div>
+        </div>
+
+        <div id="quiz-section" hidden>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+            <button type="button" class="btn btn--ghost btn--sm" id="quiz-exit">â† Back to modules</button>
+          </div>
+          <div class="quiz-shell" id="quiz-shell"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom" style="border:0;padding-top:0">
+          <span>&copy; <span data-year></span> Best Face Forward Academy</span>
+          <a href="software.html">Software products</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/academy.js"></script>
+  <script src="../js/transitions.js"></script>
+  <script src="../js/gigi.js"></script>
+</body>
+</html>
+

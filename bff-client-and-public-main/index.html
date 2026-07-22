@@ -1,381 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VIZALOK • BFF Client &amp; Public Main</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .neon-cyan { color: #67e8f9; }
-    .neon-purple { color: #a78bfa; }
-    .glass { background: rgba(15, 15, 25, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(103, 232, 249, 0.15); }
-    .section-header { position: relative; }
-    .section-header:after { content: ''; position: absolute; bottom: -6px; left: 0; width: 48px; height: 3px; background: linear-gradient(to right, #a78bfa, #67e8f9); border-radius: 999px; }
-    .portal-card { transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
-    .portal-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
-    .tab { transition: all 0.2s ease; }
-    .tab.active { border-bottom: 2px solid #67e8f9; color: #67e8f9; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome · Best Face Forward Consultants</title>
+  <meta name="description" content="Best Face Forward Consultants — Strategy. Solutions. Impact. Moving You Forward." />
+  <link rel="icon" href="assets/icon-welcome.jpeg" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/welcome.css" />
+  <link rel="stylesheet" href="css/transitions.css" />
 </head>
-<body class="bg-zinc-950 text-white min-h-screen">
-  <!-- Top Nav -->
-  <nav class="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="../" class="flex items-center gap-2.5">
-          <img src="../logo.png" alt="VIZALOK" class="w-9 h-9 object-contain">
-          <div>
-            <span class="font-black tracking-[-1.5px] text-2xl">VIZALOK</span>
-            <span class="text-[10px] text-purple-400 font-medium tracking-[1.5px] ml-0.5">BFF</span>
-          </div>
-        </a>
-        <div class="px-2.5 py-1 bg-white/5 rounded-2xl text-[10px] font-medium tracking-wider border border-white/10">BFF CLIENT + PUBLIC MAIN</div>
+<body class="welcome-page" data-gigi="off">
+  <main class="welcome">
+    <!-- YouTube full-bleed backdrop (muted, loop, cover) -->
+    <div class="welcome__yt" aria-hidden="true">
+      <div class="welcome__yt-inner">
+        <iframe
+          src="https://www.youtube.com/embed/ML47u90lJOw?autoplay=1&mute=1&loop=1&playlist=ML47u90lJOw&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0"
+          title="Background"
+          allow="autoplay; encrypted-media"
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
       </div>
-      <div class="flex items-center gap-4">
-        <a href="../" class="text-sm text-zinc-400 hover:text-white">← Back to VIZALOK</a>
-        <a href="#admin" class="text-sm text-emerald-400 hover:text-emerald-300">Admin (Open Access)</a>
-        <button onclick="showInputModal()" class="px-4 py-1.5 text-sm rounded-2xl bg-white text-zinc-950 hover:bg-zinc-200 font-medium flex items-center gap-2">
-          <i class="fa-solid fa-keyboard"></i> <span>Portal Input</span>
-        </button>
-      </div>
+      <div class="welcome__yt-shade"></div>
     </div>
-  </nav>
+    <div class="welcome__ambience" aria-hidden="true"></div>
 
-  <!-- Hero -->
-  <div class="max-w-5xl mx-auto px-6 pt-12 pb-8 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs tracking-widest mb-3">INTEGRATED PORTAL</div>
-    <h1 class="text-5xl sm:text-6xl font-black tracking-[-2.5px] mb-3">BFF Client &amp; Public Main</h1>
-    <p class="max-w-md mx-auto text-zinc-400">Seamless client experience and public-facing main interface, fully integrated into the VIZALOK ecosystem.</p>
-    <div class="flex gap-3 justify-center mt-6">
-      <button onclick="document.getElementById('bff-client').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-white text-zinc-950 rounded-2xl font-semibold flex items-center gap-2 hover:bg-zinc-200">
-        <i class="fa-solid fa-user-friends"></i> BFF Client
-      </button>
-      <button onclick="document.getElementById('public-main').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 border border-white/30 rounded-2xl hover:bg-white/5">Public Main</button>
-      <button onclick="document.getElementById('admin').scrollIntoView({behavior:'smooth'})" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold flex items-center gap-2 text-sm">
-        <i class="fa-solid fa-shield-halved"></i> Admin Dashboard (Open)
-      </button>
-    </div>
-  </div>
+    <article class="invitation" aria-label="Welcome invitation">
+      <span class="invitation__corner invitation__corner--tl" aria-hidden="true"></span>
+      <span class="invitation__corner invitation__corner--tr" aria-hidden="true"></span>
+      <span class="invitation__corner invitation__corner--bl" aria-hidden="true"></span>
+      <span class="invitation__corner invitation__corner--br" aria-hidden="true"></span>
 
-  <!-- BFF Client Section -->
-  <div id="bff-client" class="max-w-7xl mx-auto px-6 py-10 border-t border-white/10">
-    <div class="section-header mb-6">
-      <span class="text-cyan-400 text-xs tracking-[2px]">CLIENT EXPERIENCE</span>
-      <h2 class="text-3xl font-bold">BFF Client Portal</h2>
-      <p class="text-sm text-zinc-400">Personalized client dashboard with secure input, status tracking, and direct integration to VIZALOK services.</p>
-    </div>
+      <p class="invitation__eyebrow">You are invited</p>
 
-    <div class="grid md:grid-cols-2 gap-6">
-      <!-- Client Input Form -->
-      <div class="glass border border-white/10 rounded-3xl p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <i class="fa-solid fa-keyboard text-2xl text-cyan-400"></i>
-          <h3 class="font-semibold text-xl">Client Input Portal</h3>
-        </div>
-        <p class="text-sm text-zinc-400 mb-4">Submit requests, updates, or data directly. Integrated with main VIZALOK systems.</p>
-
-        <form id="bff-client-form" onsubmit="submitBFFInput(event)">
-          <div class="mb-4">
-            <label class="text-xs text-zinc-400 block mb-1">Client ID / Reference</label>
-            <input type="text" id="client-id" value="BFF-2026-001" class="w-full bg-zinc-900 border border-white/10 rounded-2xl px-4 py-2 text-sm" required>
-          </div>
-          <div class="mb-4">
-            <label class="text-xs text-zinc-400 block mb-1">Request Type</label>
-            <select id="request-type" class="w-full bg-zinc-900 border border-white/10 rounded-2xl px-4 py-2 text-sm">
-              <option>Status Update</option>
-              <option>New Project Brief</option>
-              <option>Feedback / Revision</option>
-              <option>Payment / Invoice Query</option>
-              <option>Public Main Sync</option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="text-xs text-zinc-400 block mb-1">Details / Input</label>
-            <textarea id="client-input" rows="4" class="w-full bg-zinc-900 border border-white/10 rounded-2xl px-4 py-3 text-sm" placeholder="Enter your request, notes, or data here..." required></textarea>
-          </div>
-          <div class="mb-4">
-            <label class="text-xs text-zinc-400 block mb-1">Priority</label>
-            <div class="flex gap-2">
-              <label class="flex-1"><input type="radio" name="priority" value="Low" checked class="mr-1"> Low</label>
-              <label class="flex-1"><input type="radio" name="priority" value="Medium" class="mr-1"> Medium</label>
-              <label class="flex-1"><input type="radio" name="priority" value="High" class="mr-1"> High</label>
-            </div>
-          </div>
-          <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 font-semibold rounded-2xl text-sm">Submit to VIZALOK • BFF Client</button>
-        </form>
-        <div id="bff-input-status" class="mt-3 text-xs text-emerald-400 hidden"></div>
+      <div class="invitation__logo-wrap">
+        <img
+          class="invitation__logo"
+          src="assets/icon-welcome.jpeg"
+          alt="Best Face Forward emblem"
+          width="120"
+          height="120"
+        />
       </div>
 
-      <!-- Client Status -->
-      <div class="glass border border-white/10 rounded-3xl p-6">
-        <h3 class="font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-line"></i> Current Status</h3>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between items-center bg-zinc-900/50 p-3 rounded-2xl">
-            <span>Active Projects</span>
-            <span class="font-mono text-cyan-400">4</span>
-          </div>
-          <div class="flex justify-between items-center bg-zinc-900/50 p-3 rounded-2xl">
-            <span>Pending Inputs</span>
-            <span class="font-mono text-amber-400">2</span>
-          </div>
-          <div class="flex justify-between items-center bg-zinc-900/50 p-3 rounded-2xl">
-            <span>Last Sync</span>
-            <span class="font-mono text-emerald-400">Just now</span>
-          </div>
-        </div>
-        <button onclick="syncWithVizalok()" class="mt-4 w-full py-2 text-sm border border-white/20 rounded-2xl hover:bg-white/5">Sync with Main VIZALOK</button>
-        <p class="text-[10px] text-center text-zinc-500 mt-2">Real-time integration with Music, Creators, Logistics &amp; Nash portals.</p>
-      </div>
-    </div>
-  </div>
+      <h1 class="invitation__title">
+        Best Face Forward
+        <em>Consultants, LLC</em>
+      </h1>
+      <p class="invitation__sub">Strategy · Solutions · Impact</p>
+      <p class="invitation__tagline">Moving You Forward.</p>
 
-  <!-- Public Main Section -->
-  <div id="public-main" class="max-w-7xl mx-auto px-6 py-10 border-t border-white/10 bg-zinc-900/40">
-    <div class="section-header mb-6">
-      <span class="text-rose-400 text-xs tracking-[2px]">PUBLIC FACING</span>
-      <h2 class="text-3xl font-bold">Public Main Interface</h2>
-      <p class="text-sm text-zinc-400">Open, public-facing main portal with announcements, public inputs, and community access. Fully connected to the VIZALOK ecosystem.</p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-6">
-      <!-- Public Announcements -->
-      <div class="glass border border-white/10 rounded-3xl p-6">
-        <h3 class="font-semibold mb-3 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-rose-400"></i> Public Announcements</h3>
-        <div class="space-y-3 text-sm">
-          <div class="p-3 bg-zinc-900/60 rounded-2xl">New BFF integration live — seamless client + public sync now active across all portals.</div>
-          <div class="p-3 bg-zinc-900/60 rounded-2xl">VIZALOK 2026 updates: Enhanced Supabase shared profiles, single-view auto-play belts, and new studio tools.</div>
-        </div>
+      <div class="invitation__video-frame" id="video-frame">
+        <video
+          id="welcome-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          poster="assets/icon-welcome.jpeg"
+        >
+          <source src="assets/logo-video.mp4" type="video/mp4" />
+          <source src="LogoVideo.mov" type="video/quicktime" />
+          <source src="assets/logo-video.mov" type="video/quicktime" />
+        </video>
+        <div class="invitation__video-fallback" aria-hidden="true">Moving You Forward.</div>
       </div>
 
-      <!-- Public Input -->
-      <div class="glass border border-white/10 rounded-3xl p-6">
-        <h3 class="font-semibold mb-3 flex items-center gap-2"><i class="fa-solid fa-comments text-rose-400"></i> Public Input</h3>
-        <form id="public-input-form" onsubmit="submitPublicInput(event)">
-          <input type="text" id="public-name" placeholder="Your name (optional)" class="w-full mb-3 bg-zinc-900 border border-white/10 rounded-2xl px-4 py-2 text-sm">
-          <textarea id="public-message" rows="3" placeholder="Share feedback, ideas, or public notes..." class="w-full mb-3 bg-zinc-900 border border-white/10 rounded-2xl px-4 py-3 text-sm" required></textarea>
-          <button type="submit" class="w-full py-2 bg-rose-600 hover:bg-rose-500 text-sm font-medium rounded-2xl">Submit Public Note to VIZALOK</button>
-        </form>
-        <div id="public-input-status" class="mt-2 text-xs text-rose-400 hidden"></div>
-      </div>
+      <a class="invitation__enter" href="landing.html" id="enter-site">
+        <span class="invitation__enter-link">Enter Site</span>
+        <span class="invitation__enter-hint">An elegant experience awaits</span>
+      </a>
+    </article>
 
-      <!-- Public Stats / Integration -->
-      <div class="glass border border-white/10 rounded-3xl p-6">
-        <h3 class="font-semibold mb-3">Live Ecosystem Stats</h3>
-        <div class="text-sm space-y-2">
-          <div class="flex justify-between"><span>Music Tracks</span> <span class="font-mono">14</span></div>
-          <div class="flex justify-between"><span>Creators Points Used</span> <span class="font-mono">12.4k</span></div>
-          <div class="flex justify-between"><span>Logistics Routes</span> <span class="font-mono">87</span></div>
-          <div class="flex justify-between"><span>Nash Projects</span> <span class="font-mono">23</span></div>
-          <div class="flex justify-between text-rose-400"><span>BFF + Public Inputs</span> <span class="font-mono">156</span></div>
-        </div>
-        <div class="text-[10px] text-center text-zinc-500 mt-4">All portals sync in real-time via Supabase.</div>
-      </div>
-    </div>
-  </div>
+    <p class="welcome__footer-mark">Best Face Forward Enterprise</p>
+  </main>
 
-  <!-- Admin Dashboard for BFF (direct access, NO password/user required - public admin view) -->
-  <div id="admin" class="max-w-7xl mx-auto px-6 py-10 border-t border-white/10">
-    <div class="section-header mb-6">
-      <span class="text-emerald-400 text-xs tracking-[2px]">ADMIN VIEW (OPEN ACCESS)</span>
-      <h2 class="text-3xl font-bold">BFF &amp; Public Admin Dashboard</h2>
-      <p class="text-sm text-zinc-400">View and manage all submitted inputs from BFF Client and Public Main. No login or password required — direct access portal.</p>
-    </div>
-
-    <div class="glass border border-white/10 rounded-3xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-semibold flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Submitted Inputs</h3>
-        <button onclick="clearBFFAdminData()" class="text-xs px-4 py-1.5 border border-white/20 hover:bg-white/5 rounded-2xl">Clear All</button>
-      </div>
-      <div id="admin-submission-list" class="space-y-3 max-h-[400px] overflow-auto pr-2">
-        <!-- Populated by JS from localStorage -->
-      </div>
-      <div class="text-[10px] text-center text-zinc-500 mt-4">Inputs persist in browser for demo. Real integration would use shared backend/Supabase.</div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-zinc-500 border-t border-white/10">
-    BFF Client &amp; Public Main • Fully integrated with <a href="../" class="underline">VIZALOK</a>. All inputs flow to the main ecosystem.
-  </div>
-
+  <script src="js/transitions.js"></script>
   <script>
-    function submitBFFInput(e) {
-      e.preventDefault();
-      const status = document.getElementById('bff-input-status');
-      status.textContent = 'Submitting to VIZALOK core...';
-      status.classList.remove('hidden');
-      status.style.color = '#67e8f9';
+    (function () {
+      const video = document.getElementById("welcome-video");
+      const frame = document.getElementById("video-frame");
+      if (!video) return;
 
-      // Simulate integration (in real would POST to shared backend/Supabase)
-      setTimeout(() => {
-        status.textContent = 'Input received and synced with Music, Creators, Logistics & Nash portals!';
-        status.style.color = '#4ade80';
-        document.getElementById('bff-client-form').reset();
-        setTimeout(() => status.classList.add('hidden'), 4000);
-      }, 900);
-    }
-
-    function submitPublicInput(e) {
-      e.preventDefault();
-      const status = document.getElementById('public-input-status');
-      status.textContent = 'Posting to public main...';
-      status.classList.remove('hidden');
-      status.style.color = '#f472b6';
-
-      setTimeout(() => {
-        status.textContent = 'Public note added to VIZALOK main feed and shared across all portals.';
-        status.style.color = '#4ade80';
-        document.getElementById('public-input-form').reset();
-        setTimeout(() => status.classList.add('hidden'), 4000);
-      }, 900);
-    }
-
-    function syncWithVizalok() {
-      const btns = document.querySelectorAll('#bff-client button');
-      if (btns.length) btns[btns.length-1].textContent = 'Syncing...';
-      setTimeout(() => {
-        alert('Synced with main VIZALOK website, Music, Creators, Logistics, and Nash Services. All profiles and points updated.');
-        if (btns.length) btns[btns.length-1].textContent = 'Sync with Main VIZALOK';
-      }, 800);
-    }
-
-    function showInputModal() {
-      const modal = document.createElement('div');
-      modal.className = 'fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4';
-      modal.innerHTML = `
-        <div class="glass border border-white/10 rounded-3xl p-8 max-w-md w-full">
-          <h3 class="text-xl font-semibold mb-4">Quick Portal Input</h3>
-          <p class="text-sm text-zinc-400 mb-4">Send input to either BFF Client or Public Main. Integrated live with the full VIZALOK site.</p>
-          <div class="flex gap-3">
-            <button onclick="quickInput('bff'); this.closest('.fixed').remove()" class="flex-1 py-3 bg-cyan-600 rounded-2xl text-sm">BFF Client Input</button>
-            <button onclick="quickInput('public'); this.closest('.fixed').remove()" class="flex-1 py-3 border border-white/20 rounded-2xl text-sm">Public Main Input</button>
-          </div>
-          <button onclick="this.closest('.fixed').remove()" class="mt-4 w-full text-xs text-zinc-500">Cancel</button>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-
-    function quickInput(type) {
-      if (type === 'bff') {
-        document.getElementById('bff-client').scrollIntoView({behavior:'smooth'});
-        setTimeout(() => {
-          const input = document.getElementById('client-input');
-          if (input) input.focus();
-        }, 600);
-      } else {
-        document.getElementById('public-main').scrollIntoView({behavior:'smooth'});
-        setTimeout(() => {
-          const msg = document.getElementById('public-message');
-          if (msg) msg.focus();
-        }, 600);
+      function showFallback() {
+        frame.classList.add("is-fallback");
       }
-    }
 
-    // === Admin functions for BFF (direct access, NO password/user - as requested) ===
-    // Persist submissions in localStorage for demo (simulates shared DB)
-    function saveSubmissionToAdmin(type, data) {
-      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
-      subs.unshift({
-        id: Date.now(),
-        type: type,  // 'BFF Client' or 'Public Main'
-        ...data,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('viz_bff_admin_subs', JSON.stringify(subs));
-      renderAdminSubmissions();
-    }
-
-    function renderAdminSubmissions() {
-      const container = document.getElementById('admin-submission-list');
-      if (!container) return;
-      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
-      if (subs.length === 0) {
-        container.innerHTML = '<div class="p-4 text-center text-sm text-zinc-400 border border-white/10 rounded-2xl">No submissions yet. Submit via the BFF Client or Public Main forms above.</div>';
-        return;
-      }
-      container.innerHTML = subs.map(sub => `
-        <div class="p-4 bg-zinc-900/70 border border-white/10 rounded-2xl text-sm">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="font-semibold text-emerald-400">${sub.type}</span>
-              <span class="text-xs text-zinc-500 ml-2">${new Date(sub.timestamp).toLocaleString()}</span>
-            </div>
-            <button onclick="deleteAdminSub(${sub.id}); event.stopImmediatePropagation();" class="text-xs text-red-400 hover:underline">Delete</button>
-          </div>
-          ${sub.clientId ? `<div><strong>Client ID:</strong> ${sub.clientId}</div>` : ''}
-          ${sub.name ? `<div><strong>From:</strong> ${sub.name}</div>` : ''}
-          <div class="mt-1"><strong>Message/Request:</strong> ${sub.message || sub.details || sub.input || 'N/A'}</div>
-          ${sub.requestType ? `<div class="text-xs mt-1"><strong>Type:</strong> ${sub.requestType} | <strong>Priority:</strong> ${sub.priority || 'N/A'}</div>` : ''}
-        </div>
-      `).join('');
-    }
-
-    function deleteAdminSub(id) {
-      let subs = JSON.parse(localStorage.getItem('viz_bff_admin_subs') || '[]');
-      subs = subs.filter(s => s.id !== id);
-      localStorage.setItem('viz_bff_admin_subs', JSON.stringify(subs));
-      renderAdminSubmissions();
-    }
-
-    function clearBFFAdminData() {
-      if (!confirm('Clear all BFF admin submissions?')) return;
-      localStorage.removeItem('viz_bff_admin_subs');
-      renderAdminSubmissions();
-    }
-
-    // Update submit functions to also feed the admin dashboard
-    const originalSubmitBFF = submitBFFInput;
-    window.submitBFFInput = function(e) {
-      e.preventDefault();
-      const clientId = document.getElementById('client-id') ? document.getElementById('client-id').value : 'N/A';
-      const reqType = document.getElementById('request-type') ? document.getElementById('request-type').value : '';
-      const details = document.getElementById('client-input') ? document.getElementById('client-input').value : '';
-      const priorityEls = document.querySelectorAll('input[name="priority"]:checked');
-      const priority = priorityEls.length ? priorityEls[0].value : 'Low';
-
-      saveSubmissionToAdmin('BFF Client', {
-        clientId,
-        requestType: reqType,
-        details,
-        priority,
-        input: details
+      video.addEventListener("error", showFallback);
+      video.addEventListener("loadeddata", function () {
+        frame.classList.remove("is-fallback");
       });
 
-      // Call original for status message
-      originalSubmitBFF(e);
-    };
+      setTimeout(function () {
+        if (video.readyState === 0) showFallback();
+      }, 3000);
 
-    const originalSubmitPublic = submitPublicInput;
-    window.submitPublicInput = function(e) {
-      e.preventDefault();
-      const name = document.getElementById('public-name') ? document.getElementById('public-name').value : '';
-      const message = document.getElementById('public-message') ? document.getElementById('public-message').value : '';
-
-      saveSubmissionToAdmin('Public Main', {
-        name: name || 'Anonymous',
-        message,
-        input: message
-      });
-
-      originalSubmitPublic(e);
-    };
-
-    // Load admin list on page ready
-    document.addEventListener('DOMContentLoaded', () => {
-      // Ensure admin list renders (in case after other scripts)
-      setTimeout(() => {
-        if (document.getElementById('admin-submission-list')) {
-          renderAdminSubmissions();
-        }
-      }, 100);
-    });
-
-    // Tailwind + basic ready state
-    console.log('%c[VIZALOK] BFF Client & Public Main portal loaded and integrated with main site. Admin view is direct (no password).', 'color:#64748b');
+      video.play().catch(function () {});
+    })();
   </script>
 </body>
 </html>

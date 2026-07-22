@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About · Best Face Forward</title>
+  <link rel="icon" href="../assets/logo.png" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/transitions.css" />
+  <link rel="stylesheet" href="../css/landing.css" />
+  <style>
+    .about-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 3rem 0 5rem;
+    }
+    .about-grid__frame {
+      border: 1px solid rgba(198, 161, 91, 0.55);
+      box-shadow: var(--shadow-gold);
+      position: relative;
+    }
+    .about-grid__frame::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(198, 161, 91, 0.25);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .about-grid__frame img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      object-position: top;
+    }
+    .about-copy h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 1rem;
+    }
+    .about-copy p {
+      margin-bottom: 1rem;
+      color: var(--charcoal-soft);
+      font-size: 1.15rem;
+    }
+    @media (max-width: 800px) {
+      .about-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-nav">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="../landing.html">
+          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="site-nav__links">
+          <li><a href="../landing.html">Home</a></li>
+          <li><a href="about.html" class="is-active">About</a></li>
+          <li><a href="culture.html">Culture</a></li>
+          <li><a href="../landing.html#divisions">Services</a></li>
+          <li><a href="../portals/academy.html">Academy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="site-nav__cta">
+          <a class="btn btn--sm btn--primary" href="../portals/software.html">Software Portal</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-hero">
+      <div class="container">
+        <p class="eyebrow">About us</p>
+        <h1>Best Face Forward</h1>
+        <p class="script">Presence with purpose.</p>
+      </div>
+    </div>
+
+    <div class="container about-grid">
+      <div class="about-grid__frame">
+        <img src="../assets/owner.png" alt="Founder portrait" />
+      </div>
+      <div class="about-copy">
+        <h2>An enterprise built to elevate</h2>
+        <p>
+          Best Face Forward Consultants is a multi-division enterprise serving organizations
+          that want strength, polish, and momentum â€” without sacrificing warmth or integrity.
+        </p>
+        <p>
+          From grant-ready foundations to financial confidence, protection, logistics, and
+          G&amp;G Software Solutions, every portal is designed as a refined experience:
+          clear paths, guided decisions, and outcomes that last.
+        </p>
+        <p class="script" style="font-size:1.75rem;color:var(--rose-deep);margin:1.25rem 0">
+          Moving You Forward.
+        </p>
+        <a class="btn btn--primary" href="contact.html">Start a conversation</a>
+      </div>
+    </div>
+
+    <section class="promise-strip">
+      <div class="container">
+        <p class="eyebrow" style="color:var(--gold-soft)">Brand promise</p>
+        <p>
+          Innovative solutions with integrity. Growth with purpose. Lasting impact
+          for clients and communities.
+        </p>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom" style="border:0;padding-top:0">
+          <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
+          <a href="../landing.html">Back to home</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="../js/config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/transitions.js"></script>
+  <script src="../js/gigi.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,85 @@
+/* Best Face Forward — Design Tokens
+   Softened brand palette for elegant, not clip-art, presentation */
+
+:root {
+  /* Brand palette */
+  --emerald: #0B4D3A;
+  --emerald-deep: #083528;
+  --emerald-soft: #1a6b52;
+  --rose: #E7A8BE;
+  --rose-deep: #d4899f;
+  --rose-soft: #f5d0dc;
+  --gold: #C6A15B;
+  --gold-soft: #d4b87a;
+  --gold-bright: #d4af37;
+  --ivory: #FBF1EE;
+  --ivory-warm: #f7e8e2;
+  --charcoal: #2A2620;
+  --charcoal-soft: #4a453c;
+  --charcoal-muted: #6b655c;
+
+  /* Surfaces */
+  --surface: #FBF1EE;
+  --surface-elevated: #ffffff;
+  --surface-muted: #f5e6e0;
+  --surface-dark: #0B4D3A;
+  --glass: rgba(251, 241, 238, 0.72);
+  --glass-dark: rgba(11, 77, 58, 0.88);
+
+  /* Pink gloss nav */
+  --gloss-pink: linear-gradient(
+    180deg,
+    #f8d4e0 0%,
+    #E7A8BE 35%,
+    #d4899f 70%,
+    #c97a92 100%
+  );
+  --gloss-pink-shine: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 40%,
+    transparent 60%
+  );
+
+  /* Gold hairline */
+  --gold-line: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 20%,
+    var(--gold-bright) 50%,
+    var(--gold) 80%,
+    transparent
+  );
+
+  /* Typography */
+  --font-display: "Cinzel", "Times New Roman", serif;
+  --font-body: "Cormorant Garamond", Georgia, serif;
+  --font-script: "Pinyon Script", "Segoe Script", cursive;
+  --font-ui: "Cormorant Garamond", Georgia, serif;
+
+  /* Spacing & radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-soft: 0 8px 32px rgba(42, 38, 32, 0.08);
+  --shadow-card: 0 12px 40px rgba(11, 77, 58, 0.1);
+  --shadow-gold: 0 0 0 1px rgba(198, 161, 91, 0.45),
+    0 8px 28px rgba(198, 161, 91, 0.15);
+  --shadow-elevated: 0 20px 60px rgba(42, 38, 32, 0.14);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 180ms;
+  --dur-med: 320ms;
+  --dur-slow: 600ms;
+
+  /* Layout */
+  --nav-h: 72px;
+  --max-w: 1180px;
+  --gigi-z: 1000;
+}

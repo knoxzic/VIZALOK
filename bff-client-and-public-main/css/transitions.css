@@ -1,0 +1,117 @@
+/* Page enter + inter-page transition veil */
+
+body.page-enter {
+  animation: pageEnter 0.55s var(--ease-out) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Full-screen transition overlay */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.page-transition.is-active {
+  pointer-events: all;
+  visibility: visible;
+}
+
+.page-transition__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(231, 168, 190, 0.35), transparent 65%),
+    linear-gradient(165deg, #062a20 0%, #0B4D3A 50%, #083528 100%);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.page-transition.is-covering .page-transition__veil {
+  transform: scaleY(1);
+  transform-origin: bottom;
+}
+
+.page-transition.is-revealing .page-transition__veil {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition-duration: 0.5s;
+}
+
+.page-transition__mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s var(--ease-out);
+  text-align: center;
+  color: var(--ivory, #fbf1ee);
+}
+
+.page-transition.is-covering .page-transition__mark {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  transition-delay: 0.18s;
+}
+
+.page-transition__mark img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(198, 161, 91, 0.7);
+  margin: 0 auto 0.75rem;
+  background: white;
+  object-fit: cover;
+}
+
+.page-transition__mark span {
+  display: block;
+  font-family: var(--font-display, Cinzel, serif);
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(251, 241, 238, 0.85);
+}
+
+/* Welcome enter → landing special */
+body.welcome-page.page-enter {
+  animation: none;
+}
+
+.welcome.welcome--exit .invitation {
+  animation: inviteOut 0.55s var(--ease-out) forwards;
+}
+
+@keyframes inviteOut {
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-enter,
+  .page-transition__veil,
+  .page-transition__mark,
+  .welcome.welcome--exit .invitation {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact · Best Face Forward</title>
+  <link rel="icon" href="../assets/logo.png" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/transitions.css" />
+  <style>
+    .contact-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 1rem 0 5rem;
+    }
+    .contact-card {
+      background: white;
+      border: 1px solid rgba(198, 161, 91, 0.3);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+    #contact-status {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 1rem;
+      min-height: 1.4em;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-nav">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="../landing.html">
+          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="site-nav__links">
+          <li><a href="../landing.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="culture.html">Culture</a></li>
+          <li><a href="../landing.html#divisions">Services</a></li>
+          <li><a href="../portals/academy.html">Academy</a></li>
+          <li><a href="contact.html" class="is-active">Contact</a></li>
+        </ul>
+        <div class="site-nav__cta">
+          <a class="btn btn--sm btn--primary" href="../portals/software.html">Software Portal</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Contact</p>
+        <h1>we're listening</h1>
+        <p class="script">Tell us how to help.</p>
+      </div>
+    </div>
+
+    <div class="container contact-wrap">
+      <div class="demo-banner">
+        <strong>Demo form</strong><br />
+        Messages save locally for now. Wire to Firebase intakeForms or your API later â€” field names match the scaffold.
+      </div>
+      <div class="contact-card">
+        <form id="contact-form">
+          <div class="field">
+            <label for="org-name">Organization / Name</label>
+            <input id="org-name" name="orgName" required placeholder="Your organization" />
+          </div>
+          <div class="field">
+            <label for="contact-email">Email</label>
+            <input id="contact-email" name="contactEmail" type="email" required placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="division">Division of interest</label>
+            <select id="division" name="division">
+              <option value="">Selectâ€¦</option>
+              <option>Foundation (Grants)</option>
+              <option>Financial Solutions</option>
+              <option>Insurance Solutions</option>
+              <option>Logistics Consulting</option>
+              <option>G&amp;G Software / Academy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="business-desc">How can we help?</label>
+            <textarea id="business-desc" name="businessDescription" rows="4" placeholder="Brief description"></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary btn--block">Send message</button>
+          <p id="contact-status"></p>
+        </form>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom" style="border:0;padding-top:0">
+          <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
+          <a href="../landing.html">Back to home</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="../js/config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/transitions.js"></script>
+  <script src="../js/gigi.js"></script>
+  <script>
+    document.getElementById("contact-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = {
+        orgName: document.getElementById("org-name").value.trim(),
+        contactEmail: document.getElementById("contact-email").value.trim(),
+        division: document.getElementById("division").value,
+        businessDescription: document.getElementById("business-desc").value.trim(),
+        submittedAt: new Date().toISOString(),
+        status: "Submitted (demo local)",
+      };
+      const list = BFF.storage.get("bff_contact_submissions", []);
+      list.unshift(data);
+      BFF.storage.set("bff_contact_submissions", list.slice(0, 30));
+      document.getElementById("contact-status").textContent =
+        "Received â€” thank you. we'll follow up when the live inbox is connected.";
+      document.getElementById("contact-status").style.color = "var(--emerald)";
+      e.target.reset();
+      BFF.ui.toast("Message saved (demo)");
+    });
+  </script>
+</body>
+</html>
+

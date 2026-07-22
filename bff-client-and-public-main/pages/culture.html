@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Culture · Best Face Forward</title>
+  <link rel="icon" href="../assets/logo.png" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/transitions.css" />
+  <style>
+    .values {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      padding: 1rem 0 5rem;
+    }
+    .value-card {
+      background: white;
+      border: 1px solid rgba(198, 161, 91, 0.28);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+    }
+    .value-card h3 {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--emerald);
+      margin: 0.75rem 0;
+    }
+    .value-card p {
+      color: var(--charcoal-muted);
+      font-size: 1.05rem;
+    }
+    .value-card .script {
+      font-size: 1.75rem;
+      color: var(--rose-deep);
+    }
+    @media (max-width: 800px) {
+      .values { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-nav">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="../landing.html">
+          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="site-nav__links">
+          <li><a href="../landing.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="culture.html" class="is-active">Culture</a></li>
+          <li><a href="../landing.html#divisions">Services</a></li>
+          <li><a href="../portals/academy.html">Academy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="site-nav__cta">
+          <a class="btn btn--sm btn--primary" href="../portals/software.html">Software Portal</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Culture</p>
+        <h1>How we show up</h1>
+        <p class="script">Elegant. Grounded. Forward.</p>
+        <hr class="gold-line" />
+        <p class="lead" style="max-width:42ch;margin:1rem auto 0">
+          Our culture blends feminine refinement with operational seriousness â€”
+          green for growth, rose for care, gold for excellence.
+        </p>
+      </div>
+    </div>
+
+    <div class="container values">
+      <article class="value-card">
+        <p class="script">Integrity</p>
+        <h3>Do the right work</h3>
+        <p>Transparent guidance, careful documentation, and promises we can keep.</p>
+      </article>
+      <article class="value-card">
+        <p class="script">Presence</p>
+        <h3>Look the part</h3>
+        <p>Every touchpoint â€” from welcome gate to portal â€” should feel intentional.</p>
+      </article>
+      <article class="value-card">
+        <p class="script">Momentum</p>
+        <h3>Move you forward</h3>
+        <p>Clear next steps, guided purchases, and learning that unlocks real tools.</p>
+      </article>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__bottom" style="border:0;padding-top:0">
+          <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
+          <a href="../landing.html">Back to home</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="../js/config.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/transitions.js"></script>
+  <script src="../js/gigi.js"></script>
+</body>
+</html>
+

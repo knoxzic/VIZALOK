@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Success · Best Face Forward</title>
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/transitions.css" />
+  <link rel="stylesheet" href="css/portals.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-nav">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="landing.html">
+          <img src="assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
+        </a>
+        <ul class="site-nav__links">
+          <li><a href="landing.html">Home</a></li>
+          <li><a href="portals/software.html">Software</a></li>
+          <li><a href="portals/academy.html">Academy</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="success-panel" id="success-panel">
+        <div class="success-panel__check" aria-hidden="true">âœ“</div>
+        <p class="eyebrow">Confirmation</p>
+        <h1 id="success-title">you're all set</h1>
+        <p class="script">Thank you.</p>
+        <p id="success-body" style="color:var(--charcoal-soft);margin-bottom:1.5rem">
+          Access has been unlocked in this browser for demo purposes.
+        </p>
+        <div class="demo-banner" id="success-demo-note">
+          <strong>Simulated confirmation</strong><br />
+          In production, Stripe webhooks will confirm payment server-side and email admin
+          (especially Academy enrollments). This page will verify session_id with your backend.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:1.25rem">
+          <a class="btn btn--primary btn--block" id="success-cta" href="portals/software.html">Continue</a>
+          <a class="btn btn--outline btn--block" href="landing.html">Return home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/transitions.js"></script>
+  <script src="js/gigi.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const productId = params.get("product");
+      const demo = params.get("demo") === "1";
+      // Future: const sessionId = params.get("session_id");
+      // fetch('/api/verify-checkout?session_id=' + sessionId) then unlock
+
+      if (productId && !BFF.storage.productUnlocked(productId)) {
+        BFF.storage.completePurchase(productId, {
+          mode: demo ? "demo" : "stripe-return",
+        });
+      }
+
+      const product = productId && BFF.config.products[productId];
+      if (product) {
+        document.getElementById("success-title").textContent = product.name;
+        document.getElementById("success-body").textContent =
+          "You now have access to â€œ" +
+          product.name +
+          "â€. " +
+          (demo
+            ? "This was a demo unlock stored locally."
+            : "If you completed Stripe checkout, webhook confirmation will finalize records shortly.");
+
+        const cta = document.getElementById("success-cta");
+        if (product.portal === "academy") {
+          cta.href = "portals/academy.html";
+          cta.textContent = "Enter Academy";
+        } else {
+          cta.href = "portals/software.html";
+          cta.textContent = "Open Software portal";
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
+

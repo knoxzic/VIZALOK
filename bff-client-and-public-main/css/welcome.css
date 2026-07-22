@@ -1,0 +1,373 @@
+/* Welcome / gate — YouTube full-bleed backdrop + engraved invitation */
+
+body.welcome-page {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #0a1f18;
+  color: var(--ivory);
+}
+
+.welcome {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.25rem;
+  overflow: hidden;
+}
+
+/* YouTube backdrop — covers entire viewport */
+.welcome__yt {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #0a1f18;
+}
+
+.welcome__yt-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Cover like object-fit: cover for 16:9 embeds */
+.welcome__yt-inner iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw; /* 16:9 */
+  min-height: 100vh;
+  min-width: 177.78vh; /* 16:9 */
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: none;
+}
+
+.welcome__yt-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(6, 30, 22, 0.25), rgba(6, 20, 16, 0.72) 70%),
+    linear-gradient(180deg, rgba(6, 30, 22, 0.35) 0%, rgba(6, 20, 16, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Soft ambient (sits above video shade, below card) */
+.welcome__ambience {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(198, 161, 91, 0.06), transparent 50%),
+    radial-gradient(ellipse 40% 35% at 80% 20%, rgba(231, 168, 190, 0.05), transparent 50%);
+}
+
+/* Invitation card */
+.invitation {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 520px);
+  text-align: center;
+  padding: 2.5rem 2rem 2.75rem;
+  background:
+    linear-gradient(160deg, rgba(251, 241, 238, 0.97) 0%, rgba(247, 232, 226, 0.95) 100%);
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgba(198, 161, 91, 0.55),
+    0 0 0 5px rgba(251, 241, 238, 0.08),
+    0 0 0 6px rgba(198, 161, 91, 0.25),
+    0 32px 80px rgba(0, 0, 0, 0.5);
+  animation: inviteIn 1.1s var(--ease-out) both;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes inviteIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.invitation__corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.7;
+}
+
+.invitation__corner--tl {
+  top: 10px;
+  left: 10px;
+  border-width: 1px 0 0 1px;
+}
+
+.invitation__corner--tr {
+  top: 10px;
+  right: 10px;
+  border-width: 1px 1px 0 0;
+}
+
+.invitation__corner--bl {
+  bottom: 10px;
+  left: 10px;
+  border-width: 0 0 1px 1px;
+}
+
+.invitation__corner--br {
+  bottom: 10px;
+  right: 10px;
+  border-width: 0 1px 1px 0;
+}
+
+.invitation__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.9s 0.2s var(--ease-out) both;
+}
+
+.invitation__logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.9s 0.35s var(--ease-out) both;
+}
+
+.invitation__logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  box-shadow:
+    0 0 0 4px rgba(198, 161, 91, 0.15),
+    0 12px 32px rgba(11, 77, 58, 0.2);
+  background: white;
+}
+
+.invitation__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  line-height: 1.3;
+  animation: fadeUp 0.9s 0.45s var(--ease-out) both;
+}
+
+.invitation__title em {
+  font-style: normal;
+  display: block;
+  font-size: 0.72em;
+  letter-spacing: 0.22em;
+  color: var(--rose-deep);
+  margin-top: 0.2rem;
+}
+
+.invitation__sub {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--charcoal-muted);
+  margin-top: 0.65rem;
+  animation: fadeUp 0.9s 0.55s var(--ease-out) both;
+}
+
+.invitation__tagline {
+  font-family: var(--font-script);
+  font-size: clamp(1.6rem, 4vw, 2rem);
+  color: var(--rose-deep);
+  margin: 0.85rem 0 1.5rem;
+  animation: fadeUp 0.9s 0.65s var(--ease-out) both;
+}
+
+/* Logo video inset — gold hairline frame */
+.invitation__video-frame {
+  position: relative;
+  margin: 0 auto 1.75rem;
+  width: min(100%, 360px);
+  aspect-ratio: 16 / 10;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(198, 161, 91, 0.75);
+  box-shadow:
+    inset 0 0 0 1px rgba(198, 161, 91, 0.2),
+    0 8px 28px rgba(11, 77, 58, 0.15);
+  animation: fadeUp 0.9s 0.75s var(--ease-out) both;
+  background: var(--emerald-deep);
+}
+
+.invitation__video-frame::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(198, 161, 91, 0.35);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.invitation__video-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: #0B4D3A;
+}
+
+.invitation__video-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(231, 168, 190, 0.2), transparent 60%),
+    var(--emerald);
+  color: var(--ivory);
+  font-family: var(--font-script);
+  font-size: 1.5rem;
+}
+
+.invitation__video-frame.is-fallback .invitation__video-fallback {
+  display: flex;
+}
+
+.invitation__video-frame.is-fallback video {
+  opacity: 0;
+}
+
+.invitation__enter {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  animation: fadeUp 0.9s 0.9s var(--ease-out) both;
+  text-decoration: none;
+}
+
+.invitation__enter-link {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  padding: 0.85rem 2.25rem;
+  border: 1px solid rgba(198, 161, 91, 0.65);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(251, 241, 238, 0.3) 100%
+  );
+  transition:
+    background var(--dur-med) var(--ease-out),
+    box-shadow var(--dur-med) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    color var(--dur-med);
+  position: relative;
+}
+
+.invitation__enter-link::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: -1px;
+  height: 1px;
+  background: var(--gold-line);
+  opacity: 0;
+  transition: opacity var(--dur-med);
+}
+
+.invitation__enter:hover .invitation__enter-link {
+  background: var(--emerald);
+  color: var(--ivory);
+  border-color: var(--emerald);
+  box-shadow: 0 10px 28px rgba(11, 77, 58, 0.28);
+  transform: translateY(-2px);
+}
+
+.invitation__enter:hover .invitation__enter-link::after {
+  opacity: 1;
+}
+
+.invitation__enter-hint {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--charcoal-muted);
+  letter-spacing: 0.04em;
+}
+
+.welcome__footer-mark {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(251, 241, 238, 0.45);
+  white-space: nowrap;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .invitation {
+    padding: 2rem 1.25rem 2.25rem;
+  }
+
+  .invitation__logo {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation,
+  .invitation__eyebrow,
+  .invitation__logo-wrap,
+  .invitation__title,
+  .invitation__sub,
+  .invitation__tagline,
+  .invitation__video-frame,
+  .invitation__enter {
+    animation: none !important;
+  }
+}
