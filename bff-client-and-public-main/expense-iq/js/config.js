@@ -25,7 +25,10 @@ EIQ.config = {
     enabled: true,
   },
 
-  /** Soft MFA gate for owner/bookkeeper (profile flag). Supabase Auth handles password security. */
+  /**
+   * Soft MFA gate for owner/bookkeeper (profile flag).
+   * Keep false — site-wide confirmed email is the mandatory gate (pages/auth.html).
+   */
   REQUIRE_DEMO_MFA: false,
 
   storageKey: "eiq_v1",

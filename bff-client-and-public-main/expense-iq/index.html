@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Expense IQ™ — Sign in</title>
-  <meta name="description" content="Expense IQ multi-tenant financial platform — Phase 1 foundation." />
+  <title>Expense IQ™ — Access</title>
+  <meta name="description" content="Expense IQ multi-tenant financial platform — confirmed email + subscription required." />
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
@@ -14,94 +14,27 @@
         <div class="brand-mark__icon">EIQ</div>
         <div>
           <div class="brand-mark__text">Expense IQ™</div>
-          <p class="brand-mark__sub">Best Face Forward · Phase 1 foundation</p>
+          <p class="brand-mark__sub">Best Face Forward · cloud workspace</p>
         </div>
       </div>
 
-      <!-- LOGIN / REGISTER -->
-      <div id="view-auth">
-        <h1>Welcome</h1>
-        <p class="lede">Cloud multi-tenant finance workspace — each organization is your private Supabase-backed database (RLS by <code>org_id</code>).</p>
-
-        <div id="supabase-status" class="alert alert--warn hidden" style="margin-bottom:14px"></div>
-
-        <div class="tabs" role="tablist">
-          <button type="button" class="is-active" data-tab="login" id="tab-login">Sign in</button>
-          <button type="button" data-tab="register" id="tab-register">Create account</button>
-        </div>
-
-        <div id="auth-alert" class="alert alert--error hidden"></div>
-
-        <form id="form-login">
-          <div class="field">
-            <label for="login-email">Email</label>
-            <input id="login-email" type="email" autocomplete="username" required placeholder="you@business.com" />
-          </div>
-          <div class="field">
-            <label for="login-password">Password</label>
-            <input id="login-password" type="password" autocomplete="current-password" required minlength="8" />
-          </div>
-          <button class="btn btn--primary btn--block" type="submit">Sign in</button>
-        </form>
-
-        <form id="form-register" class="hidden">
-          <div class="field">
-            <label for="reg-name">Display name</label>
-            <input id="reg-name" type="text" autocomplete="name" placeholder="Jameal Clark" />
-          </div>
-          <div class="field">
-            <label for="reg-email">Email</label>
-            <input id="reg-email" type="email" autocomplete="username" required />
-          </div>
-          <div class="field">
-            <label for="reg-password">Password</label>
-            <input id="reg-password" type="password" autocomplete="new-password" required minlength="8" />
-            <p class="field-hint">Secured by Supabase Auth. Use a unique password.</p>
-          </div>
-          <button class="btn btn--primary btn--block" type="submit">Create account</button>
-        </form>
-
-        <p class="footer-meta" style="margin-top:20px;text-align:center">
-          <a href="../landing.html">← Back to Best Face Forward</a>
+      <div id="gate-loading">
+        <h1>Checking access…</h1>
+        <p class="lede">
+          Expense IQ uses the site-wide sign-in only. You must confirm your email before this product opens.
+        </p>
+        <div id="gate-status" class="alert alert--warn">Connecting to Supabase…</div>
+        <p class="footer-meta" style="margin-top:16px;text-align:center">
+          <a href="../pages/auth.html?next=../expense-iq/index.html">Go to sign-in →</a>
+          ·
+          <a href="../landing.html">Site home</a>
         </p>
       </div>
 
-      <!-- MFA VERIFY -->
-      <div id="view-mfa" class="hidden">
-        <h1>Multi-factor check</h1>
-        <p class="lede">Owner and Bookkeeper roles require MFA (spec §8.1). Enter your 6-digit demo code.</p>
-        <div id="mfa-alert" class="alert alert--error hidden"></div>
-        <form id="form-mfa">
-          <div class="field">
-            <label for="mfa-code">Authentication code</label>
-            <input id="mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required />
-          </div>
-          <button class="btn btn--primary btn--block" type="submit">Verify &amp; continue</button>
-        </form>
-        <button type="button" class="btn btn--ghost btn--block" id="btn-mfa-regen" style="margin-top:10px">Regenerate demo code</button>
-        <button type="button" class="btn btn--ghost btn--block" id="btn-mfa-cancel" style="margin-top:8px">Cancel</button>
-        <p class="field-hint" style="text-align:center;margin-top:10px">Local demo only — real TOTP later with Firebase/Supabase.</p>
-      </div>
-
-      <!-- MFA SETUP -->
-      <div id="view-mfa-setup" class="hidden">
-        <h1>Enable MFA</h1>
-        <p class="lede">Your role requires MFA before you can use Expense IQ as Owner or Bookkeeper. Save this demo code — it is shown once.</p>
-        <div id="mfa-setup-code" class="mfa-code">------</div>
-        <div class="alert alert--warn">Demo mode: this is not real TOTP. Replace with authenticator app / SMS when you attach Firebase or Supabase Auth.</div>
-        <form id="form-mfa-setup">
-          <div class="field">
-            <label for="mfa-confirm">Re-enter code to confirm</label>
-            <input id="mfa-confirm" inputmode="numeric" maxlength="6" required />
-          </div>
-          <button class="btn btn--gold btn--block" type="submit">I’ve saved it — continue</button>
-        </form>
-      </div>
-
-      <!-- CREATE ORG -->
+      <!-- Post-auth: org bootstrap only (no separate login) -->
       <div id="view-org-create" class="hidden">
         <h1>Create organization</h1>
-        <p class="lede">Every dollar will be scoped by <code>org_id</code>. Choose SMB or Nonprofit Chart of Accounts template now (accounts seed in Phase 3).</p>
+        <p class="lede">Your private ledger is scoped by <code>org_id</code>. Choose SMB or Nonprofit COA template.</p>
         <div id="org-alert" class="alert alert--error hidden"></div>
         <form id="form-org">
           <div class="field">
@@ -129,21 +62,47 @@
         </form>
       </div>
 
-      <!-- PICK ORG (multi-org) -->
       <div id="view-org-pick" class="hidden">
         <h1>Choose organization</h1>
-        <p class="lede">You belong to more than one org. Context loads <code>org_id</code> for every query.</p>
+        <p class="lede">Multi-org context — every query is scoped by <code>org_id</code>.</p>
         <div id="org-pick-list"></div>
         <button type="button" class="btn btn--ghost btn--block" id="btn-new-org" style="margin-top:12px">+ Create another organization</button>
+      </div>
+
+      <!-- MFA kept for optional future; hidden unless enabled in config -->
+      <div id="view-mfa" class="hidden">
+        <h1>Multi-factor check</h1>
+        <div id="mfa-alert" class="alert alert--error hidden"></div>
+        <form id="form-mfa">
+          <div class="field">
+            <label for="mfa-code">Authentication code</label>
+            <input id="mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required />
+          </div>
+          <button class="btn btn--primary btn--block" type="submit">Verify &amp; continue</button>
+        </form>
+        <button type="button" class="btn btn--ghost btn--block" id="btn-mfa-cancel" style="margin-top:8px">Cancel</button>
+      </div>
+      <div id="view-mfa-setup" class="hidden">
+        <h1>Enable MFA</h1>
+        <div id="mfa-setup-code" class="mfa-code">------</div>
+        <form id="form-mfa-setup">
+          <div class="field">
+            <label for="mfa-confirm">Re-enter code to confirm</label>
+            <input id="mfa-confirm" inputmode="numeric" maxlength="6" required />
+          </div>
+          <button class="btn btn--gold btn--block" type="submit">Continue</button>
+        </form>
+        <button type="button" class="btn btn--ghost btn--block" id="btn-mfa-regen" style="margin-top:8px">Regenerate</button>
       </div>
     </div>
   </div>
 
-  <!-- Supabase JS (UMD) + shared BFF client config -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabase/config.js"></script>
   <script src="../js/supabase/client.js"></script>
+  <script src="../js/supabase/auth.js"></script>
+  <script src="../js/supabase/access.js"></script>
   <script src="js/config.js"></script>
   <script src="js/supabase-db.js"></script>
   <script src="js/db.js"></script>

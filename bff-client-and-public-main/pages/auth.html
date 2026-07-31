@@ -17,8 +17,8 @@
       background: var(--grad-hero);
     }
     .auth-card {
-      width: min(100%, 440px);
-      background: rgba(255,255,255,0.88);
+      width: min(100%, 460px);
+      background: rgba(255,255,255,0.9);
       backdrop-filter: blur(18px);
       border: 1px solid rgba(212,175,90,0.4);
       border-radius: var(--radius-xl);
@@ -27,20 +27,21 @@
     }
     .auth-card h1 {
       font-family: var(--font-display);
-      font-size: 1.5rem;
-      letter-spacing: 0.08em;
+      font-size: 1.45rem;
+      letter-spacing: 0.06em;
       color: var(--emerald-deep);
-      margin: 0.5rem 0 0.35rem;
+      margin: 0.4rem 0 0.35rem;
     }
     .auth-card .lede {
       color: var(--charcoal-muted);
-      font-size: 1.05rem;
-      margin-bottom: 1.25rem;
+      font-size: 1.02rem;
+      margin-bottom: 1.1rem;
+      line-height: 1.45;
     }
     .auth-tabs {
       display: flex;
       gap: 0.35rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.15rem;
       background: var(--surface-muted);
       padding: 0.3rem;
       border-radius: var(--radius-pill);
@@ -97,6 +98,18 @@
       color: var(--charcoal-muted);
       text-align: center;
     }
+    .dest-list { display: grid; gap: 0.55rem; margin-top: 0.75rem; }
+    .dest-list a {
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(212,175,90,0.35);
+      text-decoration: none;
+      color: var(--emerald-deep);
+      font-weight: 600;
+    }
+    .dest-list a:hover { background: rgba(10,92,69,0.06); }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body class="page-landing">
@@ -112,59 +125,86 @@
           <li><a href="contact.html">Contact</a></li>
         </ul>
         <div class="site-nav__cta">
-          <a class="btn btn--sm btn--outline" href="../landing.html">Back</a>
+          <a class="btn btn--sm btn--outline" href="../landing.html">Site</a>
         </div>
       </div>
     </header>
 
     <div class="auth-wrap">
       <div class="auth-card">
-        <p class="eyebrow">Secure access</p>
-        <h1>Client &amp; team sign-in</h1>
-        <p class="lede">Supabase auth for portals and practice platforms.</p>
+        <p class="eyebrow">Secure access · single sign-in</p>
+        <h1>Client &amp; product access</h1>
+        <p class="lede">
+          One account for Best Face Forward platforms. Email confirmation is required before any product continues.
+        </p>
 
-        <div id="status-banner" class="alert alert--info is-visible">
-          Checking Supabase configuration…
-        </div>
+        <div id="status-banner" class="alert alert--info is-visible">Checking Supabase…</div>
         <div id="msg" class="alert"></div>
 
-        <div class="auth-tabs" role="tablist">
-          <button type="button" class="is-active" data-tab="signin" id="tab-in">Sign in</button>
-          <button type="button" data-tab="signup" id="tab-up">Create account</button>
+        <!-- SIGNED-OUT: forms -->
+        <div id="panel-forms">
+          <div class="auth-tabs" role="tablist">
+            <button type="button" class="is-active" id="tab-in">Sign in</button>
+            <button type="button" id="tab-up">Create account</button>
+          </div>
+
+          <form id="form-signin">
+            <div class="field">
+              <label for="in-email">Email</label>
+              <input id="in-email" type="email" autocomplete="username" required />
+            </div>
+            <div class="field">
+              <label for="in-pass">Password</label>
+              <input id="in-pass" type="password" autocomplete="current-password" required minlength="8" />
+            </div>
+            <button class="btn btn--primary btn--block" type="submit" id="btn-in">Sign in</button>
+          </form>
+
+          <form id="form-signup" class="hidden">
+            <div class="field">
+              <label for="up-name">Full name</label>
+              <input id="up-name" type="text" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="up-email">Email</label>
+              <input id="up-email" type="email" autocomplete="username" required />
+            </div>
+            <div class="field">
+              <label for="up-pass">Password</label>
+              <input id="up-pass" type="password" autocomplete="new-password" required minlength="8" />
+            </div>
+            <button class="btn btn--gold btn--block" type="submit" id="btn-up">Create account</button>
+            <p class="auth-meta" style="margin-top:0.75rem">
+              After signup you must confirm your email before signing in.
+            </p>
+          </form>
+
+          <div id="confirm-help" class="hidden" style="margin-top:1rem">
+            <p class="lede" style="margin-bottom:0.5rem">Didn’t get the email?</p>
+            <button type="button" class="btn btn--outline btn--block" id="btn-resend">Resend confirmation</button>
+          </div>
         </div>
 
-        <form id="form-signin">
-          <div class="field">
-            <label for="in-email">Email</label>
-            <input id="in-email" type="email" autocomplete="username" required />
-          </div>
-          <div class="field">
-            <label for="in-pass">Password</label>
-            <input id="in-pass" type="password" autocomplete="current-password" required minlength="8" />
-          </div>
-          <button class="btn btn--primary btn--block" type="submit" id="btn-in">Sign in</button>
-        </form>
+        <!-- PAYWALL -->
+        <div id="panel-paywall" class="hidden">
+          <h2 style="font-family:var(--font-display);font-size:1.1rem;color:var(--emerald-deep);margin:0 0 0.5rem">Subscription required</h2>
+          <p class="lede" id="paywall-copy">
+            Your email is confirmed, but this product needs an active subscription.
+          </p>
+          <a class="btn btn--gold btn--block" id="paywall-cta" href="contact.html">Contact sales</a>
+          <button type="button" class="btn btn--outline btn--block" id="paywall-home" style="margin-top:0.5rem">Return to site</button>
+        </div>
 
-        <form id="form-signup" class="hidden" style="display:none">
-          <div class="field">
-            <label for="up-name">Full name</label>
-            <input id="up-name" type="text" autocomplete="name" />
-          </div>
-          <div class="field">
-            <label for="up-email">Email</label>
-            <input id="up-email" type="email" autocomplete="username" required />
-          </div>
-          <div class="field">
-            <label for="up-pass">Password</label>
-            <input id="up-pass" type="password" autocomplete="new-password" required minlength="8" />
-          </div>
-          <button class="btn btn--gold btn--block" type="submit" id="btn-up">Create account</button>
-        </form>
-
-        <div id="signed-in" class="hidden" style="display:none">
+        <!-- SIGNED-IN confirmed -->
+        <div id="panel-ready" class="hidden">
           <p class="lede" id="who"></p>
-          <button type="button" class="btn btn--outline btn--block" id="btn-out">Sign out</button>
-          <p class="auth-meta"><a href="../landing.html">Return to site</a> · <a href="../expense-iq/index.html">Expense IQ</a></p>
+          <p class="auth-meta" style="text-align:left;margin:0 0 0.75rem">Email confirmed · ready for products</p>
+          <div class="dest-list" id="dest-list">
+            <a href="../expense-iq/index.html">Continue to Expense IQ →</a>
+            <a href="../landing.html#divisions">Division portals →</a>
+            <a href="../landing.html">Site home →</a>
+          </div>
+          <button type="button" class="btn btn--outline btn--block" id="btn-out" style="margin-top:1rem">Sign out</button>
         </div>
 
         <p class="auth-meta">
@@ -174,28 +214,32 @@
     </div>
   </div>
 
-  <!-- Supabase UMD CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabase/config.js"></script>
-  <script>
-    // Inject from local env file values if you set window.__ENV before deploy
-    // For static hosting, paste URL + anon key into BFF.config.supabase in config.js
-    // or serve with env replacement.
-  </script>
   <script src="../js/supabase/client.js"></script>
   <script src="../js/supabase/auth.js"></script>
+  <script src="../js/supabase/access.js"></script>
   <script src="../js/main.js"></script>
   <script>
     (function () {
+      const params = new URLSearchParams(location.search);
+      const nextUrl = params.get("next") || "";
+      const reason = params.get("reason") || "";
+      const product = params.get("product") || "";
+      const confirmedFlag = params.get("confirmed") === "1";
+
       const banner = document.getElementById("status-banner");
       const msg = document.getElementById("msg");
+      const panelForms = document.getElementById("panel-forms");
+      const panelReady = document.getElementById("panel-ready");
+      const panelPaywall = document.getElementById("panel-paywall");
       const formIn = document.getElementById("form-signin");
       const formUp = document.getElementById("form-signup");
-      const signed = document.getElementById("signed-in");
+      const confirmHelp = document.getElementById("confirm-help");
       const who = document.getElementById("who");
+      const destList = document.getElementById("dest-list");
 
-      // Map CDN global
       if (window.supabase && !window.supabase.createClient && window.supabase.default) {
         window.supabase = window.supabase.default;
       }
@@ -208,72 +252,224 @@
       function setTab(which) {
         document.getElementById("tab-in").classList.toggle("is-active", which === "signin");
         document.getElementById("tab-up").classList.toggle("is-active", which === "signup");
-        formIn.style.display = which === "signin" ? "block" : "none";
-        formUp.style.display = which === "signup" ? "block" : "none";
+        formIn.classList.toggle("hidden", which !== "signin");
+        formUp.classList.toggle("hidden", which !== "signup");
         showMsg("");
       }
 
       document.getElementById("tab-in").onclick = () => setTab("signin");
       document.getElementById("tab-up").onclick = () => setTab("signup");
 
+      function safeNext(url) {
+        if (!url) return "";
+        try {
+          // allow relative paths only under this site
+          if (url.startsWith("http")) {
+            const u = new URL(url);
+            if (u.origin !== location.origin) return "";
+            return u.pathname + u.search + u.hash;
+          }
+          if (url.startsWith("/")) return url;
+          if (url.startsWith("../") || url.startsWith("./") || !url.includes("://")) return url;
+        } catch (_) {}
+        return "";
+      }
+
+      function continueDestination() {
+        const n = safeNext(nextUrl);
+        if (n) {
+          window.location.href = n;
+          return true;
+        }
+        return false;
+      }
+
+      function showPaywall(productKey) {
+        panelForms.classList.add("hidden");
+        panelReady.classList.add("hidden");
+        panelPaywall.classList.remove("hidden");
+        const label =
+          (BFF.access && BFF.access.PRODUCT_LABELS && BFF.access.PRODUCT_LABELS[productKey]) ||
+          productKey ||
+          "this product";
+        document.getElementById("paywall-copy").textContent =
+          "Your email is confirmed, but you need an active subscription for " +
+          label +
+          ". Purchase unlocks your private workspace; staff roles bypass via profiles.";
+        const cfg =
+          (BFF.config && BFF.config.PAYWALL && BFF.config.PAYWALL.products && BFF.config.PAYWALL.products[productKey]) ||
+          null;
+        const cta = document.getElementById("paywall-cta");
+        if (cfg && cfg.stripeUrl) {
+          cta.href = cfg.stripeUrl;
+          cta.textContent = "Subscribe — " + (cfg.priceLabel || label);
+        } else {
+          cta.href = "contact.html?product=" + encodeURIComponent(productKey || "subscription");
+          cta.textContent = "Request access / subscribe";
+        }
+        document.getElementById("paywall-home").onclick = () => {
+          window.location.href = "../landing.html";
+        };
+      }
+
       async function refresh() {
         const ready = BFF.supabase && BFF.supabase.isReady();
         if (!ready) {
           banner.className = "alert alert--info is-visible";
           banner.textContent =
-            "Supabase not configured yet. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (see .env.example), or fill BFF.config.supabase in js/config.js.";
+            "Supabase not configured. Set NEXT_PUBLIC_SUPABASE_URL / ANON_KEY or BFF.config.supabase.";
           return;
         }
         banner.className = "alert alert--ok is-visible";
-        banner.textContent = "Supabase connected.";
+        banner.textContent = "Supabase connected · email confirmation enforced";
+
+        if (confirmedFlag) {
+          showMsg("Email confirmed. Sign in to continue.", "ok");
+        }
+        if (reason === "confirm") {
+          showMsg("Confirm your email before accessing products. Check your inbox, then sign in here.", "info");
+          confirmHelp.classList.remove("hidden");
+        }
+        if (reason === "login") {
+          showMsg("Sign in with your Best Face Forward account to continue.", "info");
+        }
 
         const { user } = await BFF.auth.getUser();
-        if (user) {
-          formIn.style.display = "none";
-          formUp.style.display = "none";
-          document.querySelector(".auth-tabs").style.display = "none";
-          signed.style.display = "block";
-          who.textContent = "Signed in as " + (user.email || user.id);
-          banner.style.display = "none";
-        } else {
-          signed.style.display = "none";
-          document.querySelector(".auth-tabs").style.display = "flex";
+
+        if (!user) {
+          panelForms.classList.remove("hidden");
+          panelReady.classList.add("hidden");
+          panelPaywall.classList.add("hidden");
           setTab("signin");
+          return;
+        }
+
+        if (!BFF.auth.isEmailConfirmed(user)) {
+          await BFF.auth.signOut();
+          panelForms.classList.remove("hidden");
+          panelReady.classList.add("hidden");
+          panelPaywall.classList.add("hidden");
+          showMsg(
+            "Email not confirmed. Open the confirmation link we sent, then sign in. You cannot enter products until then.",
+            "err"
+          );
+          confirmHelp.classList.remove("hidden");
+          return;
+        }
+
+        // Confirmed user — paywall check if requested
+        if (reason === "paywall" && product) {
+          const entitled = await BFF.access.hasProduct(user.id, product);
+          const profile = await BFF.access.getProfile(user.id);
+          const staff =
+            profile && BFF.access.isStaffRole(profile.role);
+          const free =
+            BFF.config && BFF.config.PAYWALL && BFF.config.PAYWALL.freePreview === true;
+          if (!entitled && !staff && !free) {
+            who.textContent = "Signed in as " + (user.email || user.id);
+            showPaywall(product);
+            banner.style.display = "none";
+            return;
+          }
+        }
+
+        // Ready
+        panelForms.classList.add("hidden");
+        panelPaywall.classList.add("hidden");
+        panelReady.classList.remove("hidden");
+        banner.style.display = "none";
+        who.textContent = "Signed in as " + (user.email || user.id);
+
+        if (safeNext(nextUrl)) {
+          destList.innerHTML =
+            '<a href="' +
+            safeNext(nextUrl).replace(/"/g, "") +
+            '">Continue where you left off →</a>' +
+            destList.innerHTML;
+          // Auto-continue when next is set and access is ok
+          if (reason !== "paywall" || (BFF.config.PAYWALL && BFF.config.PAYWALL.freePreview)) {
+            setTimeout(function () {
+              continueDestination();
+            }, 400);
+          }
         }
       }
 
       formIn.addEventListener("submit", async (e) => {
         e.preventDefault();
         showMsg("");
-        const { data, error } = await BFF.auth.signIn({
-          email: document.getElementById("in-email").value,
-          password: document.getElementById("in-pass").value,
-        });
-        if (error) showMsg(error.message || "Sign-in failed", "err");
-        else {
-          showMsg("Welcome back.", "ok");
-          refresh();
+        const btn = document.getElementById("btn-in");
+        btn.disabled = true;
+        try {
+          const { error } = await BFF.auth.signIn({
+            email: document.getElementById("in-email").value,
+            password: document.getElementById("in-pass").value,
+          });
+          if (error) {
+            showMsg(error.message || "Sign-in failed", "err");
+            if (error.code === "email_not_confirmed") confirmHelp.classList.remove("hidden");
+            return;
+          }
+          showMsg("Signed in.", "ok");
+          await refresh();
+        } finally {
+          btn.disabled = false;
         }
       });
 
       formUp.addEventListener("submit", async (e) => {
         e.preventDefault();
         showMsg("");
-        const { data, error } = await BFF.auth.signUp({
-          email: document.getElementById("up-email").value,
-          password: document.getElementById("up-pass").value,
-          metadata: { full_name: document.getElementById("up-name").value },
-        });
-        if (error) showMsg(error.message || "Sign-up failed", "err");
-        else {
-          showMsg("Account created. Check email if confirmation is required.", "ok");
-          refresh();
+        const btn = document.getElementById("btn-up");
+        btn.disabled = true;
+        try {
+          const { data, error } = await BFF.auth.signUp({
+            email: document.getElementById("up-email").value,
+            password: document.getElementById("up-pass").value,
+            metadata: { full_name: document.getElementById("up-name").value },
+          });
+          if (error) {
+            showMsg(error.message || "Sign-up failed", "err");
+            return;
+          }
+          // If session returned without confirm (project misconfigured), force sign-out
+          const user = data && data.user;
+          if (user && !BFF.auth.isEmailConfirmed(user)) {
+            await BFF.auth.signOut();
+          }
+          if (data && data.session && user && BFF.auth.isEmailConfirmed(user)) {
+            showMsg("Account ready.", "ok");
+            await refresh();
+            return;
+          }
+          showMsg(
+            "Account created. Confirm your email (check inbox / spam), then sign in here. Products stay locked until confirmation.",
+            "ok"
+          );
+          confirmHelp.classList.remove("hidden");
+          setTab("signin");
+          document.getElementById("in-email").value = document.getElementById("up-email").value;
+        } finally {
+          btn.disabled = false;
         }
       });
 
+      document.getElementById("btn-resend").onclick = async () => {
+        const email =
+          document.getElementById("in-email").value ||
+          document.getElementById("up-email").value;
+        if (!email) {
+          showMsg("Enter your email above, then resend.", "err");
+          return;
+        }
+        const { error } = await BFF.auth.resendConfirmation(email);
+        if (error) showMsg(error.message || "Could not resend", "err");
+        else showMsg("Confirmation email sent (if the account exists).", "ok");
+      };
+
       document.getElementById("btn-out").onclick = async () => {
         await BFF.auth.signOut();
-        location.reload();
+        location.href = "auth.html";
       };
 
       refresh();

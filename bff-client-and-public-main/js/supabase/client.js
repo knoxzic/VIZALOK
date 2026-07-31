@@ -43,6 +43,8 @@
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storage: window.localStorage,
+        // Shared across BFF + Expense IQ so one sign-in works site-wide
+        storageKey: "bff-supabase-auth",
       },
     });
     return _client;

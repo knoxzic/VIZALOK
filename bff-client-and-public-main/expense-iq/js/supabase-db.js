@@ -44,7 +44,8 @@
           autoRefreshToken: true,
           detectSessionInUrl: true,
           storage: window.localStorage,
-          storageKey: "eiq-supabase-auth",
+          // Must match BFF.supabase client (single session)
+          storageKey: "bff-supabase-auth",
         },
       });
     }

@@ -557,7 +557,8 @@
 
   document.getElementById("btn-logout").addEventListener("click", async () => {
     await EIQ.db.signOut();
-    window.location.href = "index.html";
+    if (window.BFF && BFF.auth) await BFF.auth.signOut();
+    window.location.href = "../pages/auth.html";
   });
 
   document.getElementById("menu-toggle").addEventListener("click", () => {
@@ -574,6 +575,18 @@
     if (window.BFF && BFF.config && BFF.config.supabase) {
       EIQ.config.supabase = Object.assign({}, EIQ.config.supabase, BFF.config.supabase);
     }
+
+    // Hard gate: confirmed email + product access (redirects if not)
+    if (window.BFF && BFF.access) {
+      const gate = await BFF.access.requireProduct("expense_iq", {
+        next: window.location.href,
+      });
+      if (!gate) return;
+    } else if (window.BFF && BFF.auth) {
+      const auth = await BFF.auth.requireConfirmedUser({ next: window.location.href });
+      if (!auth) return;
+    }
+
     if (EIQ.db.isSupabase) {
       try {
         await EIQ.db.hydrateFromAuth();

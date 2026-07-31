@@ -27,6 +27,29 @@ BFF.config = {
   DEMO_MODE: true,
 
   /**
+   * Paywall — product access after confirmed email.
+   * freePreview: true lets confirmed users into paid apps until Stripe webhooks fill `subscriptions`.
+   * Set freePreview: false once Stripe is live.
+   */
+  PAYWALL: {
+    freePreview: true,
+    products: {
+      expense_iq: {
+        key: "expense_iq",
+        name: "Expense IQ",
+        stripeUrl: "", // paste Stripe Payment Link when ready
+        priceLabel: "Subscription",
+      },
+      full_suite: {
+        key: "full_suite",
+        name: "BFF Full Suite",
+        stripeUrl: "",
+        priceLabel: "Enterprise",
+      },
+    },
+  },
+
+  /**
    * Supabase (public anon key is safe in the browser).
    * Override with NEXT_PUBLIC_SUPABASE_* env or window.__ENV on deploy.
    * Project ref: rjxiytnoomgpodkpvxad
