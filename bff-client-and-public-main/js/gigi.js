@@ -1,68 +1,72 @@
 /**
- * Gigi — AI Due Diligence Concierge
- * Demo knowledge base now; swap getGigiReply to hit GIGI_ENDPOINT later.
+ * Gigi — Due Diligence Concierge
+ * Local FAQ when GIGI_ENDPOINT is null; live API when configured.
  */
 window.BFF = window.BFF || {};
 
 BFF.gigi = (function () {
   const GREETING =
-    "Hello, I'm Gigi — your Due Diligence Concierge at Best Face Forward. I can guide you through our five divisions, Academy enrollment, software products, or what to prepare for intake. What may I help you with?";
+    "Hello, I'm Gigi — your Due Diligence Concierge at Best Face Forward. I can guide you through our divisions, packages, Academy, Expense IQ, or what to prepare for intake. How may I help?";
 
   const FAQ = [
     {
       keys: ["academy", "enroll", "course", "learn", "quiz", "curriculum"],
       reply:
-        "Our Business Academy is a game-based learning experience with elegant, feminine business styling. Enroll once (demo unlock works offline), complete modules and quizzes, then unlock standalone graduate products. Open the Academy portal from the landing page under G&G Software Solutions → Academy.",
+        "Business Academy is our learning portal under G&G Software. Enrollment and curriculum open as offerings go live — use Contact to request Academy access, or browse the Academy page for updates.",
     },
     {
-      keys: ["software", "product", "buy", "purchase", "download", "g&g", "gg"],
+      keys: ["software", "product", "buy", "purchase", "download", "g&g", "gg", "stripe"],
       reply:
-        "G&G Software Solutions offers digital products and service packages — Starter Kit, Funding Readiness, Accelerators, and more. In demo mode, checkout simulates Stripe and unlocks access in your browser. Use the Software portal for a guided buy flow.",
+        "G&G Software Solutions and division packages use secure Stripe Payment Links. Open the Software, Financial, Foundation, or Logistics portal and choose Buy with Stripe. After payment, our webhook records your entitlement in Supabase.",
+    },
+    {
+      keys: ["expense", "eiq", "ledger"],
+      reply:
+        "Expense IQ is our multi-tenant financial platform. Sign in with a confirmed email at the site Sign-in page. Access requires an active Expense IQ subscription (or a staff profile). Subscription checkout is listed as Coming soon until the Payment Link is published.",
     },
     {
       keys: ["grant", "foundation", "nonprofit", "funding"],
       reply:
-        "Best Face Forward Foundation supports grant writing, grant readiness, board development, and capacity building. Visit the Foundation portal for services; for ready-to-buy packages, see Software or ask about Funding Readiness Assessment.",
+        "Best Face Forward Foundation supports grant readiness, nonprofit startup, strategic planning, and grant writing. Live Stripe packages are on the Foundation portal; custom grant writing is quote-based via Contact.",
     },
     {
-      keys: ["bookkeep", "financial", "tax", "accounting", "cash"],
+      keys: ["bookkeep", "financial", "tax", "accounting", "cash", "cfo"],
       reply:
-        "Financial Solutions covers bookkeeping, controller services, cash flow, budgeting, and strategic financial planning. The portal is structured and ready — full client workflows arrive with the backend phase.",
+        "Financial Solutions covers bookkeeping, Phase I/II growth packages, CFO advisory, and financial cleanup — all available with Stripe checkout on the Financial portal.",
     },
     {
       keys: ["insurance", "life", "health", "retirement", "benefits"],
       reply:
-        "Insurance Solutions helps protect today while building tomorrow — life, health, final expense, annuities, retirement planning, and benefits. Contact us from the Insurance portal or Contact page for a consult.",
+        "Insurance Solutions helps protect today while building tomorrow — life, health, final expense, retirement, and benefits. Explore the Insurance portal and Contact us for a consult.",
     },
     {
-      keys: ["logistics", "supply", "route", "ops", "operations"],
+      keys: ["logistics", "supply", "route", "ops", "operations", "transport"],
       reply:
-        "Logistics Consulting focuses on strategy, route optimization, supply chain, vendor management, and operational efficiency. Explore the Logistics portal for an overview and request a conversation.",
+        "Logistics Consulting covers assessments, startup packages, route optimization, operations manuals, and success bundles — live Stripe checkout on the Logistics portal.",
     },
     {
-      keys: ["stripe", "pay", "payment", "checkout", "price", "cost"],
+      keys: ["pay", "payment", "checkout", "price", "cost", "subscribe"],
       reply:
-        "We're in demo stage: purchases can simulate success and unlock content via localStorage. Real Stripe Payment Links are already wired for several software products. Webhooks will later notify admin (e.g. Academy enrollment emails) without changing these pages.",
+        "Checkout is live Stripe Payment Links (not a demo). After you pay, Stripe webhooks write your entitlement to Supabase subscriptions. Sign in with the same email you used at checkout for product access.",
     },
     {
       keys: ["contact", "email", "phone", "reach", "talk", "human"],
       reply:
-        "Use the Contact page for a polished intake message, or start an intake from the public site when forms are live. For urgent needs, mention your division of interest so the right team can follow up.",
+        "Use the Contact page to send an intake message — it is saved to our Supabase leads pipeline. Mention your division so the right team can follow up.",
     },
     {
       keys: ["about", "who", "culture", "owner", "story"],
       reply:
-        "Best Face Forward Consultants delivers strategy, solutions, and impact across five divisions. Our brand promise: innovative solutions with integrity, growth with purpose, and lasting impact. Visit About and Culture for the full story.",
+        "Best Face Forward Consultants delivers strategy, solutions, and impact across Foundation, Financial, Insurance, Logistics, and G&G Software. Visit About and Culture for the full story.",
     },
     {
       keys: ["hello", "hi", "hey", "help"],
       reply:
-        "Welcome. I can explain divisions, walk you through Academy enrollment, or help you pick a software product. Try asking about grants, bookkeeping, insurance, logistics, or G&G Software.",
+        "Welcome. Ask about grants, bookkeeping, insurance, logistics, Expense IQ, or G&G Software — or use Contact for a human follow-up.",
     },
   ];
 
   let opened = false;
-  let root = null;
 
   function ensureDom() {
     if (document.getElementById("gigi-launcher")) return;
@@ -90,7 +94,7 @@ BFF.gigi = (function () {
         <button type="button" class="gigi-close" aria-label="Close">&times;</button>
       </div>
       <div class="gigi-messages" id="gigi-messages"></div>
-      <div class="gigi-demo-note" id="gigi-demo-note">Demo mode — smart local answers until the AI backend is connected.</div>
+      <div class="gigi-demo-note" id="gigi-status-note"></div>
       <div class="gigi-input-row">
         <input id="gigi-input" type="text" placeholder="Ask Gigi a question..." autocomplete="off" />
         <button type="button" class="gigi-send" id="gigi-send" aria-label="Send">➤</button>
@@ -106,18 +110,19 @@ BFF.gigi = (function () {
       if (e.key === "Enter") send();
     });
 
-    root = panel;
-    updateDemoNote();
+    updateStatusNote();
   }
 
-  function updateDemoNote() {
-    const note = document.getElementById("gigi-demo-note");
+  function updateStatusNote() {
+    const note = document.getElementById("gigi-status-note");
     if (!note) return;
     const live = Boolean(BFF.config?.GIGI_ENDPOINT);
-    note.textContent = live
-      ? "Connected to live Gigi endpoint."
-      : "Demo mode — smart local answers until the AI backend is connected.";
-    note.style.display = live ? "none" : "block";
+    if (live) {
+      note.style.display = "none";
+    } else {
+      note.style.display = "block";
+      note.textContent = "On-site guide · full AI endpoint coming soon";
+    }
   }
 
   function toggle() {
@@ -158,13 +163,13 @@ BFF.gigi = (function () {
     for (const item of FAQ) {
       if (item.keys.some((k) => t.includes(k))) return item.reply;
     }
-    return "I can help with our five divisions (Foundation, Financial, Insurance, Logistics, G&G Software), Academy enrollment, product purchases, or how demo unlocks work. Ask about a specific service, or visit Contact for a human follow-up.";
+    return "I can help with Foundation, Financial, Insurance, Logistics, G&G Software, Expense IQ, or Contact. Ask about a specific service for details.";
   }
 
   async function getGigiReply(userText) {
     const endpoint = BFF.config?.GIGI_ENDPOINT;
     if (!endpoint) {
-      await new Promise((r) => setTimeout(r, 350));
+      await new Promise((r) => setTimeout(r, 280));
       return localReply(userText);
     }
     try {
@@ -182,7 +187,6 @@ BFF.gigi = (function () {
   }
 
   function init() {
-    // Skip on pure welcome gate if desired — still useful, so we show everywhere
     if (document.body.dataset.gigi === "off") return;
     ensureDom();
   }

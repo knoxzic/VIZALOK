@@ -21,27 +21,22 @@
         <ul class="site-nav__links">
           <li><a href="landing.html">Home</a></li>
           <li><a href="portals/software.html">Software</a></li>
-          <li><a href="portals/academy.html">Academy</a></li>
+          <li><a href="pages/auth.html">Sign in</a></li>
         </ul>
       </div>
     </header>
 
     <div class="container">
       <div class="success-panel" id="success-panel">
-        <div class="success-panel__check" aria-hidden="true">âœ“</div>
+        <div class="success-panel__check" aria-hidden="true">✓</div>
         <p class="eyebrow">Confirmation</p>
-        <h1 id="success-title">you're all set</h1>
+        <h1 id="success-title">You're all set</h1>
         <p class="script">Thank you.</p>
         <p id="success-body" style="color:var(--charcoal-soft);margin-bottom:1.5rem">
-          Access has been unlocked in this browser for demo purposes.
+          Payment received. Your entitlement is recorded via Stripe and Supabase — sign in with the same email to access products.
         </p>
-        <div class="demo-banner" id="success-demo-note">
-          <strong>Simulated confirmation</strong><br />
-          In production, Stripe webhooks will confirm payment server-side and email admin
-          (especially Academy enrollments). This page will verify session_id with your backend.
-        </div>
         <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:1.25rem">
-          <a class="btn btn--primary btn--block" id="success-cta" href="portals/software.html">Continue</a>
+          <a class="btn btn--primary btn--block" id="success-cta" href="pages/auth.html">Sign in to continue</a>
           <a class="btn btn--outline btn--block" href="landing.html">Return home</a>
         </div>
       </div>
@@ -57,38 +52,42 @@
     (function () {
       const params = new URLSearchParams(location.search);
       const productId = params.get("product");
-      const demo = params.get("demo") === "1";
-      // Future: const sessionId = params.get("session_id");
-      // fetch('/api/verify-checkout?session_id=' + sessionId) then unlock
+      // Stripe may return session_id when success_url is configured on the Payment Link
 
-      if (productId && !BFF.storage.productUnlocked(productId)) {
-        BFF.storage.completePurchase(productId, {
-          mode: demo ? "demo" : "stripe-return",
-        });
+      if (productId) {
+        BFF.storage.completePurchase(productId, { mode: "stripe-return" });
       }
 
       const product = productId && BFF.config.products[productId];
       if (product) {
         document.getElementById("success-title").textContent = product.name;
         document.getElementById("success-body").textContent =
-          "You now have access to â€œ" +
+          "Thank you for purchasing “" +
           product.name +
-          "â€. " +
-          (demo
-            ? "This was a demo unlock stored locally."
-            : "If you completed Stripe checkout, webhook confirmation will finalize records shortly.");
+          "”. Stripe has confirmed checkout; your access is linked in Supabase shortly. Sign in with the same email you used at checkout.";
 
         const cta = document.getElementById("success-cta");
         if (product.portal === "academy") {
           cta.href = "portals/academy.html";
           cta.textContent = "Enter Academy";
+        } else if (product.portal === "financial") {
+          cta.href = "portals/financial.html";
+          cta.textContent = "Financial portal";
+        } else if (product.portal === "foundation") {
+          cta.href = "portals/foundation.html";
+          cta.textContent = "Foundation portal";
+        } else if (product.portal === "logistics") {
+          cta.href = "portals/logistics.html";
+          cta.textContent = "Logistics portal";
+        } else if (productId === "expense_iq") {
+          cta.href = "expense-iq/index.html";
+          cta.textContent = "Open Expense IQ";
         } else {
-          cta.href = "portals/software.html";
-          cta.textContent = "Open Software portal";
+          cta.href = "pages/auth.html";
+          cta.textContent = "Sign in to continue";
         }
       }
     })();
   </script>
 </body>
 </html>
-

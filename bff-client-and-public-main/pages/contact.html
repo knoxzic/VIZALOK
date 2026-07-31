@@ -49,7 +49,7 @@
           <li><a href="contact.html" class="is-active">Contact</a></li>
         </ul>
         <div class="site-nav__cta">
-          <a class="btn btn--sm btn--primary" href="../portals/software.html">Software Portal</a>
+          <a class="btn btn--sm btn--outline" href="auth.html">Sign in</a>
         </div>
       </div>
     </header>
@@ -57,16 +57,12 @@
     <div class="page-hero">
       <div class="container">
         <p class="eyebrow">Contact</p>
-        <h1>we're listening</h1>
+        <h1>We're listening</h1>
         <p class="script">Tell us how to help.</p>
       </div>
     </div>
 
     <div class="container contact-wrap">
-      <div class="demo-banner">
-        <strong>Demo form</strong><br />
-        Messages save locally for now. Wire to Firebase intakeForms or your API later â€” field names match the scaffold.
-      </div>
       <div class="contact-card">
         <form id="contact-form">
           <div class="field">
@@ -78,21 +74,26 @@
             <input id="contact-email" name="contactEmail" type="email" required placeholder="you@example.com" />
           </div>
           <div class="field">
+            <label for="contact-phone">Phone (optional)</label>
+            <input id="contact-phone" name="phone" type="tel" placeholder="(optional)" />
+          </div>
+          <div class="field">
             <label for="division">Division of interest</label>
             <select id="division" name="division">
-              <option value="">Selectâ€¦</option>
-              <option>Foundation (Grants)</option>
-              <option>Financial Solutions</option>
-              <option>Insurance Solutions</option>
-              <option>Logistics Consulting</option>
-              <option>G&amp;G Software / Academy</option>
+              <option value="">Select…</option>
+              <option value="foundation">Foundation (Grants)</option>
+              <option value="financial">Financial Solutions</option>
+              <option value="insurance">Insurance Solutions</option>
+              <option value="logistics">Logistics Consulting</option>
+              <option value="software">G&amp;G Software / Academy</option>
+              <option value="expense_iq">Expense IQ</option>
             </select>
           </div>
           <div class="field">
             <label for="business-desc">How can we help?</label>
             <textarea id="business-desc" name="businessDescription" rows="4" placeholder="Brief description"></textarea>
           </div>
-          <button type="submit" class="btn btn--primary btn--block">Send message</button>
+          <button type="submit" class="btn btn--primary btn--block" id="contact-submit">Send message</button>
           <p id="contact-status"></p>
         </form>
       </div>
@@ -107,32 +108,92 @@
       </div>
     </footer>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="../js/config.js"></script>
+  <script src="../js/supabase/config.js"></script>
+  <script src="../js/supabase/client.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/main.js"></script>
   <script src="../js/transitions.js"></script>
   <script src="../js/gigi.js"></script>
   <script>
-    document.getElementById("contact-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const data = {
-        orgName: document.getElementById("org-name").value.trim(),
-        contactEmail: document.getElementById("contact-email").value.trim(),
-        division: document.getElementById("division").value,
-        businessDescription: document.getElementById("business-desc").value.trim(),
-        submittedAt: new Date().toISOString(),
-        status: "Submitted (demo local)",
-      };
-      const list = BFF.storage.get("bff_contact_submissions", []);
-      list.unshift(data);
-      BFF.storage.set("bff_contact_submissions", list.slice(0, 30));
-      document.getElementById("contact-status").textContent =
-        "Received â€” thank you. we'll follow up when the live inbox is connected.";
-      document.getElementById("contact-status").style.color = "var(--emerald)";
-      e.target.reset();
-      BFF.ui.toast("Message saved (demo)");
-    });
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const product = params.get("product");
+      if (product) {
+        const desc = document.getElementById("business-desc");
+        if (desc && !desc.value) {
+          desc.value = "Interested in: " + product.replace(/_/g, " ");
+        }
+        const div = document.getElementById("division");
+        if (div && product === "expense_iq") div.value = "expense_iq";
+      }
+
+      document.getElementById("contact-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const status = document.getElementById("contact-status");
+        const btn = document.getElementById("contact-submit");
+        btn.disabled = true;
+        status.textContent = "Sending…";
+        status.style.color = "var(--charcoal-muted)";
+
+        const orgName = document.getElementById("org-name").value.trim();
+        const email = document.getElementById("contact-email").value.trim();
+        const phone = document.getElementById("contact-phone").value.trim();
+        const division = document.getElementById("division").value;
+        const notes = document.getElementById("business-desc").value.trim();
+
+        const lineMap = {
+          foundation: ["analysis"],
+          financial: ["bookkeeping", "advisory", "tax"],
+          insurance: ["life", "health"],
+          logistics: ["analysis"],
+          software: ["analysis"],
+          expense_iq: ["bookkeeping", "analysis"],
+        };
+
+        try {
+          const sb = BFF.supabase && BFF.supabase.getClient && BFF.supabase.getClient();
+          if (!sb) throw new Error("Connection unavailable");
+
+          const payload = {
+            source: "web_form",
+            contact_name: orgName,
+            email: email.toLowerCase(),
+            phone: phone || null,
+            lines_of_interest: lineMap[division] || [],
+            stage: "new",
+            score: 0,
+            notes:
+              (division ? "Division: " + division + "\n" : "") +
+              (product ? "Product: " + product + "\n" : "") +
+              (notes || ""),
+          };
+
+          const { error } = await sb.from("leads").insert(payload);
+          if (error) throw error;
+
+          status.textContent = "Received — thank you. Our team will follow up.";
+          status.style.color = "var(--emerald)";
+          e.target.reset();
+          BFF.ui.toast("Message sent");
+        } catch (err) {
+          console.error(err);
+          status.textContent =
+            "Could not send right now. Email us directly or try again. (" +
+            (err.message || "error") +
+            ")";
+          status.style.color = "var(--rose, #a33)";
+          // If public_leads policy not applied yet
+          if (/policy|RLS|permission|row-level/i.test(err.message || "")) {
+            status.textContent +=
+              " Run supabase/public_leads.sql in Supabase if this is the first submission.";
+          }
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    })();
   </script>
 </body>
 </html>
-

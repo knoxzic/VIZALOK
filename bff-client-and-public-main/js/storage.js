@@ -1,23 +1,15 @@
 /**
- * Demo unlocks + purchase state via localStorage.
- * Real webhooks will write the same keys (or Firestore flags) later —
- * UI already checks isUnlocked() so no portal refactor is needed.
+ * Local cache helpers (preferences, academy progress).
+ * Entitlements are authoritative in Supabase `subscriptions` via Stripe webhooks.
  */
 window.BFF = window.BFF || {};
 
 BFF.storage = (function () {
-  const PREFIX = "bff_";
-  const ORDERS_KEY = "bff_demo_orders";
-
-  function get(key, fallback = null) {
+  function get(key, fallback) {
     try {
       const raw = localStorage.getItem(key);
-      if (raw === null) return fallback;
-      try {
-        return JSON.parse(raw);
-      } catch {
-        return raw;
-      }
+      if (raw == null) return fallback;
+      return JSON.parse(raw);
     } catch {
       return fallback;
     }
@@ -25,102 +17,67 @@ BFF.storage = (function () {
 
   function set(key, value) {
     try {
-      localStorage.setItem(
-        key,
-        typeof value === "string" ? value : JSON.stringify(value)
-      );
-    } catch (e) {
-      console.warn("BFF storage write failed", e);
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch {
+      return false;
     }
   }
 
   function isUnlocked(unlockKey) {
     if (!unlockKey) return false;
-    return get(unlockKey) === true || get(unlockKey) === "true";
-  }
-
-  function unlock(unlockKey, meta = {}) {
-    if (!unlockKey) return;
-    set(unlockKey, true);
-    set(unlockKey + "_meta", {
-      unlockedAt: new Date().toISOString(),
-      ...meta,
-    });
-    const orders = get(ORDERS_KEY, []);
-    orders.unshift({
-      unlockKey,
-      ...meta,
-      at: new Date().toISOString(),
-    });
-    set(ORDERS_KEY, orders.slice(0, 50));
-
-    // Mirror shape for future webhook payload consumers
-    window.dispatchEvent(
-      new CustomEvent("bff:unlock", { detail: { unlockKey, meta } })
-    );
-  }
-
-  function lock(unlockKey) {
     try {
-      localStorage.removeItem(unlockKey);
-      localStorage.removeItem(unlockKey + "_meta");
-    } catch {}
-  }
-
-  function getOrders() {
-    return get(ORDERS_KEY, []);
-  }
-
-  function clearDemo() {
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith(PREFIX))
-      .forEach((k) => localStorage.removeItem(k));
+      return localStorage.getItem(unlockKey) === "1";
+    } catch {
+      return false;
+    }
   }
 
   function productUnlocked(productId) {
     const p = BFF.config?.products?.[productId];
-    return p ? isUnlocked(p.unlockKey) : false;
+    if (!p || !p.unlockKey) return false;
+    return isUnlocked(p.unlockKey);
   }
 
   /**
-   * Simulate post-checkout success (demo).
-   * Later: success.html reads session_id and calls backend to verify.
+   * Cache unlock after verified Stripe return (success.html).
+   * Server of record remains Supabase subscriptions via webhook.
    */
-  function completePurchase(productId, opts = {}) {
+  function completePurchase(productId, opts) {
     const product = BFF.config?.products?.[productId];
-    if (!product) return { ok: false, error: "Unknown product" };
-
-    unlock(product.unlockKey, {
-      productId,
-      name: product.name,
-      price: product.price,
-      mode: opts.mode || "demo",
-      email: opts.email || null,
-    });
-
-    // Academy enrollment also unlocks the graduate playbook in demo
-    if (productId === "academy_enroll") {
-      unlock(BFF.config.products.academy_playbook.unlockKey, {
-        productId: "academy_playbook",
-        name: BFF.config.products.academy_playbook.name,
-        via: "academy_enroll",
-        mode: opts.mode || "demo",
-      });
+    if (!product || !product.unlockKey) return { ok: false };
+    const mode = (opts && opts.mode) || "stripe-return";
+    if (mode === "demo") {
+      return { ok: false, error: "Demo purchases are disabled" };
     }
-
-    return { ok: true, product };
+    try {
+      localStorage.setItem(product.unlockKey, "1");
+      localStorage.setItem(
+        product.unlockKey + "_meta",
+        JSON.stringify({
+          productId,
+          mode,
+          at: new Date().toISOString(),
+        })
+      );
+      if (productId === "academy_enroll") {
+        const playbook = BFF.config.products.academy_playbook;
+        if (playbook && playbook.unlockKey) {
+          localStorage.setItem(playbook.unlockKey, "1");
+        }
+      }
+      window.dispatchEvent(new CustomEvent("bff:unlock", { detail: { productId } }));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
   return {
     get,
     set,
     isUnlocked,
-    unlock,
-    lock,
-    getOrders,
-    clearDemo,
     productUnlocked,
     completePurchase,
-    ORDERS_KEY,
   };
 })();

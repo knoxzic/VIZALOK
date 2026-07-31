@@ -14,10 +14,7 @@ BFF.config = {
 
   GIGI_ENDPOINT: null,
 
-  /**
-   * When false, products with stripeUrl open real Stripe Checkout.
-   * Demo unlock still available only if stripeUrl is empty.
-   */
+  /** Production site — no simulated purchases */
   DEMO_MODE: false,
 
   /**

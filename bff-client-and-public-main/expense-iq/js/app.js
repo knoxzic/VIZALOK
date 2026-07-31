@@ -72,13 +72,13 @@
     return `
       <div class="page-head">
         <h1>${escapeHtml(title)}</h1>
-        <p><span class="badge badge--phase">Phase ${phase}</span> — shell only until that phase ships.</p>
+        <p><span class="badge badge--phase">Coming soon</span></p>
       </div>
       <div class="panel placeholder-mod">
         <h2>${escapeHtml(title)}</h2>
         <p>${escapeHtml(blurb)}</p>
         <p style="margin-top:16px;font-size:13px">
-          When this module posts money, it must go through the same Validation Gate → <code>transactions</code> + <code>coa_id</code> path. No shortcuts.
+          This workspace module is not live yet. When it posts money, every dollar will still pass the Validation Gate → <code>transactions</code> + <code>coa_id</code>. No shortcuts.
         </p>
       </div>`;
   }
@@ -103,14 +103,14 @@
       </div>
 
       <div class="grid-kpi">
-        <div class="kpi"><div class="kpi__label">Income</div><div class="kpi__value">—</div><div class="kpi__hint">Phase 3 data</div></div>
-        <div class="kpi"><div class="kpi__label">Expenses</div><div class="kpi__value">—</div><div class="kpi__hint">Phase 3 data</div></div>
-        <div class="kpi"><div class="kpi__label">Net cash flow</div><div class="kpi__value">—</div><div class="kpi__hint">Phase 3 data</div></div>
-        <div class="kpi"><div class="kpi__label">Missing receipts</div><div class="kpi__value">${stats.receipts}</div><div class="kpi__hint">Capture queue (P2)</div></div>
-        <div class="kpi"><div class="kpi__label">Needs review</div><div class="kpi__value">0</div><div class="kpi__hint">Review queue (P2)</div></div>
-        <div class="kpi"><div class="kpi__label">Mileage trips</div><div class="kpi__value">${stats.mileage}</div><div class="kpi__hint">Phase 4</div></div>
-        <div class="kpi"><div class="kpi__label">Grant funds left</div><div class="kpi__value">—</div><div class="kpi__hint">Phase 4</div></div>
-        <div class="kpi"><div class="kpi__label">Tax readiness</div><div class="kpi__value">—</div><div class="kpi__hint">Phase 5</div></div>
+        <div class="kpi"><div class="kpi__label">Income</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
+        <div class="kpi"><div class="kpi__label">Expenses</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
+        <div class="kpi"><div class="kpi__label">Net cash flow</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
+        <div class="kpi"><div class="kpi__label">Missing receipts</div><div class="kpi__value">${stats.receipts}</div><div class="kpi__hint">Live count</div></div>
+        <div class="kpi"><div class="kpi__label">Needs review</div><div class="kpi__value">0</div><div class="kpi__hint">Coming soon</div></div>
+        <div class="kpi"><div class="kpi__label">Mileage trips</div><div class="kpi__value">${stats.mileage}</div><div class="kpi__hint">Live count</div></div>
+        <div class="kpi"><div class="kpi__label">Grant funds left</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
+        <div class="kpi"><div class="kpi__label">Tax readiness</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
       </div>
 
       <div class="panel">
@@ -330,13 +330,9 @@
         </table>
       </div>
       <div class="panel">
-        <h2>${cloud ? "Session" : "Danger zone (local demo)"}</h2>
-        ${
-          cloud
-            ? `<p class="field-hint">Cloud mode: sign out only clears this device session. Org data stays in Supabase.</p>
-               <button type="button" class="btn btn--ghost" id="btn-wipe">Sign out everywhere on this device</button>`
-            : `<button type="button" class="btn btn--pink" id="btn-wipe">Wipe all local Expense IQ data</button>`
-        }
+        <h2>Session</h2>
+        <p class="field-hint">Sign out clears this device session. Organization data stays in Supabase.</p>
+        <button type="button" class="btn btn--ghost" id="btn-wipe">Sign out on this device</button>
       </div>
     `;
   }
@@ -352,18 +348,14 @@
       dashboard: () => viewDashboard(s),
       capture: () =>
         Promise.resolve(
-          placeholder(
-            "Capture",
-            2,
-            "Camera, upload, bulk, email-in → OCR & confidence scoring. Not built yet."
-          )
+          placeholder("Capture", 2, "Coming soon — camera, upload, bulk, and email-in with OCR.")
         ),
       transactions: () =>
         Promise.resolve(
           placeholder(
             "Transactions",
             3,
-            "Register, imports, posting pipeline into the central Ledger."
+            "Coming soon — register, imports, and posting into the central Ledger."
           )
         ),
       coa: () =>
@@ -371,45 +363,48 @@
           placeholder(
             "Chart of Accounts",
             3,
-            "SMB and Nonprofit templates with Schedule C / Form 990 mapping."
+            "Coming soon — SMB and Nonprofit templates with Schedule C / Form 990 mapping."
           )
         ),
       bank: () =>
         Promise.resolve(
-          placeholder("Bank & Reconciliation", 3, "Match, categorize, period close / lock.")
+          placeholder(
+            "Bank & Reconciliation",
+            3,
+            "Coming soon — match, categorize, and period close."
+          )
         ),
       grants: () =>
         Promise.resolve(
-          placeholder("Grants", 4, "Allowability, budget lines, burn rate — still posts via Ledger.")
+          placeholder(
+            "Grants",
+            4,
+            "Coming soon — allowability, budget lines, burn rate (still posts via Ledger)."
+          )
         ),
       mileage: () =>
         Promise.resolve(
-          placeholder(
-            "Mileage & Travel",
-            4,
-            "Trips and travel lines costed and posted as transactions — not side logs."
-          )
+          placeholder("Mileage & Travel", 4, "Coming soon — trips costed and posted as transactions.")
         ),
       vendors: () =>
-        Promise.resolve(placeholder("Vendors", 4, "Directory, W-9 / 1099 thresholds.")),
+        Promise.resolve(
+          placeholder("Vendors", 4, "Coming soon — directory, W-9 / 1099 thresholds.")
+        ),
       clients: () =>
-        Promise.resolve(placeholder("Clients & Projects", 4, "Billable split and profitability.")),
-      tax: () => Promise.resolve(placeholder("Tax Center", 5, "Schedule C summary and tax packages.")),
+        Promise.resolve(
+          placeholder("Clients & Projects", 4, "Coming soon — billable split and profitability.")
+        ),
+      tax: () =>
+        Promise.resolve(
+          placeholder("Tax Center", 5, "Coming soon — Schedule C summary and tax packages.")
+        ),
       reports: () =>
         Promise.resolve(
-          placeholder(
-            "Reports & Exports",
-            5,
-            "Read-only rollups off transactions only — never independent math."
-          )
+          placeholder("Reports & Exports", 5, "Coming soon — read-only rollups from the Ledger only.")
         ),
       gigi: () =>
         Promise.resolve(
-          placeholder(
-            "Gigi Assistant",
-            5,
-            "Read-only financial Q&A. Separate from marketing-site Gigi on BFF."
-          )
+          placeholder("Gigi Assistant", 5, "Coming soon — read-only financial Q&A inside Expense IQ.")
         ),
       admin: () => viewAdmin(s),
       org: () => viewOrg(s),

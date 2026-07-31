@@ -106,26 +106,26 @@ BFF.academy = (function () {
           explain: "Gigi is the Due Diligence Concierge — helpful, never a black box for secrets.",
         },
         {
-          q: "In demo mode, a successful “purchase” should…",
+          q: "After a real Stripe purchase, access is confirmed by…",
           options: [
-            "Delete your browser",
-            "Unlock access locally so you can experience the product flow",
-            "Email the entire internet",
-            "Change the brand colors",
+            "Guessing the password",
+            "Stripe webhooks writing entitlements server-side (Supabase subscriptions)",
+            "Emailing the entire internet",
+            "Changing brand colors",
           ],
           answer: 1,
-          explain: "localStorage unlocks mirror what webhooks will grant later.",
+          explain: "Webhooks are the trusted server event for paid enrollment.",
         },
         {
-          q: "After Academy enrollment in the full vision, Stripe webhooks will help…",
+          q: "Best Face Forward Payment Links open…",
           options: [
-            "Style the CSS",
-            "Notify admin and unlock access server-side without trusting the browser alone",
-            "Replace the welcome video",
-            "Design logos",
+            "A local demo only",
+            "Secure Stripe Checkout",
+            "The welcome video editor",
+            "Logo design software",
           ],
           answer: 1,
-          explain: "Webhooks are the trustworthy server event for paid enrollment.",
+          explain: "Live packages use Stripe Payment Links for secure checkout.",
         },
       ],
     },
@@ -204,7 +204,7 @@ BFF.academy = (function () {
       el.innerHTML = `
         <div class="demo-banner">
           <strong>Graduate unlocks</strong><br/>
-          Complete all three modules to highlight your standalone graduate products.
+          Complete all three modules to open graduate products. Full library: Coming soon.
         </div>`;
       return;
     }
@@ -214,17 +214,17 @@ BFF.academy = (function () {
         <h2>You finished the Academy path</h2>
         <p class="script">Well done.</p>
         <p style="color:var(--charcoal-soft);margin-bottom:0.5rem">
-          Standalone products unlocked with your enrollment are ready below.
+          Graduate materials unlock with enrollment and progress.
         </p>
         <div class="unlock-grid">
           <div class="unlock-item">
             <h4>Graduate Playbook</h4>
-            <p>Ops map, 90-day calendar, template vault — demo access on.</p>
-            <span class="badge badge--unlock" style="margin-top:0.5rem">Unlocked</span>
+            <p>Ops map, 90-day calendar, template vault.</p>
+            <span class="badge badge--unlock" style="margin-top:0.5rem">Included</span>
           </div>
           <div class="unlock-item">
-            <h4>Certificate (demo)</h4>
-            <p>A printable certificate can attach here when backend is live.</p>
+            <h4>Certificate</h4>
+            <p>Printable completion certificate.</p>
             <span class="badge badge--rose" style="margin-top:0.5rem">Coming soon</span>
           </div>
         </div>
@@ -348,16 +348,6 @@ BFF.academy = (function () {
       enrollBtn.addEventListener("click", (e) => {
         e.preventDefault();
         BFF.ui.startCheckout("academy_enroll");
-      });
-    }
-
-    const demoEnroll = document.getElementById("demo-enroll");
-    if (demoEnroll) {
-      demoEnroll.addEventListener("click", (e) => {
-        e.preventDefault();
-        BFF.storage.completePurchase("academy_enroll", { mode: "demo" });
-        BFF.ui.toast("Academy unlocked (demo)");
-        showViews();
       });
     }
 

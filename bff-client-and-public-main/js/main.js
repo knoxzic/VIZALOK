@@ -1,5 +1,6 @@
 /**
- * Shared UI: nav mobile, toast, checkout helpers, footer year
+ * Shared UI: nav mobile, toast, real Stripe checkout, footer year
+ * No simulated payments — production only.
  */
 window.BFF = window.BFF || {};
 
@@ -41,11 +42,20 @@ BFF.ui = (function () {
     });
   }
 
+  function contactPath(productId) {
+    const q = productId ? "?product=" + encodeURIComponent(productId) : "";
+    if (
+      location.pathname.includes("/pages/") ||
+      location.pathname.includes("/portals/") ||
+      location.pathname.includes("/expense-iq/")
+    ) {
+      return "../pages/contact.html" + q;
+    }
+    return "pages/contact.html" + q;
+  }
+
   /**
-   * Guided purchase entry — demo unlock or real Stripe link.
-   */
-  /**
-   * Build Stripe Payment Link URL with client_reference_id for webhook → profile mapping.
+   * Stripe Payment Link + client_reference_id for webhook → profile mapping.
    * Format: {userId}|{productKey}
    */
   async function stripeCheckoutUrl(product) {
@@ -53,27 +63,24 @@ BFF.ui = (function () {
     if (!url) return "";
     try {
       let userId = "";
+      let email = "";
       if (BFF.auth && BFF.auth.getUser) {
         const { user } = await BFF.auth.getUser();
         if (user && user.id) userId = user.id;
+        if (user && user.email) email = user.email;
       }
       const u = new URL(url);
       if (userId) {
         u.searchParams.set("client_reference_id", userId + "|" + product.id);
       }
-      // success return to site
-      if (!u.searchParams.has("prefilled_email") && BFF.auth && BFF.auth.getUser) {
-        const { user } = await BFF.auth.getUser();
-        if (user && user.email) u.searchParams.set("prefilled_email", user.email);
-      }
+      if (email) u.searchParams.set("prefilled_email", email);
       return u.toString();
     } catch {
       return url;
     }
   }
 
-  async function startCheckout(productId) {
-    // Allow paywall product keys from PAYWALL.products too
+  function resolveProduct(productId) {
     let product = BFF.config?.products?.[productId];
     if (!product && BFF.config?.PAYWALL?.products?.[productId]) {
       const p = BFF.config.PAYWALL.products[productId];
@@ -87,6 +94,11 @@ BFF.ui = (function () {
         inactive: false,
       };
     }
+    return product;
+  }
+
+  async function startCheckout(productId) {
+    const product = resolveProduct(productId);
     if (!product) {
       toast("Product not found");
       return;
@@ -97,115 +109,15 @@ BFF.ui = (function () {
       return;
     }
 
-    if (product.comingSoon && !product.stripeUrl) {
-      toast("Checkout link coming soon — request access via Contact.");
-      const contact =
-        location.pathname.includes("/pages/") || location.pathname.includes("/portals/")
-          ? "../pages/contact.html?product=" + encodeURIComponent(productId)
-          : "pages/contact.html?product=" + encodeURIComponent(productId);
-      window.location.href = contact;
+    if (!product.stripeUrl || product.comingSoon) {
+      toast("Coming soon — request access via Contact.");
+      window.location.href = contactPath(productId);
       return;
     }
 
-    if (BFF.storage && BFF.storage.productUnlocked && BFF.storage.productUnlocked(productId)) {
-      toast("Already unlocked — enjoy your access");
-      return;
-    }
-
-    // Real Stripe when URL present and DEMO_MODE is false
-    const demo = Boolean(BFF.config.DEMO_MODE) || !product.stripeUrl;
-    if (!demo && product.stripeUrl) {
-      const href = await stripeCheckoutUrl(product);
-      window.open(href, "_blank", "noopener");
-      toast("Opening secure Stripe checkout…");
-      return;
-    }
-    openCheckoutModal(product, demo);
-  }
-
-  function openCheckoutModal(product, demo) {
-    let overlay = document.getElementById("checkout-modal");
-    if (overlay) overlay.remove();
-
-    overlay = document.createElement("div");
-    overlay.id = "checkout-modal";
-    overlay.className = "modal-overlay";
-    overlay.innerHTML = `
-      <div class="modal" role="dialog" aria-labelledby="checkout-title">
-        <p class="eyebrow" style="margin-bottom:0.5rem">Secure checkout</p>
-        <h3 id="checkout-title">${escapeHtml(product.name)}</h3>
-        <p>
-          ${
-            product.priceLabel ||
-            (product.price ? "$" + product.price.toLocaleString() : "Included")
-          }
-          — ${escapeHtml(product.description || "")}
-        </p>
-        ${
-          demo
-            ? `<div class="demo-banner"><strong>Demo mode</strong><br/>Simulates payment success and unlocks access in this browser. Real Stripe opens when DEMO_MODE is off and a link is set.</div>`
-            : `<div class="demo-banner"><strong>Stripe Checkout</strong><br/>You will complete payment on Stripe’s secure page.</div>`
-        }
-        <div class="modal__actions">
-          <button type="button" class="btn btn--primary btn--block" data-action="confirm">
-            ${demo ? "Simulate successful payment" : "Continue to Stripe"}
-          </button>
-          ${
-            !demo && product.stripeUrl
-              ? ""
-              : demo && product.stripeUrl
-                ? `<button type="button" class="btn btn--outline btn--block" data-action="stripe">Open real Stripe link instead</button>`
-                : ""
-          }
-          <button type="button" class="btn btn--ghost btn--block" data-action="cancel">Cancel</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-    requestAnimationFrame(() => overlay.classList.add("is-open"));
-
-    const close = () => {
-      overlay.classList.remove("is-open");
-      setTimeout(() => overlay.remove(), 280);
-    };
-
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) close();
-    });
-    overlay.querySelector('[data-action="cancel"]').addEventListener("click", close);
-    overlay.querySelector('[data-action="confirm"]').addEventListener("click", () => {
-      if (demo) {
-        const result = BFF.storage.completePurchase(product.id, { mode: "demo" });
-        close();
-        if (result.ok) {
-          toast("Payment simulated — access unlocked");
-          const base = pathToSuccess();
-          window.location.href =
-            base +
-            "?product=" +
-            encodeURIComponent(product.id) +
-            "&demo=1";
-        }
-      } else if (product.stripeUrl) {
-        window.open(product.stripeUrl, "_blank", "noopener");
-        close();
-      }
-    });
-    const stripeBtn = overlay.querySelector('[data-action="stripe"]');
-    if (stripeBtn) {
-      stripeBtn.addEventListener("click", () => {
-        window.open(product.stripeUrl, "_blank", "noopener");
-        close();
-      });
-    }
-  }
-
-  function pathToSuccess() {
-    // portals/* pages need ../success.html
-    const inPortal = /\/portals\//i.test(location.pathname) || location.pathname.endsWith("\\portals\\") || location.href.includes("/portals/");
-    const inPages = /\/pages\//i.test(location.pathname) || location.href.includes("/pages/");
-    if (inPortal || inPages) return "../success.html";
-    return "success.html";
+    const href = await stripeCheckoutUrl(product);
+    window.open(href, "_blank", "noopener");
+    toast("Opening secure Stripe checkout…");
   }
 
   function escapeHtml(str) {
@@ -216,35 +128,51 @@ BFF.ui = (function () {
       .replace(/"/g, "&quot;");
   }
 
-  function refreshUnlockUI() {
+  async function refreshUnlockUI() {
+    // Prefer Supabase entitlements when signed in
+    let entitledKeys = new Set();
+    try {
+      if (BFF.auth && BFF.access) {
+        const { user } = await BFF.auth.getUser();
+        if (user) {
+          const rows = await BFF.access.listSubscriptions(user.id);
+          rows.forEach((r) => {
+            if (BFF.access.isEntitlementActive(r)) entitledKeys.add(r.product_key);
+          });
+        }
+      }
+    } catch (_) {}
+
     document.querySelectorAll("[data-product]").forEach((el) => {
       const id = el.getAttribute("data-product");
-      if (BFF.storage.productUnlocked(id)) {
+      const unlocked =
+        entitledKeys.has(id) ||
+        entitledKeys.has("full_suite") ||
+        (BFF.storage && BFF.storage.productUnlocked && BFF.storage.productUnlocked(id));
+      if (unlocked) {
         el.classList.add("is-unlocked");
         const btn = el.querySelector("[data-buy]");
         if (btn) {
-          btn.textContent = "Unlocked — Open";
+          btn.textContent = "Purchased";
           btn.classList.remove("btn--primary", "btn--gold");
           btn.classList.add("btn--outline");
+          btn.disabled = true;
         }
         const badge = el.querySelector("[data-unlock-badge]");
         if (badge) {
           badge.hidden = false;
-          badge.textContent = "Unlocked";
+          badge.textContent = "Purchased";
         }
       }
     });
 
     document.querySelectorAll("[data-requires-unlock]").forEach((el) => {
       const key = el.getAttribute("data-requires-unlock");
-      const ok = BFF.storage.isUnlocked(key);
+      const ok =
+        entitledKeys.has(key) ||
+        (BFF.storage && BFF.storage.isUnlocked && BFF.storage.isUnlocked(key));
       el.hidden = !ok;
       el.classList.toggle("is-locked", !ok);
-    });
-
-    document.querySelectorAll("[data-show-if-locked]").forEach((el) => {
-      const key = el.getAttribute("data-show-if-locked");
-      el.hidden = BFF.storage.isUnlocked(key);
     });
   }
 
@@ -261,12 +189,6 @@ BFF.ui = (function () {
         startCheckout(buy.getAttribute("data-buy"));
       }
     });
-
-    // Soft device-lease refresh when online (non-blocking for marketing pages)
-    if (BFF.deviceLease && BFF.config && BFF.config.DEVICE_LEASE && BFF.config.DEVICE_LEASE.enabled) {
-      BFF.deviceLease.evaluate().catch(function () {});
-      BFF.deviceLease.scheduleRefresh();
-    }
   }
 
   if (document.readyState === "loading") {
@@ -275,5 +197,5 @@ BFF.ui = (function () {
     init();
   }
 
-  return { toast, startCheckout, stripeCheckoutUrl, refreshUnlockUI, escapeHtml };
+  return { toast, startCheckout, stripeCheckoutUrl, refreshUnlockUI, escapeHtml, contactPath };
 })();

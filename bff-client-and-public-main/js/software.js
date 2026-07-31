@@ -32,13 +32,13 @@ BFF.software = (function () {
             <div class="product-card__price">${price}</div>
           </div>
           <div class="product-card__body">
-            <span class="badge badge--unlock" data-unlock-badge ${unlocked ? "" : "hidden"}>Unlocked</span>
+            <span class="badge badge--unlock" data-unlock-badge ${unlocked ? "" : "hidden"}>Purchased</span>
             <p>${BFF.ui.escapeHtml(p.description)}</p>
             <ul class="product-card__list">
               ${(p.benefits || []).map((b) => `<li>${BFF.ui.escapeHtml(b)}</li>`).join("")}
             </ul>
-            <button type="button" class="btn ${unlocked ? "btn--outline" : p.popular ? "btn--gold" : "btn--primary"} btn--block" data-buy="${p.id}">
-              ${unlocked ? "Unlocked — Open" : "Purchase easily"}
+            <button type="button" class="btn ${unlocked ? "btn--outline" : p.popular ? "btn--gold" : "btn--primary"} btn--block" data-buy="${p.id}" ${unlocked ? "disabled" : ""}>
+              ${unlocked ? "Purchased" : p.stripeUrl ? "Buy with Stripe" : "Coming soon"}
             </button>
           </div>
         </article>
