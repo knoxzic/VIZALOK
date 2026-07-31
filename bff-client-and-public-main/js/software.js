@@ -1,5 +1,5 @@
 /**
- * Software portal product rendering
+ * Software portal — live Stripe products first, then coming soon.
  */
 window.BFF = window.BFF || {};
 
@@ -12,21 +12,20 @@ BFF.software = (function () {
     "first_two_grants",
   ];
 
-  function render() {
-    const root = document.getElementById("product-grid");
-    if (!root || !BFF.config) return;
+  function isLive(p) {
+    return Boolean(p && p.stripeUrl && !p.inactive && !p.comingSoon);
+  }
 
-    root.innerHTML = SOFTWARE_IDS.map((id) => {
-      const p = BFF.config.products[id];
-      if (!p) return "";
-      const unlocked = BFF.storage.productUnlocked(id);
-      const price =
-        p.priceLabel || (p.price != null ? "$" + p.price.toLocaleString() : "");
-      return `
+  function cardHtml(p, unlocked) {
+    const price =
+      p.priceLabel || (p.price != null ? "$" + p.price.toLocaleString() : "");
+    const live = isLive(p);
+    return `
         <article class="product-card ${unlocked ? "is-unlocked" : ""}" data-product="${p.id}">
           <div class="product-card__top">
             <div>
               ${p.popular ? '<span class="badge badge--rose">Most popular</span>' : ""}
+              ${!live ? '<span class="badge" style="margin-left:0.35rem">Coming soon</span>' : ""}
               <h3 class="product-card__title" style="margin-top:0.5rem">${BFF.ui.escapeHtml(p.name)}</h3>
             </div>
             <div class="product-card__price">${price}</div>
@@ -37,13 +36,28 @@ BFF.software = (function () {
             <ul class="product-card__list">
               ${(p.benefits || []).map((b) => `<li>${BFF.ui.escapeHtml(b)}</li>`).join("")}
             </ul>
-            <button type="button" class="btn ${unlocked ? "btn--outline" : p.popular ? "btn--gold" : "btn--primary"} btn--block" data-buy="${p.id}" ${unlocked ? "disabled" : ""}>
-              ${unlocked ? "Purchased" : p.stripeUrl ? "Buy with Stripe" : "Coming soon"}
+            <button type="button" class="btn ${unlocked ? "btn--outline" : p.popular && live ? "btn--gold" : live ? "btn--primary" : "btn--outline"} btn--block" data-buy="${p.id}" ${unlocked ? "disabled" : ""}>
+              ${unlocked ? "Purchased" : live ? "Buy with Stripe" : "Coming soon"}
             </button>
           </div>
         </article>
       `;
-    }).join("");
+  }
+
+  function render() {
+    const root = document.getElementById("product-grid");
+    if (!root || !BFF.config) return;
+
+    const products = SOFTWARE_IDS.map((id) => BFF.config.products[id]).filter(Boolean);
+    // Available first, coming soon last
+    products.sort((a, b) => Number(isLive(b)) - Number(isLive(a)));
+
+    root.innerHTML = products
+      .map((p) => {
+        const unlocked = BFF.storage.productUnlocked(p.id);
+        return cardHtml(p, unlocked);
+      })
+      .join("");
   }
 
   function init() {

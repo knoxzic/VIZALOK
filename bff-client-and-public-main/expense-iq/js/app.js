@@ -41,16 +41,25 @@
   }
 
   function buildNav(active) {
-    nav.innerHTML = EIQ.config.nav
-      .map((item) => {
-        const isActive = item.id === active ? " is-active" : "";
-        return `<a class="nav-link${isActive}" href="${item.href}">
+    const live = EIQ.config.nav.filter((i) => i.live);
+    const soon = EIQ.config.nav.filter((i) => !i.live);
+    const link = (item) => {
+      const isActive = item.id === active ? " is-active" : "";
+      const badge = item.live
+        ? ""
+        : `<span class="nav-phase" title="Coming soon">Soon</span>`;
+      return `<a class="nav-link${isActive}" href="${item.href}">
           <span class="nav-link__icon">${item.icon}</span>
           ${escapeHtml(item.label)}
-          <span class="nav-phase">P${item.phase}</span>
+          ${badge}
         </a>`;
-      })
-      .join("");
+    };
+    nav.innerHTML =
+      live.map(link).join("") +
+      (soon.length
+        ? `<div class="nav-section-label" style="margin-top:12px">Coming soon</div>` +
+          soon.map(link).join("")
+        : "");
   }
 
   async function refreshChrome() {

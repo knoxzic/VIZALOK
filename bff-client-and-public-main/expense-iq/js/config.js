@@ -72,7 +72,11 @@ EIQ.config = {
    * phase: which roadmap phase unlocks real work (shell shows all).
    */
   nav: [
-    { id: "dashboard", label: "Dashboard", icon: "◆", phase: 2, href: "#/dashboard" },
+    // Available now (top)
+    { id: "dashboard", label: "Dashboard", icon: "◆", phase: 1, href: "#/dashboard", live: true },
+    { id: "org", label: "Organization", icon: "⌂", phase: 1, href: "#/org", live: true },
+    { id: "admin", label: "Admin", icon: "⚙", phase: 1, href: "#/admin", live: true },
+    // Coming soon (bottom of nav)
     { id: "capture", label: "Capture", icon: "◎", phase: 2, href: "#/capture" },
     { id: "transactions", label: "Transactions", icon: "☰", phase: 3, href: "#/transactions" },
     { id: "coa", label: "Chart of Accounts", icon: "⊞", phase: 3, href: "#/coa" },
@@ -84,8 +88,6 @@ EIQ.config = {
     { id: "tax", label: "Tax Center", icon: "▣", phase: 5, href: "#/tax" },
     { id: "reports", label: "Reports & Exports", icon: "▥", phase: 5, href: "#/reports" },
     { id: "gigi", label: "Gigi Assistant", icon: "✦", phase: 5, href: "#/gigi" },
-    { id: "admin", label: "Admin", icon: "⚙", phase: 1, href: "#/admin" },
-    { id: "org", label: "Organization", icon: "⌂", phase: 1, href: "#/org" },
   ],
 
   /**
