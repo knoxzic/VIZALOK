@@ -44,8 +44,49 @@ BFF.ui = (function () {
   /**
    * Guided purchase entry — demo unlock or real Stripe link.
    */
-  function startCheckout(productId) {
-    const product = BFF.config?.products?.[productId];
+  /**
+   * Build Stripe Payment Link URL with client_reference_id for webhook → profile mapping.
+   * Format: {userId}|{productKey}
+   */
+  async function stripeCheckoutUrl(product) {
+    let url = product.stripeUrl;
+    if (!url) return "";
+    try {
+      let userId = "";
+      if (BFF.auth && BFF.auth.getUser) {
+        const { user } = await BFF.auth.getUser();
+        if (user && user.id) userId = user.id;
+      }
+      const u = new URL(url);
+      if (userId) {
+        u.searchParams.set("client_reference_id", userId + "|" + product.id);
+      }
+      // success return to site
+      if (!u.searchParams.has("prefilled_email") && BFF.auth && BFF.auth.getUser) {
+        const { user } = await BFF.auth.getUser();
+        if (user && user.email) u.searchParams.set("prefilled_email", user.email);
+      }
+      return u.toString();
+    } catch {
+      return url;
+    }
+  }
+
+  async function startCheckout(productId) {
+    // Allow paywall product keys from PAYWALL.products too
+    let product = BFF.config?.products?.[productId];
+    if (!product && BFF.config?.PAYWALL?.products?.[productId]) {
+      const p = BFF.config.PAYWALL.products[productId];
+      product = {
+        id: productId,
+        name: p.name,
+        stripeUrl: p.stripeUrl,
+        priceLabel: p.priceLabel,
+        description: p.name,
+        comingSoon: p.comingSoon,
+        inactive: false,
+      };
+    }
     if (!product) {
       toast("Product not found");
       return;
@@ -53,6 +94,16 @@ BFF.ui = (function () {
 
     if (product.inactive) {
       toast("This package is temporarily unavailable. Contact us to purchase.");
+      return;
+    }
+
+    if (product.comingSoon && !product.stripeUrl) {
+      toast("Checkout link coming soon — request access via Contact.");
+      const contact =
+        location.pathname.includes("/pages/") || location.pathname.includes("/portals/")
+          ? "../pages/contact.html?product=" + encodeURIComponent(productId)
+          : "pages/contact.html?product=" + encodeURIComponent(productId);
+      window.location.href = contact;
       return;
     }
 
@@ -64,7 +115,8 @@ BFF.ui = (function () {
     // Real Stripe when URL present and DEMO_MODE is false
     const demo = Boolean(BFF.config.DEMO_MODE) || !product.stripeUrl;
     if (!demo && product.stripeUrl) {
-      window.open(product.stripeUrl, "_blank", "noopener");
+      const href = await stripeCheckoutUrl(product);
+      window.open(href, "_blank", "noopener");
       toast("Opening secure Stripe checkout…");
       return;
     }
@@ -223,5 +275,5 @@ BFF.ui = (function () {
     init();
   }
 
-  return { toast, startCheckout, refreshUnlockUI, escapeHtml };
+  return { toast, startCheckout, stripeCheckoutUrl, refreshUnlockUI, escapeHtml };
 })();

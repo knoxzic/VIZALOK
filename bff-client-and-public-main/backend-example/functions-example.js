@@ -65,12 +65,26 @@ Ask clarifying questions before recommending a specific service. Be warm, organi
 });
 
 // ---------------------------------------------------------------
-// 2. STRIPE WEBHOOK — Stripe calls THIS after a checkout completes.
-//    A static site can never receive webhooks directly; it needs a server URL like this.
+// 2. STRIPE WEBHOOK → Supabase subscriptions
+//    Prefer: supabase/functions/stripe-webhook (Edge Function)
+//    Or: backend-example/stripe-webhook-supabase.js
+//    This Firebase stub forwards to the same handleStripeEvent logic.
+//
+//    firebase functions:config:set \
+//      stripe.secret_key="sk_..." \
+//      stripe.webhook_secret="whsec_..." \
+//      supabase.url="https://xxx.supabase.co" \
+//      supabase.service_role="eyJ..."
 // ---------------------------------------------------------------
 const stripe = require("stripe")(functions.config().stripe.secret_key);
 
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
+  // Wire env for shared handler
+  process.env.STRIPE_SECRET_KEY = functions.config().stripe.secret_key;
+  process.env.STRIPE_WEBHOOK_SECRET = functions.config().stripe.webhook_secret;
+  process.env.SUPABASE_URL = functions.config().supabase.url;
+  process.env.SUPABASE_SERVICE_ROLE_KEY = functions.config().supabase.service_role;
+
   const sig = req.headers["stripe-signature"];
   let event;
 
@@ -85,23 +99,19 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object;
-      // Mark the matching client record as paid, e.g.:
-      await admin.firestore().collection("orders").add({
-        stripeSessionId: session.id,
-        customerEmail: session.customer_details?.email || null,
-        amountTotal: session.amount_total,
-        status: "paid",
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-      break;
-    }
-    default:
-      // Ignore other event types for now.
-      break;
+  try {
+    // Dynamic import of shared handler (copy stripe-webhook-supabase into functions bundle)
+    const { handleStripeEvent } = require("./stripe-webhook-supabase");
+    const result = await handleStripeEvent(event);
+    // Optional mirror to Firestore for admin dashboards
+    await admin.firestore().collection("stripe_events").doc(event.id).set({
+      type: event.type,
+      result,
+      at: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    res.json({ received: true, ...result });
+  } catch (err) {
+    console.error("Webhook handler error:", err);
+    res.status(500).json({ error: err.message || "handler failed" });
   }
-
-  res.json({ received: true });
 });

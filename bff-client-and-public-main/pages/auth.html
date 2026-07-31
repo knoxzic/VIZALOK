@@ -292,20 +292,32 @@
           (BFF.access && BFF.access.PRODUCT_LABELS && BFF.access.PRODUCT_LABELS[productKey]) ||
           productKey ||
           "this product";
-        document.getElementById("paywall-copy").textContent =
-          "Your email is confirmed, but you need an active subscription for " +
-          label +
-          ". Purchase unlocks your private workspace; staff roles bypass via profiles.";
         const cfg =
           (BFF.config && BFF.config.PAYWALL && BFF.config.PAYWALL.products && BFF.config.PAYWALL.products[productKey]) ||
           null;
+        const comingSoon = cfg && cfg.comingSoon && !cfg.stripeUrl;
+        document.getElementById("paywall-copy").textContent = comingSoon
+          ? "Your email is confirmed. " +
+            label +
+            " subscription checkout is being finalized — request access below. Staff/principal profiles bypass for internal use."
+          : "Your email is confirmed, but you need an active subscription for " +
+            label +
+            ". After Stripe checkout, the webhook unlocks access in Supabase (subscriptions).";
         const cta = document.getElementById("paywall-cta");
         if (cfg && cfg.stripeUrl) {
-          cta.href = cfg.stripeUrl;
+          cta.removeAttribute("href");
           cta.textContent = "Subscribe — " + (cfg.priceLabel || label);
+          cta.onclick = function (e) {
+            e.preventDefault();
+            if (BFF.ui && BFF.ui.startCheckout) BFF.ui.startCheckout(productKey);
+            else window.open(cfg.stripeUrl, "_blank", "noopener");
+          };
         } else {
+          cta.onclick = null;
           cta.href = "contact.html?product=" + encodeURIComponent(productKey || "subscription");
-          cta.textContent = "Request access / subscribe";
+          cta.textContent = comingSoon
+            ? "Request " + label + " access"
+            : "Request access / subscribe";
         }
         document.getElementById("paywall-home").onclick = () => {
           window.location.href = "../landing.html";
@@ -361,8 +373,7 @@
         if (reason === "paywall" && product) {
           const entitled = await BFF.access.hasProduct(user.id, product);
           const profile = await BFF.access.getProfile(user.id);
-          const staff =
-            profile && BFF.access.isStaffRole(profile.role);
+          const staff = profile && BFF.access.isStaffRole(profile.role);
           const free =
             BFF.config && BFF.config.PAYWALL && BFF.config.PAYWALL.freePreview === true;
           if (!entitled && !staff && !free) {
@@ -386,8 +397,12 @@
             safeNext(nextUrl).replace(/"/g, "") +
             '">Continue where you left off →</a>' +
             destList.innerHTML;
-          // Auto-continue when next is set and access is ok
-          if (reason !== "paywall" || (BFF.config.PAYWALL && BFF.config.PAYWALL.freePreview)) {
+          // Auto-continue when next is set and not blocked by paywall
+          if (reason !== "paywall") {
+            setTimeout(function () {
+              continueDestination();
+            }, 400);
+          } else if (BFF.config.PAYWALL && BFF.config.PAYWALL.freePreview) {
             setTimeout(function () {
               continueDestination();
             }, 400);

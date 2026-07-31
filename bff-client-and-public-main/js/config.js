@@ -21,33 +21,42 @@ BFF.config = {
   DEMO_MODE: false,
 
   /**
-   * Device lease (desktop / offline entitlement)
-   * Online: RPC issue_device_lease() → store signed payload
-   * Offline: allow only if NOW() < lease.expires_at
-   * Refresh: every 12 hours while online
+   * Device lease — paused until offline standalone ships.
+   * Keep module loaded but disabled so web product access is subscription-only.
    */
   DEVICE_LEASE: {
-    enabled: true,
+    enabled: false,
     refreshHours: 12,
     storageKey: "bff_device_lease_v1",
     lockMessage: "Access locked. Connect to the internet to renew your license lease.",
   },
 
+  /**
+   * Paywall — freePreview OFF: confirmed email + active subscriptions row required.
+   * Stripe webhooks write public.subscriptions (see backend-example + supabase/functions).
+   *
+   * Expense IQ: paste Payment Link URL into PAYWALL.products.expense_iq.stripeUrl
+   * and stripeId (plink_…) when ready; also add mapping in stripe webhook maps.
+   */
   PAYWALL: {
-    // Set false when Stripe webhooks write subscriptions rows
-    freePreview: true,
+    freePreview: false,
     products: {
       expense_iq: {
         key: "expense_iq",
         name: "Expense IQ",
+        // Paste live Stripe Payment Link when ready, e.g. https://buy.stripe.com/...
         stripeUrl: "",
-        priceLabel: "Subscription",
+        stripeId: "",
+        priceLabel: "Subscribe",
+        comingSoon: true,
       },
       full_suite: {
         key: "full_suite",
         name: "BFF Full Suite",
         stripeUrl: "",
+        stripeId: "",
         priceLabel: "Enterprise",
+        comingSoon: true,
       },
     },
   },
@@ -80,9 +89,8 @@ BFF.config = {
         "Financial Readiness Score",
         "Funding Readiness Report",
       ],
-      // plink inactive on Stripe dashboard — keep URL for re-enable
       stripeUrl: "https://buy.stripe.com/7sY9AUbchb40bIUflV1sQ0f",
-      inactive: true,
+      inactive: false,
       unlockKey: "bff_unlock_grant_readiness_assessment",
       portal: "foundation",
       stripeId: "plink_1TdjLgLavWJ4R5kOtKS6mqB2",
@@ -301,10 +309,10 @@ BFF.config = {
       id: "funding_readiness",
       name: "Funding Readiness Assessment",
       price: 497,
-      description: "Readiness review for funders (legacy product id).",
+      description: "Readiness review for funders (legacy product id — same link as Grant Ready Assessment).",
       benefits: ["Scorecard report", "Gap analysis", "Priority action plan"],
       stripeUrl: "https://buy.stripe.com/7sY9AUbchb40bIUflV1sQ0f",
-      inactive: true,
+      inactive: false,
       unlockKey: "bff_unlock_funding_readiness",
       portal: "software",
     },
