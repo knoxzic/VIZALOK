@@ -54,17 +54,13 @@
       const productId = params.get("product");
       // Stripe may return session_id when success_url is configured on the Payment Link
 
-      if (productId) {
-        BFF.storage.completePurchase(productId, { mode: "stripe-return" });
-      }
-
       const product = productId && BFF.config.products[productId];
       if (product) {
         document.getElementById("success-title").textContent = product.name;
         document.getElementById("success-body").textContent =
           "Thank you for purchasing “" +
           product.name +
-          "”. Stripe has confirmed checkout; your access is linked in Supabase shortly. Sign in with the same email you used at checkout.";
+          "”. After Stripe confirms payment, our webhook records your entitlement in Supabase. Sign in with the same email — products only show as Purchased when you are signed in and the subscription is active.";
 
         const cta = document.getElementById("success-cta");
         if (product.portal === "academy") {

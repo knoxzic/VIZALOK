@@ -128,49 +128,86 @@ BFF.ui = (function () {
       .replace(/"/g, "&quot;");
   }
 
-  async function refreshUnlockUI() {
-    // Prefer Supabase entitlements when signed in
-    let entitledKeys = new Set();
+  /**
+   * "Purchased" only if signed in + confirmed email + active Supabase subscription.
+   * Never trust localStorage alone for purchase UI.
+   */
+  async function getVerifiedEntitlements() {
+    const entitledKeys = new Set();
     try {
-      if (BFF.auth && BFF.access) {
-        const { user } = await BFF.auth.getUser();
-        if (user) {
-          const rows = await BFF.access.listSubscriptions(user.id);
-          rows.forEach((r) => {
-            if (BFF.access.isEntitlementActive(r)) entitledKeys.add(r.product_key);
-          });
-        }
+      if (!BFF.auth || !BFF.access) return { signedIn: false, keys: entitledKeys };
+      const { user } = await BFF.auth.getUser();
+      if (!user) return { signedIn: false, keys: entitledKeys };
+      if (BFF.auth.isEmailConfirmed && !BFF.auth.isEmailConfirmed(user)) {
+        return { signedIn: false, keys: entitledKeys };
       }
-    } catch (_) {}
+      const rows = await BFF.access.listSubscriptions(user.id);
+      rows.forEach((r) => {
+        if (BFF.access.isEntitlementActive(r)) entitledKeys.add(r.product_key);
+      });
+      return { signedIn: true, keys: entitledKeys, user };
+    } catch (_) {
+      return { signedIn: false, keys: entitledKeys };
+    }
+  }
+
+  async function refreshUnlockUI() {
+    const { signedIn, keys: entitledKeys } = await getVerifiedEntitlements();
 
     document.querySelectorAll("[data-product]").forEach((el) => {
       const id = el.getAttribute("data-product");
+      const product = resolveProduct(id);
+      const live = product && product.stripeUrl && !product.inactive && !product.comingSoon;
       const unlocked =
-        entitledKeys.has(id) ||
-        entitledKeys.has("full_suite") ||
-        (BFF.storage && BFF.storage.productUnlocked && BFF.storage.productUnlocked(id));
-      if (unlocked) {
-        el.classList.add("is-unlocked");
-        const btn = el.querySelector("[data-buy]");
-        if (btn) {
+        signedIn && (entitledKeys.has(id) || entitledKeys.has("full_suite"));
+
+      el.classList.toggle("is-unlocked", unlocked);
+
+      const btn = el.querySelector("[data-buy]");
+      if (btn) {
+        btn.disabled = unlocked;
+        if (unlocked) {
           btn.textContent = "Purchased";
           btn.classList.remove("btn--primary", "btn--gold");
           btn.classList.add("btn--outline");
-          btn.disabled = true;
+        } else {
+          // Restore buy CTA (do not leave stale Purchased from prior render)
+          if (product && product.comingSoon) {
+            btn.textContent = "Coming soon";
+            btn.classList.remove("btn--primary", "btn--gold");
+            btn.classList.add("btn--outline");
+          } else if (live) {
+            btn.textContent = "Buy with Stripe";
+            btn.classList.remove("btn--outline");
+            if (product && product.popular) {
+              btn.classList.add("btn--gold");
+              btn.classList.remove("btn--primary");
+            } else {
+              btn.classList.add("btn--primary");
+              btn.classList.remove("btn--gold");
+            }
+          } else if (!btn.textContent || /purchased/i.test(btn.textContent)) {
+            // Quote / non-stripe buttons keep their own label unless wrongly set
+            if (/purchased/i.test(btn.textContent)) {
+              btn.textContent = live ? "Buy with Stripe" : "Request quote";
+              btn.classList.remove("btn--outline");
+              btn.classList.add("btn--primary");
+            }
+          }
+          btn.disabled = false;
         }
-        const badge = el.querySelector("[data-unlock-badge]");
-        if (badge) {
-          badge.hidden = false;
-          badge.textContent = "Purchased";
-        }
+      }
+
+      const badge = el.querySelector("[data-unlock-badge]");
+      if (badge) {
+        badge.hidden = !unlocked;
+        badge.textContent = unlocked ? "Purchased" : "";
       }
     });
 
     document.querySelectorAll("[data-requires-unlock]").forEach((el) => {
       const key = el.getAttribute("data-requires-unlock");
-      const ok =
-        entitledKeys.has(key) ||
-        (BFF.storage && BFF.storage.isUnlocked && BFF.storage.isUnlocked(key));
+      const ok = signedIn && entitledKeys.has(key);
       el.hidden = !ok;
       el.classList.toggle("is-locked", !ok);
     });
@@ -197,5 +234,13 @@ BFF.ui = (function () {
     init();
   }
 
-  return { toast, startCheckout, stripeCheckoutUrl, refreshUnlockUI, escapeHtml, contactPath };
+  return {
+    toast,
+    startCheckout,
+    stripeCheckoutUrl,
+    refreshUnlockUI,
+    getVerifiedEntitlements,
+    escapeHtml,
+    contactPath,
+  };
 })();

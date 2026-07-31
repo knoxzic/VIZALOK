@@ -1,5 +1,6 @@
 /**
  * Software portal — live Stripe products first, then coming soon.
+ * Never marks Purchased from localStorage; refreshUnlockUI verifies via Supabase.
  */
 window.BFF = window.BFF || {};
 
@@ -16,12 +17,12 @@ BFF.software = (function () {
     return Boolean(p && p.stripeUrl && !p.inactive && !p.comingSoon);
   }
 
-  function cardHtml(p, unlocked) {
+  function cardHtml(p) {
     const price =
       p.priceLabel || (p.price != null ? "$" + p.price.toLocaleString() : "");
     const live = isLive(p);
     return `
-        <article class="product-card ${unlocked ? "is-unlocked" : ""}" data-product="${p.id}">
+        <article class="product-card" data-product="${p.id}">
           <div class="product-card__top">
             <div>
               ${p.popular ? '<span class="badge badge--rose">Most popular</span>' : ""}
@@ -31,13 +32,13 @@ BFF.software = (function () {
             <div class="product-card__price">${price}</div>
           </div>
           <div class="product-card__body">
-            <span class="badge badge--unlock" data-unlock-badge ${unlocked ? "" : "hidden"}>Purchased</span>
+            <span class="badge badge--unlock" data-unlock-badge hidden>Purchased</span>
             <p>${BFF.ui.escapeHtml(p.description)}</p>
             <ul class="product-card__list">
               ${(p.benefits || []).map((b) => `<li>${BFF.ui.escapeHtml(b)}</li>`).join("")}
             </ul>
-            <button type="button" class="btn ${unlocked ? "btn--outline" : p.popular && live ? "btn--gold" : live ? "btn--primary" : "btn--outline"} btn--block" data-buy="${p.id}" ${unlocked ? "disabled" : ""}>
-              ${unlocked ? "Purchased" : live ? "Buy with Stripe" : "Coming soon"}
+            <button type="button" class="btn ${p.popular && live ? "btn--gold" : live ? "btn--primary" : "btn--outline"} btn--block" data-buy="${p.id}">
+              ${live ? "Buy with Stripe" : "Coming soon"}
             </button>
           </div>
         </article>
@@ -49,20 +50,15 @@ BFF.software = (function () {
     if (!root || !BFF.config) return;
 
     const products = SOFTWARE_IDS.map((id) => BFF.config.products[id]).filter(Boolean);
-    // Available first, coming soon last
     products.sort((a, b) => Number(isLive(b)) - Number(isLive(a)));
 
-    root.innerHTML = products
-      .map((p) => {
-        const unlocked = BFF.storage.productUnlocked(p.id);
-        return cardHtml(p, unlocked);
-      })
-      .join("");
+    // Always render as not purchased; refreshUnlockUI applies real entitlements after sign-in check
+    root.innerHTML = products.map((p) => cardHtml(p)).join("");
   }
 
   function init() {
     render();
-    BFF.ui?.refreshUnlockUI();
+    if (BFF.ui && BFF.ui.refreshUnlockUI) BFF.ui.refreshUnlockUI();
   }
 
   if (document.readyState === "loading") {

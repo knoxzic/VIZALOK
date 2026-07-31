@@ -132,7 +132,8 @@ BFF.academy = (function () {
   ];
 
   function isEnrolled() {
-    return BFF.storage.isUnlocked(UNLOCK);
+    // Only enrolled if verified subscription (set async via showViews)
+    return !!BFF.academy._enrolledVerified;
   }
 
   function getProgress() {
@@ -353,9 +354,23 @@ BFF.academy = (function () {
 
     document.getElementById("quiz-exit")?.addEventListener("click", exitQuiz);
 
-    // If redirected from success.html with academy product
-    showViews();
-    window.addEventListener("bff:unlock", showViews);
+    // Verify enrollment via Supabase (signed-in + active entitlement)
+    async function verifyEnrollment() {
+      BFF.academy._enrolledVerified = false;
+      try {
+        if (BFF.ui && BFF.ui.getVerifiedEntitlements) {
+          const { signedIn, keys } = await BFF.ui.getVerifiedEntitlements();
+          BFF.academy._enrolledVerified =
+            signedIn &&
+            (keys.has("academy_enroll") ||
+              keys.has("academy") ||
+              keys.has("full_suite"));
+        }
+      } catch (_) {}
+      showViews();
+    }
+    verifyEnrollment();
+    window.addEventListener("bff:unlock", verifyEnrollment);
   }
 
   if (document.readyState === "loading") {

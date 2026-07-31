@@ -33,44 +33,20 @@ BFF.storage = (function () {
     }
   }
 
-  function productUnlocked(productId) {
-    const p = BFF.config?.products?.[productId];
-    if (!p || !p.unlockKey) return false;
-    return isUnlocked(p.unlockKey);
+  /**
+   * Local cache only — NOT proof of purchase for UI.
+   * Purchase UI must use BFF.ui.getVerifiedEntitlements() (signed-in + Supabase).
+   */
+  function productUnlocked() {
+    return false;
   }
 
   /**
-   * Cache unlock after verified Stripe return (success.html).
-   * Server of record remains Supabase subscriptions via webhook.
+   * Do not mark products purchased from the browser alone.
+   * Webhook → subscriptions is the source of truth.
    */
-  function completePurchase(productId, opts) {
-    const product = BFF.config?.products?.[productId];
-    if (!product || !product.unlockKey) return { ok: false };
-    const mode = (opts && opts.mode) || "stripe-return";
-    if (mode === "demo") {
-      return { ok: false, error: "Demo purchases are disabled" };
-    }
-    try {
-      localStorage.setItem(product.unlockKey, "1");
-      localStorage.setItem(
-        product.unlockKey + "_meta",
-        JSON.stringify({
-          productId,
-          mode,
-          at: new Date().toISOString(),
-        })
-      );
-      if (productId === "academy_enroll") {
-        const playbook = BFF.config.products.academy_playbook;
-        if (playbook && playbook.unlockKey) {
-          localStorage.setItem(playbook.unlockKey, "1");
-        }
-      }
-      window.dispatchEvent(new CustomEvent("bff:unlock", { detail: { productId } }));
-      return { ok: true };
-    } catch (e) {
-      return { ok: false, error: e.message };
-    }
+  function completePurchase() {
+    return { ok: false, error: "Purchase verification is server-side only" };
   }
 
   return {
