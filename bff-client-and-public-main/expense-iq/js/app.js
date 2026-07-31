@@ -1,6 +1,6 @@
 /**
- * Expense IQ™ — app shell (Phase 1)
- * Hash routes; every view reads session.org_id.
+ * Expense IQ™ — app shell (Phase 1+)
+ * Hash routes; every view reads session.org_id. Async-safe for Supabase.
  */
 (function () {
   const main = document.getElementById("main");
@@ -20,7 +20,7 @@
       window.location.href = "index.html";
       return null;
     }
-    if (s.mfa_required && !s.mfa_verified) {
+    if (s.mfa_required && !s.mfa_verified && EIQ.config.REQUIRE_DEMO_MFA) {
       window.location.href = "index.html";
       return null;
     }
@@ -53,11 +53,11 @@
       .join("");
   }
 
-  function refreshChrome() {
+  async function refreshChrome() {
     const s = session();
     if (!s) return;
     roleBadge.textContent = s.role || "—";
-    const memberships = EIQ.db.membershipsForUser(s.user_id);
+    const memberships = await EIQ.db.membershipsForUser(s.user_id);
     orgSwitch.innerHTML = memberships
       .map(
         (m) =>
@@ -83,9 +83,12 @@
       </div>`;
   }
 
-  function viewDashboard(s) {
-    const org = EIQ.db.getOrg(s.org_id);
-    const stats = EIQ.db.stats(s.org_id);
+  async function viewDashboard(s) {
+    const org = await EIQ.db.getOrg(s.org_id);
+    const stats = await EIQ.db.stats(s.org_id);
+    if (!org) {
+      return `<div class="alert alert--error">Organization not found. <a href="index.html">Sign in again</a>.</div>`;
+    }
     return `
       <div class="page-head">
         <h1>Executive Dashboard</h1>
@@ -145,6 +148,9 @@
           <tr><td>Your role</td><td><span class="badge badge--role">${escapeHtml(
             s.role
           )}</span></td></tr>
+          <tr><td>Database</td><td><span class="badge">${escapeHtml(
+            EIQ.config.STORAGE_MODE
+          )}</span> · per-user org data via Supabase RLS</td></tr>
         </table>
       </div>
 
@@ -154,11 +160,11 @@
     `;
   }
 
-  function viewOrg(s) {
-    if (!EIQ.permissions.can(s, "admin", "full") && s.role !== "owner" && s.role !== "bookkeeper") {
-      // Bookkeeper can view; owner full — allow all members to view profile basics
+  async function viewOrg(s) {
+    const org = await EIQ.db.getOrg(s.org_id);
+    if (!org) {
+      return `<div class="alert alert--error">Organization not found.</div>`;
     }
-    const org = EIQ.db.getOrg(s.org_id);
     const canEdit = s.role === "owner";
     return `
       <div class="page-head">
@@ -220,14 +226,15 @@
     `;
   }
 
-  function viewAdmin(s) {
+  async function viewAdmin(s) {
     if (!EIQ.permissions.can(s, "admin", "full")) {
       return `
         <div class="page-head"><h1>Admin</h1></div>
         <div class="alert alert--error">Admin / Security is Owner-only (permission matrix §9.2).</div>`;
     }
-    const members = EIQ.db.membersOfOrg(s.org_id);
-    const audit = EIQ.db.recentAudit(s.org_id, 15);
+    const members = await EIQ.db.membersOfOrg(s.org_id);
+    const audit = await EIQ.db.recentAudit(s.org_id, 15);
+    const cloud = EIQ.db.isSupabase;
     return `
       <div class="page-head">
         <h1>Admin &amp; Security</h1>
@@ -252,8 +259,12 @@
         </table>
       </div>
       <div class="panel">
-        <h2>Invite member (demo)</h2>
-        <p class="field-hint" style="margin-top:0">User must already have registered in this browser (local store).</p>
+        <h2>Invite member</h2>
+        <p class="field-hint" style="margin-top:0">${
+          cloud
+            ? "Invitee must already have registered an Expense IQ account (Supabase Auth)."
+            : "User must already have registered in this browser (local store)."
+        }</p>
         <form id="form-invite" class="stack-row">
           <div class="field" style="flex:1;min-width:180px;margin:0">
             <label>Email</label>
@@ -319,69 +330,98 @@
         </table>
       </div>
       <div class="panel">
-        <h2>Danger zone (local demo)</h2>
-        <button type="button" class="btn btn--pink" id="btn-wipe">Wipe all local Expense IQ data</button>
+        <h2>${cloud ? "Session" : "Danger zone (local demo)"}</h2>
+        ${
+          cloud
+            ? `<p class="field-hint">Cloud mode: sign out only clears this device session. Org data stays in Supabase.</p>
+               <button type="button" class="btn btn--ghost" id="btn-wipe">Sign out everywhere on this device</button>`
+            : `<button type="button" class="btn btn--pink" id="btn-wipe">Wipe all local Expense IQ data</button>`
+        }
       </div>
     `;
   }
 
-  function render() {
+  async function render() {
     const s = requireSession();
     if (!s) return;
-    refreshChrome();
+    await refreshChrome();
     const r = route();
     buildNav(r);
 
     const map = {
       dashboard: () => viewDashboard(s),
       capture: () =>
-        placeholder(
-          "Capture",
-          2,
-          "Camera, upload, bulk, email-in → OCR & confidence scoring. Not built yet."
+        Promise.resolve(
+          placeholder(
+            "Capture",
+            2,
+            "Camera, upload, bulk, email-in → OCR & confidence scoring. Not built yet."
+          )
         ),
       transactions: () =>
-        placeholder(
-          "Transactions",
-          3,
-          "Register, imports, posting pipeline into the central Ledger."
+        Promise.resolve(
+          placeholder(
+            "Transactions",
+            3,
+            "Register, imports, posting pipeline into the central Ledger."
+          )
         ),
       coa: () =>
-        placeholder(
-          "Chart of Accounts",
-          3,
-          "SMB and Nonprofit templates with Schedule C / Form 990 mapping."
+        Promise.resolve(
+          placeholder(
+            "Chart of Accounts",
+            3,
+            "SMB and Nonprofit templates with Schedule C / Form 990 mapping."
+          )
         ),
       bank: () =>
-        placeholder("Bank & Reconciliation", 3, "Match, categorize, period close / lock."),
-      grants: () =>
-        placeholder("Grants", 4, "Allowability, budget lines, burn rate — still posts via Ledger."),
-      mileage: () =>
-        placeholder(
-          "Mileage & Travel",
-          4,
-          "Trips and travel lines costed and posted as transactions — not side logs."
+        Promise.resolve(
+          placeholder("Bank & Reconciliation", 3, "Match, categorize, period close / lock.")
         ),
-      vendors: () => placeholder("Vendors", 4, "Directory, W-9 / 1099 thresholds."),
-      clients: () => placeholder("Clients & Projects", 4, "Billable split and profitability."),
-      tax: () => placeholder("Tax Center", 5, "Schedule C summary and tax packages."),
+      grants: () =>
+        Promise.resolve(
+          placeholder("Grants", 4, "Allowability, budget lines, burn rate — still posts via Ledger.")
+        ),
+      mileage: () =>
+        Promise.resolve(
+          placeholder(
+            "Mileage & Travel",
+            4,
+            "Trips and travel lines costed and posted as transactions — not side logs."
+          )
+        ),
+      vendors: () =>
+        Promise.resolve(placeholder("Vendors", 4, "Directory, W-9 / 1099 thresholds.")),
+      clients: () =>
+        Promise.resolve(placeholder("Clients & Projects", 4, "Billable split and profitability.")),
+      tax: () => Promise.resolve(placeholder("Tax Center", 5, "Schedule C summary and tax packages.")),
       reports: () =>
-        placeholder(
-          "Reports & Exports",
-          5,
-          "Read-only rollups off transactions only — never independent math."
+        Promise.resolve(
+          placeholder(
+            "Reports & Exports",
+            5,
+            "Read-only rollups off transactions only — never independent math."
+          )
         ),
       gigi: () =>
-        placeholder(
-          "Gigi Assistant",
-          5,
-          "Read-only financial Q&A. Separate from marketing-site Gigi on BFF."
+        Promise.resolve(
+          placeholder(
+            "Gigi Assistant",
+            5,
+            "Read-only financial Q&A. Separate from marketing-site Gigi on BFF."
+          )
         ),
       admin: () => viewAdmin(s),
       org: () => viewOrg(s),
     };
 
-    main.innerHTML = (map[r] || map.dashboard)();
+    try {
+      main.innerHTML = await (map[r] || map.dashboard)();
+    } catch (err) {
+      main.innerHTML = `<div class="alert alert--error">${escapeHtml(
+        err.message || "Failed to load view"
+      )}</div>`;
+    }
     wireViewHandlers(r, s);
     closeMenu();
   }
@@ -390,35 +430,41 @@
     if (r === "org") {
       const form = document.getElementById("form-org-edit");
       if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
           if (s.role !== "owner") return;
           const fd = new FormData(form);
-          EIQ.db.updateOrganization(
-            s.org_id,
-            {
-              org_name: String(fd.get("org_name") || "").trim(),
-              org_type: String(fd.get("org_type")),
-              coa_template: String(fd.get("coa_template")),
-              ein: String(fd.get("ein") || "").trim(),
-              fiscal_year_start: String(fd.get("fiscal_year_start")),
-            },
-            s.user_id
-          );
-          const sess = session();
-          sess.org_name = String(fd.get("org_name") || "").trim();
-          EIQ.db.setSession(sess);
-          const msg = document.getElementById("org-save-msg");
-          msg.textContent = "Organization saved.";
-          msg.classList.remove("hidden");
-          refreshChrome();
+          try {
+            await EIQ.db.updateOrganization(
+              s.org_id,
+              {
+                org_name: String(fd.get("org_name") || "").trim(),
+                org_type: String(fd.get("org_type")),
+                coa_template: String(fd.get("coa_template")),
+                ein: String(fd.get("ein") || "").trim(),
+                fiscal_year_start: String(fd.get("fiscal_year_start")),
+              },
+              s.user_id
+            );
+            const sess = session();
+            sess.org_name = String(fd.get("org_name") || "").trim();
+            EIQ.db.setSession(sess);
+            const msg = document.getElementById("org-save-msg");
+            msg.textContent = "Organization saved to Supabase.";
+            msg.classList.remove("hidden");
+            await refreshChrome();
+          } catch (err) {
+            const msg = document.getElementById("org-save-msg");
+            msg.className = "alert alert--error";
+            msg.textContent = err.message || "Save failed.";
+            msg.classList.remove("hidden");
+          }
         });
       }
       const link = document.getElementById("link-new-org");
       if (link) {
         link.addEventListener("click", (e) => {
           e.preventDefault();
-          // Drop org context, keep user, open create flow
           const sess = session();
           EIQ.db.setSession({
             user_id: sess.user_id,
@@ -430,7 +476,6 @@
             org_id: null,
             role: null,
           });
-          // Store flag so auth-flow opens create
           sessionStorage.setItem("eiq_force_new_org", "1");
           window.location.href = "index.html";
         });
@@ -440,12 +485,12 @@
     if (r === "admin") {
       const form = document.getElementById("form-invite");
       if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
           const msg = document.getElementById("invite-msg");
           const fd = new FormData(form);
           try {
-            EIQ.db.inviteMember({
+            await EIQ.db.inviteMember({
               orgId: s.org_id,
               email: String(fd.get("email")),
               role: String(fd.get("role")),
@@ -454,7 +499,7 @@
             msg.className = "alert alert--ok";
             msg.textContent = "Member added to this organization.";
             msg.classList.remove("hidden");
-            render();
+            await render();
           } catch (err) {
             msg.className = "alert alert--error";
             msg.textContent = err.message || "Invite failed.";
@@ -464,13 +509,16 @@
       }
       const wipe = document.getElementById("btn-wipe");
       if (wipe) {
-        wipe.addEventListener("click", () => {
+        wipe.addEventListener("click", async () => {
+          const cloud = EIQ.db.isSupabase;
           if (
             confirm(
-              "Delete ALL local Expense IQ users, orgs, and data on this browser? This cannot be undone."
+              cloud
+                ? "Sign out on this device? Cloud org data is kept in Supabase."
+                : "Delete ALL local Expense IQ users, orgs, and data on this browser? This cannot be undone."
             )
           ) {
-            EIQ.db.wipeAll();
+            await EIQ.db.wipeAll();
             window.location.href = "index.html";
           }
         });
@@ -483,13 +531,15 @@
     backdrop.classList.remove("is-open");
   }
 
-  orgSwitch.addEventListener("change", () => {
+  orgSwitch.addEventListener("change", async () => {
     const s = session();
     if (!s) return;
     const orgId = orgSwitch.value;
-    const m = EIQ.db.membershipsForUser(s.user_id).find((x) => x.org_id === orgId);
+    const memberships = await EIQ.db.membershipsForUser(s.user_id);
+    const m = memberships.find((x) => x.org_id === orgId);
     if (!m) return;
-    const mfaRequired = EIQ.permissions.mfaRequiredForRole(m.role);
+    const mfaRequired =
+      EIQ.config.REQUIRE_DEMO_MFA && EIQ.permissions.mfaRequiredForRole(m.role);
     EIQ.db.setSession({
       ...s,
       org_id: m.org_id,
@@ -502,11 +552,11 @@
       window.location.href = "index.html";
       return;
     }
-    render();
+    await render();
   });
 
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    EIQ.db.setSession(null);
+  document.getElementById("btn-logout").addEventListener("click", async () => {
+    await EIQ.db.signOut();
     window.location.href = "index.html";
   });
 
@@ -516,8 +566,21 @@
   });
   backdrop.addEventListener("click", closeMenu);
 
-  window.addEventListener("hashchange", render);
+  window.addEventListener("hashchange", () => {
+    render();
+  });
 
-  // Boot
-  if (requireSession()) render();
+  async function boot() {
+    if (window.BFF && BFF.config && BFF.config.supabase) {
+      EIQ.config.supabase = Object.assign({}, EIQ.config.supabase, BFF.config.supabase);
+    }
+    if (EIQ.db.isSupabase) {
+      try {
+        await EIQ.db.hydrateFromAuth();
+      } catch (_) {}
+    }
+    if (requireSession()) await render();
+  }
+
+  boot();
 })();

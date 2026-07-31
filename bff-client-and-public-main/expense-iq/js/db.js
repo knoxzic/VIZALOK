@@ -1,10 +1,14 @@
 /**
- * Expense IQ™ — local multi-tenant data layer
- * Every financial/org query is scoped by org_id.
- * Later: same method shapes for Firebase / Supabase adapters.
+ * Expense IQ™ — data layer facade
+ * STORAGE_MODE: "local" | "supabase"
+ * Supabase path = multi-tenant cloud DB (custom org data per signed-in user).
  */
 (function () {
   const KEY = () => (window.EIQ && EIQ.config && EIQ.config.storageKey) || "eiq_v1";
+
+  function mode() {
+    return (EIQ.config && EIQ.config.STORAGE_MODE) || "local";
+  }
 
   function emptyStore() {
     return {
@@ -12,7 +16,6 @@
       organizations: [],
       org_users: [],
       audit_log: [],
-      // Phase 2+ tables stubbed so the spine is visible
       transactions: [],
       chart_of_accounts: [],
       receipts: [],
@@ -44,7 +47,6 @@
     });
   }
 
-  /** Demo-only password digest — replace with real auth provider */
   async function digest(password, salt) {
     const data = new TextEncoder().encode(salt + ":" + password);
     if (crypto.subtle) {
@@ -68,12 +70,13 @@
     });
   }
 
-  const db = {
+  const localDb = {
     uuid,
     digest,
     now,
     load,
     save,
+    isSupabase: false,
 
     getSession() {
       try {
@@ -88,13 +91,25 @@
       else sessionStorage.setItem("eiq_session", JSON.stringify(session));
     },
 
+    async ready() {
+      return true;
+    },
+
+    async status() {
+      return { ok: true, mode: "local", message: "Local browser storage" };
+    },
+
+    async hydrateFromAuth() {
+      return this.getSession();
+    },
+
     findUserByEmail(email) {
       const store = load();
       const e = (email || "").trim().toLowerCase();
       return store.users.find((u) => u.email === e) || null;
     },
 
-    getUser(userId) {
+    async getUser(userId) {
       return load().users.find((u) => u.user_id === userId) || null;
     },
 
@@ -147,11 +162,14 @@
       };
     },
 
-    enableMfa(userId) {
+    async signOut() {
+      this.setSession(null);
+    },
+
+    async enableMfa(userId) {
       const store = load();
       const user = store.users.find((u) => u.user_id === userId);
       if (!user) throw new Error("User not found.");
-      // 6-digit demo secret (shown once); real TOTP later
       const secret = String(Math.floor(100000 + Math.random() * 900000));
       const before = { mfa_enabled: user.mfa_enabled };
       user.mfa_enabled = true;
@@ -169,13 +187,13 @@
       return secret;
     },
 
-    verifyMfaCode(userId, code) {
-      const user = this.getUser(userId);
+    async verifyMfaCode(userId, code) {
+      const user = await this.getUser(userId);
       if (!user || !user.mfa_enabled) return false;
       return String(code).trim() === String(user.mfa_secret);
     },
 
-    createOrganization({ orgName, orgType, coaTemplate, ein, fiscalYearStart, ownerUserId }) {
+    async createOrganization({ orgName, orgType, coaTemplate, ein, fiscalYearStart, ownerUserId }) {
       const store = load();
       const org_id = uuid();
       const org = {
@@ -213,7 +231,7 @@
       return org;
     },
 
-    updateOrganization(orgId, patch, actorUserId) {
+    async updateOrganization(orgId, patch, actorUserId) {
       const store = load();
       const org = store.organizations.find((o) => o.org_id === orgId);
       if (!org) throw new Error("Organization not found.");
@@ -232,8 +250,7 @@
       return org;
     },
 
-    /** All memberships for a user (multi-org) */
-    membershipsForUser(userId) {
+    async membershipsForUser(userId) {
       const store = load();
       return store.org_users
         .filter((m) => m.user_id === userId)
@@ -252,21 +269,17 @@
         .filter(Boolean);
     },
 
-    getOrg(orgId) {
+    async getOrg(orgId) {
       return load().organizations.find((o) => o.org_id === orgId) || null;
     },
 
-    getMembership(userId, orgId) {
+    async getMembership(userId, orgId) {
       return (
         load().org_users.find((m) => m.user_id === userId && m.org_id === orgId) || null
       );
     },
 
-    /**
-     * Scoped query helper — every list path must pass org_id.
-     * Phase 1 uses this pattern; later adapters enforce the same contract.
-     */
-    scoped(orgId, table) {
+    async scoped(orgId, table) {
       if (!orgId) throw new Error("org_id is required — no unscoped queries.");
       const store = load();
       const rows = store[table];
@@ -274,7 +287,7 @@
       return rows.filter((r) => r.org_id === orgId);
     },
 
-    membersOfOrg(orgId) {
+    async membersOfOrg(orgId) {
       const store = load();
       return store.org_users
         .filter((m) => m.org_id === orgId)
@@ -290,13 +303,13 @@
         });
     },
 
-    inviteMember({ orgId, email, role, actorUserId }) {
+    async inviteMember({ orgId, email, role, actorUserId }) {
       const store = load();
       const e = email.trim().toLowerCase();
       let user = store.users.find((u) => u.email === e);
       if (!user) {
         throw new Error(
-          "User must register first (local demo). Ask them to create an account, then invite by email."
+          "User must register first. Ask them to create an account, then invite by email."
         );
       }
       if (store.org_users.some((m) => m.user_id === user.user_id && m.org_id === orgId)) {
@@ -325,7 +338,7 @@
       return true;
     },
 
-    recentAudit(orgId, limit) {
+    async recentAudit(orgId, limit) {
       const store = load();
       return store.audit_log
         .filter((a) => a.org_id === orgId || a.org_id === null)
@@ -334,22 +347,67 @@
         .slice(0, limit || 20);
     },
 
-    stats(orgId) {
+    async stats(orgId) {
+      const transactions = await this.scoped(orgId, "transactions");
+      const receipts = await this.scoped(orgId, "receipts");
+      const grants = await this.scoped(orgId, "grants");
+      const mileage = await this.scoped(orgId, "mileage_trips");
       return {
-        transactions: this.scoped(orgId, "transactions").length,
-        receipts: this.scoped(orgId, "receipts").length,
-        grants: this.scoped(orgId, "grants").length,
-        mileage: this.scoped(orgId, "mileage_trips").length,
-        posted: this.scoped(orgId, "transactions").filter((t) => t.status === "posted")
-          .length,
+        transactions: transactions.length,
+        receipts: receipts.length,
+        grants: grants.length,
+        mileage: mileage.length,
+        posted: transactions.filter((t) => t.status === "posted").length,
       };
     },
 
-    wipeAll() {
+    async wipeAll() {
       localStorage.removeItem(KEY());
       sessionStorage.removeItem("eiq_session");
     },
   };
 
-  EIQ.db = db;
+  function active() {
+    if (mode() === "supabase" && EIQ.supabaseDb) return EIQ.supabaseDb;
+    return localDb;
+  }
+
+  // Facade — sync session helpers + async data API
+  EIQ.db = {
+    get isSupabase() {
+      return mode() === "supabase";
+    },
+    getSession() {
+      return active().getSession();
+    },
+    setSession(s) {
+      return active().setSession(s);
+    },
+    uuid: (...a) => active().uuid(...a),
+    now: () => active().now(),
+    ready: (...a) => active().ready(...a),
+    status: (...a) => active().status(...a),
+    hydrateFromAuth: (...a) => active().hydrateFromAuth(...a),
+    registerUser: (...a) => active().registerUser(...a),
+    verifyPassword: (...a) => active().verifyPassword(...a),
+    signOut: (...a) => active().signOut(...a),
+    getUser: (...a) => active().getUser(...a),
+    findUserByEmail: (...a) => {
+      const r = active().findUserByEmail(...a);
+      return r && typeof r.then === "function" ? r : Promise.resolve(r);
+    },
+    enableMfa: (...a) => active().enableMfa(...a),
+    verifyMfaCode: (...a) => active().verifyMfaCode(...a),
+    createOrganization: (...a) => active().createOrganization(...a),
+    updateOrganization: (...a) => active().updateOrganization(...a),
+    membershipsForUser: (...a) => active().membershipsForUser(...a),
+    getOrg: (...a) => active().getOrg(...a),
+    getMembership: (...a) => active().getMembership(...a),
+    scoped: (...a) => active().scoped(...a),
+    membersOfOrg: (...a) => active().membersOfOrg(...a),
+    inviteMember: (...a) => active().inviteMember(...a),
+    recentAudit: (...a) => active().recentAudit(...a),
+    stats: (...a) => active().stats(...a),
+    wipeAll: (...a) => active().wipeAll(...a),
+  };
 })();

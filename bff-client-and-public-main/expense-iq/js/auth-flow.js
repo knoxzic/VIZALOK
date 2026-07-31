@@ -1,5 +1,6 @@
 /**
  * Expense IQ™ — login / register / MFA / org bootstrap
+ * Works with local or Supabase STORAGE_MODE (all db calls await).
  */
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -32,7 +33,27 @@
     el.classList.remove("hidden");
   }
 
-  function resumeIfSession() {
+  function mfaEnforced() {
+    return EIQ.config.REQUIRE_DEMO_MFA !== false && EIQ.config.REQUIRE_DEMO_MFA !== 0;
+  }
+
+  function setStatusBanner(text, ok) {
+    const el = $("supabase-status");
+    if (!el) return;
+    el.textContent = text;
+    el.classList.remove("hidden", "alert--error", "alert--ok", "alert--warn");
+    el.classList.add(ok ? "alert--ok" : "alert--warn");
+  }
+
+  async function resumeIfSession() {
+    if (EIQ.db.isSupabase) {
+      try {
+        await EIQ.db.hydrateFromAuth();
+      } catch (e) {
+        console.warn("[EIQ] hydrate", e);
+      }
+    }
+
     const s = EIQ.db.getSession();
     if (!s || !s.user_id) return;
 
@@ -43,7 +64,6 @@
       mfa_enabled: s.mfa_enabled,
     };
 
-    // Explicit "create another org" from app
     if (sessionStorage.getItem("eiq_force_new_org") === "1") {
       sessionStorage.removeItem("eiq_force_new_org");
       show("view-org-create");
@@ -51,62 +71,55 @@
     }
 
     if (!s.org_id) {
-      pending.memberships = EIQ.db.membershipsForUser(s.user_id);
-      routeAfterAuth();
+      pending.memberships = await EIQ.db.membershipsForUser(s.user_id);
+      await routeAfterAuth();
       return;
     }
-    if (s.mfa_required && !s.mfa_verified) {
-      pending.user = {
-        user_id: s.user_id,
-        email: s.email,
-        display_name: s.display_name,
-        mfa_enabled: s.mfa_enabled,
-      };
+    if (s.mfa_required && !s.mfa_verified && mfaEnforced()) {
       show("view-mfa");
       return;
     }
     window.location.href = "app.html";
   }
 
-  function routeAfterAuth() {
+  async function routeAfterAuth() {
     const user = pending.user;
     if (!user) return;
 
-    const memberships = EIQ.db.membershipsForUser(user.user_id);
+    const memberships = await EIQ.db.membershipsForUser(user.user_id);
     pending.memberships = memberships;
 
-    // No org yet → create
     if (!memberships.length) {
-      // Creating first org as owner → MFA will be required
-      const full = EIQ.db.getUser(user.user_id);
-      if (!full.mfa_enabled) {
-        pending.needsMfaSetup = true;
-        const secret = EIQ.db.enableMfa(user.user_id);
-        pending.mfaSecretOnce = secret;
-        $("mfa-setup-code").textContent = secret;
-        show("view-mfa-setup");
-        return;
+      if (mfaEnforced()) {
+        const full = await EIQ.db.getUser(user.user_id);
+        if (full && !full.mfa_enabled) {
+          pending.needsMfaSetup = true;
+          const secret = await EIQ.db.enableMfa(user.user_id);
+          pending.mfaSecretOnce = secret;
+          $("mfa-setup-code").textContent = secret;
+          show("view-mfa-setup");
+          return;
+        }
       }
       show("view-org-create");
       return;
     }
 
-    // Has orgs — if any membership is MFA-required role without MFA, setup
-    const needsRoleMfa = memberships.some((m) =>
-      EIQ.permissions.mfaRequiredForRole(m.role)
-    );
-    const full = EIQ.db.getUser(user.user_id);
-    if (needsRoleMfa && !full.mfa_enabled) {
+    const needsRoleMfa =
+      mfaEnforced() &&
+      memberships.some((m) => EIQ.permissions.mfaRequiredForRole(m.role));
+    const full = await EIQ.db.getUser(user.user_id);
+
+    if (needsRoleMfa && full && !full.mfa_enabled) {
       pending.needsMfaSetup = true;
-      const secret = EIQ.db.enableMfa(user.user_id);
+      const secret = await EIQ.db.enableMfa(user.user_id);
       pending.mfaSecretOnce = secret;
       $("mfa-setup-code").textContent = secret;
       show("view-mfa-setup");
       return;
     }
 
-    if (needsRoleMfa && full.mfa_enabled) {
-      // Require verify this session
+    if (needsRoleMfa && full && full.mfa_enabled) {
       EIQ.db.setSession({
         user_id: user.user_id,
         email: user.email,
@@ -122,7 +135,7 @@
     }
 
     if (memberships.length === 1) {
-      enterOrg(memberships[0]);
+      await enterOrg(memberships[0]);
       return;
     }
 
@@ -130,18 +143,18 @@
     show("view-org-pick");
   }
 
-  function enterOrg(membership) {
+  async function enterOrg(membership) {
     const user = pending.user;
-    const full = EIQ.db.getUser(user.user_id);
-    const mfaRequired = EIQ.permissions.mfaRequiredForRole(membership.role);
+    const full = (await EIQ.db.getUser(user.user_id)) || user;
+    const mfaRequired =
+      mfaEnforced() && EIQ.permissions.mfaRequiredForRole(membership.role);
 
     if (mfaRequired && !full.mfa_enabled) {
       pending.needsMfaSetup = true;
-      const secret = EIQ.db.enableMfa(user.user_id);
+      const secret = await EIQ.db.enableMfa(user.user_id);
       pending.mfaSecretOnce = secret;
       $("mfa-setup-code").textContent = secret;
       show("view-mfa-setup");
-      // stash intended org
       pending.intendedMembership = membership;
       return;
     }
@@ -171,7 +184,7 @@
       display_name: user.display_name || full.display_name,
       mfa_enabled: !!full.mfa_enabled,
       mfa_required: mfaRequired,
-      mfa_verified: mfaRequired ? true : true,
+      mfa_verified: true,
       org_id: membership.org_id,
       role: membership.role,
       org_name: membership.org_name,
@@ -191,9 +204,9 @@
       )
       .join("");
     root.querySelectorAll("[data-org]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const m = list.find((x) => x.org_id === btn.getAttribute("data-org"));
-        if (m) enterOrg(m);
+        if (m) await enterOrg(m);
       });
     });
   }
@@ -232,7 +245,6 @@
     });
   }
 
-  // Tabs
   $("tab-login").addEventListener("click", () => {
     $("tab-login").classList.add("is-active");
     $("tab-register").classList.remove("is-active");
@@ -251,6 +263,8 @@
   $("form-login").addEventListener("submit", async (e) => {
     e.preventDefault();
     setAlert("auth-alert", null);
+    const btn = $("form-login").querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
     try {
       const user = await EIQ.db.verifyPassword(
         $("login-email").value,
@@ -261,15 +275,19 @@
         return;
       }
       pending.user = user;
-      routeAfterAuth();
+      await routeAfterAuth();
     } catch (err) {
       setAlert("auth-alert", err.message || "Sign-in failed.");
+    } finally {
+      if (btn) btn.disabled = false;
     }
   });
 
   $("form-register").addEventListener("submit", async (e) => {
     e.preventDefault();
     setAlert("auth-alert", null);
+    const btn = $("form-register").querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
     try {
       const user = await EIQ.db.registerUser({
         email: $("reg-email").value,
@@ -277,13 +295,22 @@
         displayName: $("reg-name").value,
       });
       pending.user = user;
-      routeAfterAuth();
+      await routeAfterAuth();
     } catch (err) {
-      setAlert("auth-alert", err.message || "Registration failed.");
+      // Signup may create user but require email confirm / re-login
+      const msg = err.message || "Registration failed.";
+      if (/check your email|confirm/i.test(msg)) {
+        setAlert("auth-alert", msg);
+        $("tab-login").click();
+      } else {
+        setAlert("auth-alert", msg);
+      }
+    } finally {
+      if (btn) btn.disabled = false;
     }
   });
 
-  $("form-mfa-setup").addEventListener("submit", (e) => {
+  $("form-mfa-setup").addEventListener("submit", async (e) => {
     e.preventDefault();
     const code = $("mfa-confirm").value.trim();
     if (code !== pending.mfaSecretOnce) {
@@ -302,26 +329,26 @@
       role: null,
     });
     if (pending.intendedMembership) {
-      enterOrg(pending.intendedMembership);
+      await enterOrg(pending.intendedMembership);
       return;
     }
-    const memberships = EIQ.db.membershipsForUser(pending.user.user_id);
+    const memberships = await EIQ.db.membershipsForUser(pending.user.user_id);
     if (!memberships.length) {
       show("view-org-create");
       return;
     }
     if (memberships.length === 1) {
-      enterOrg(memberships[0]);
+      await enterOrg(memberships[0]);
       return;
     }
     renderOrgPick(memberships);
     show("view-org-pick");
   });
 
-  $("form-mfa").addEventListener("submit", (e) => {
+  $("form-mfa").addEventListener("submit", async (e) => {
     e.preventDefault();
     setAlert("mfa-alert", null);
-    const ok = EIQ.db.verifyMfaCode(pending.user.user_id, $("mfa-code").value);
+    const ok = await EIQ.db.verifyMfaCode(pending.user.user_id, $("mfa-code").value);
     if (!ok) {
       setAlert("mfa-alert", "Incorrect code.");
       return;
@@ -336,9 +363,9 @@
       mfa_required: true,
       mfa_verified: true,
     });
-    const memberships = EIQ.db.membershipsForUser(pending.user.user_id);
+    const memberships = await EIQ.db.membershipsForUser(pending.user.user_id);
     if (pending.intendedMembership) {
-      enterOrg(pending.intendedMembership);
+      await enterOrg(pending.intendedMembership);
       return;
     }
     if (!memberships.length) {
@@ -346,33 +373,35 @@
       return;
     }
     if (memberships.length === 1) {
-      enterOrg(memberships[0]);
+      await enterOrg(memberships[0]);
       return;
     }
     renderOrgPick(memberships);
     show("view-org-pick");
   });
 
-  $("btn-mfa-cancel").addEventListener("click", () => {
-    EIQ.db.setSession(null);
+  $("btn-mfa-cancel").addEventListener("click", async () => {
+    await EIQ.db.signOut();
     pending = { user: null, memberships: [], mfaSecretOnce: null, needsMfaSetup: false };
     show("view-auth");
   });
 
-  $("btn-mfa-regen").addEventListener("click", () => {
+  $("btn-mfa-regen").addEventListener("click", async () => {
     if (!pending.user) return;
-    const secret = EIQ.db.enableMfa(pending.user.user_id);
+    const secret = await EIQ.db.enableMfa(pending.user.user_id);
     pending.mfaSecretOnce = secret;
     pending.user.mfa_enabled = true;
     $("mfa-setup-code").textContent = secret;
     alert("New demo MFA code: " + secret + "\nSave it, then enter it above.");
   });
 
-  $("form-org").addEventListener("submit", (e) => {
+  $("form-org").addEventListener("submit", async (e) => {
     e.preventDefault();
     setAlert("org-alert", null);
+    const btn = $("form-org").querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
     try {
-      const org = EIQ.db.createOrganization({
+      const org = await EIQ.db.createOrganization({
         orgName: $("org-name").value,
         orgType: $("org-type").value,
         coaTemplate: $("coa-template").value,
@@ -380,7 +409,7 @@
         fiscalYearStart: $("org-fy").value,
         ownerUserId: pending.user.user_id,
       });
-      enterOrg({
+      await enterOrg({
         org_id: org.org_id,
         role: "owner",
         org_name: org.org_name,
@@ -389,11 +418,45 @@
       });
     } catch (err) {
       setAlert("org-alert", err.message || "Could not create organization.");
+    } finally {
+      if (btn) btn.disabled = false;
     }
   });
 
   $("btn-new-org").addEventListener("click", () => show("view-org-create"));
 
-  initOrgForm();
-  resumeIfSession();
+  async function boot() {
+    initOrgForm();
+
+    // Align EIQ supabase config with BFF if parent loaded
+    if (window.BFF && BFF.config && BFF.config.supabase) {
+      EIQ.config.supabase = Object.assign({}, EIQ.config.supabase, BFF.config.supabase);
+    }
+
+    if (EIQ.db.isSupabase) {
+      try {
+        const st = await EIQ.db.status();
+        if (st.ok) {
+          setStatusBanner(
+            "Supabase connected · cloud multi-tenant database active" +
+              (st.hasSession ? " · session restored" : ""),
+            true
+          );
+        } else {
+          setStatusBanner(
+            "Supabase not ready: " + (st.message || "check keys / schema.sql"),
+            false
+          );
+        }
+      } catch (e) {
+        setStatusBanner("Supabase error: " + (e.message || e), false);
+      }
+    } else {
+      setStatusBanner("Local mode — data stays in this browser only", false);
+    }
+
+    await resumeIfSession();
+  }
+
+  boot();
 })();

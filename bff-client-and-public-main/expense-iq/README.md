@@ -45,7 +45,12 @@ Data is stored in **this browser only** (`localStorage` key `eiq_v1`).
 
 - This folder is self-contained: copy `expense-iq/` to its own GitHub repo when ready.
 - Point a custom domain at static hosting (GitHub Pages, Cloudflare Pages, Netlify, Firebase Hosting).
-- Later: set `EIQ.config.STORAGE_MODE` to `firebase` or `supabase` and replace `js/db.js` methods with the same signatures (keep `org_id` on every query).
+- **Supabase (default):** `STORAGE_MODE: "supabase"` — Auth + org-scoped tables with RLS.
+  1. In Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql) once.
+  2. Auth → disable “Confirm email” for faster testing (optional), or leave on for production.
+  3. Open `index.html` — status banner should say **Supabase connected**.
+  4. Create account → create organization → data lives in your project under that `org_id`.
+- Fallback: set `STORAGE_MODE` to `local` for browser-only demos.
 
 ## Architecture (runtime spine)
 

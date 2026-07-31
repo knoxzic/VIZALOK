@@ -21,7 +21,9 @@
       <!-- LOGIN / REGISTER -->
       <div id="view-auth">
         <h1>Welcome</h1>
-        <p class="lede">Local multi-tenant scaffold — no paid APIs yet. Data stays in this browser until you connect Firebase or Supabase.</p>
+        <p class="lede">Cloud multi-tenant finance workspace — each organization is your private Supabase-backed database (RLS by <code>org_id</code>).</p>
+
+        <div id="supabase-status" class="alert alert--warn hidden" style="margin-bottom:14px"></div>
 
         <div class="tabs" role="tablist">
           <button type="button" class="is-active" data-tab="login" id="tab-login">Sign in</button>
@@ -54,7 +56,7 @@
           <div class="field">
             <label for="reg-password">Password</label>
             <input id="reg-password" type="password" autocomplete="new-password" required minlength="8" />
-            <p class="field-hint">Demo auth only — use a unique password you don’t reuse elsewhere.</p>
+            <p class="field-hint">Secured by Supabase Auth. Use a unique password.</p>
           </div>
           <button class="btn btn--primary btn--block" type="submit">Create account</button>
         </form>
@@ -137,7 +139,13 @@
     </div>
   </div>
 
+  <!-- Supabase JS (UMD) + shared BFF client config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase/config.js"></script>
+  <script src="../js/supabase/client.js"></script>
   <script src="js/config.js"></script>
+  <script src="js/supabase-db.js"></script>
   <script src="js/db.js"></script>
   <script src="js/permissions.js"></script>
   <script src="js/auth-flow.js"></script>

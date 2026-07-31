@@ -1,17 +1,32 @@
 /**
  * Expense IQ™ — config
- * Local-first Phase 1. Swap STORAGE_MODE later to "firebase" | "supabase".
+ * STORAGE_MODE "supabase" uses shared BFF Supabase project (per-user org data + RLS).
+ * Set to "local" for offline browser-only demos.
  */
 window.EIQ = window.EIQ || {};
 
 EIQ.config = {
   appName: "Expense IQ",
   tagline: "Compliant. Integrated. Accurate.",
-  version: "0.1.0-phase1",
+  version: "0.2.0-supabase",
   brand: "Best Face Forward Consultants, LLC",
 
-  /** local | firebase | supabase — only local is wired in Phase 1 */
-  STORAGE_MODE: "local",
+  /** local | supabase */
+  STORAGE_MODE: "supabase",
+
+  /**
+   * Inherited from BFF.config.supabase when parent scripts load.
+   * Fallback mirrors site keys for standalone expense-iq hosting.
+   */
+  supabase: {
+    url: "https://rjxiytnoomgpodkpvxad.supabase.co",
+    anonKey:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqeGl5dG5vb21ncG9ka3B2eGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MTM4MDIsImV4cCI6MjEwMTA4OTgwMn0.TGW9RWrru2cqMyr19QGA_biryvNuaW4CGNJOaF7ACHk",
+    enabled: true,
+  },
+
+  /** Soft MFA gate for owner/bookkeeper (profile flag). Supabase Auth handles password security. */
+  REQUIRE_DEMO_MFA: false,
 
   storageKey: "eiq_v1",
 
