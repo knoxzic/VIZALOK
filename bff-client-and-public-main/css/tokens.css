@@ -1,85 +1,107 @@
-/* Best Face Forward — Design Tokens
-   Softened brand palette for elegant, not clip-art, presentation */
+/* Best Face Forward — 2026 foundation / enterprise design tokens
+   High-profile nonprofit + multi-division consulting aesthetic */
 
 :root {
-  /* Brand palette */
-  --emerald: #0B4D3A;
-  --emerald-deep: #083528;
-  --emerald-soft: #1a6b52;
-  --rose: #E7A8BE;
-  --rose-deep: #d4899f;
-  --rose-soft: #f5d0dc;
-  --gold: #C6A15B;
-  --gold-soft: #d4b87a;
-  --gold-bright: #d4af37;
-  --ivory: #FBF1EE;
-  --ivory-warm: #f7e8e2;
-  --charcoal: #2A2620;
-  --charcoal-soft: #4a453c;
-  --charcoal-muted: #6b655c;
+  /* Core brand */
+  --emerald: #064e3b;
+  --emerald-deep: #022c22;
+  --emerald-mid: #0f766e;
+  --emerald-soft: #14b8a6;
+  --emerald-glow: rgba(20, 184, 166, 0.35);
+
+  --rose: #f0abbf;
+  --rose-deep: #db6b8f;
+  --rose-hot: #e11d74;
+  --rose-soft: #fce7f0;
+  --rose-glow: rgba(225, 29, 116, 0.28);
+
+  --gold: #c9a227;
+  --gold-soft: #e8c96a;
+  --gold-bright: #f5d76e;
+  --gold-deep: #9a7b1a;
+  --gold-glow: rgba(201, 162, 39, 0.38);
+
+  --ivory: #faf7f4;
+  --ivory-warm: #f5ebe3;
+  --ivory-deep: #ebe0d6;
+  --charcoal: #141210;
+  --charcoal-soft: #2c2824;
+  --charcoal-muted: #6b645c;
 
   /* Surfaces */
-  --surface: #FBF1EE;
+  --surface: #faf7f4;
   --surface-elevated: #ffffff;
-  --surface-muted: #f5e6e0;
-  --surface-dark: #0B4D3A;
-  --glass: rgba(251, 241, 238, 0.72);
-  --glass-dark: rgba(11, 77, 58, 0.88);
+  --surface-muted: #f0e6de;
+  --surface-dark: #064e3b;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-dark: rgba(2, 44, 34, 0.92);
 
-  /* Pink gloss nav */
+  /* Signature gradients */
+  --grad-emerald: linear-gradient(145deg, #0f766e 0%, #064e3b 48%, #022c22 100%);
+  --grad-emerald-soft: linear-gradient(180deg, #0d9488 0%, #064e3b 100%);
+  --grad-rose-gold: linear-gradient(125deg, #fce7f0 0%, #f0abbf 38%, #e8c96a 100%);
+  --grad-pink-gold: linear-gradient(135deg, #e11d74 0%, #f0abbf 42%, #c9a227 100%);
+  --grad-gold: linear-gradient(135deg, #f5d76e 0%, #c9a227 52%, #9a7b1a 100%);
+  --grad-hero:
+    radial-gradient(ellipse 100% 80% at 85% -20%, rgba(240, 171, 191, 0.5), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 0% 100%, rgba(201, 162, 39, 0.22), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 40%, rgba(15, 118, 110, 0.08), transparent 65%),
+    linear-gradient(165deg, #fffdfb 0%, #faf7f4 45%, #f5ebe3 100%);
+  --grad-promise: linear-gradient(125deg, #022c22 0%, #064e3b 38%, #0f766e 72%, #134e4a 100%);
+  --grad-foundation: linear-gradient(160deg, rgba(6, 78, 59, 0.96) 0%, rgba(2, 44, 34, 0.98) 100%);
+
+  /* Nav glass */
   --gloss-pink: linear-gradient(
     180deg,
-    #f8d4e0 0%,
-    #E7A8BE 35%,
-    #d4899f 70%,
-    #c97a92 100%
+    rgba(255, 252, 250, 0.95) 0%,
+    rgba(252, 231, 240, 0.9) 55%,
+    rgba(240, 171, 191, 0.55) 100%
   );
   --gloss-pink-shine: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.12) 40%,
-    transparent 60%
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.1) 45%,
+    transparent 70%
   );
 
-  /* Gold hairline */
   --gold-line: linear-gradient(
     90deg,
     transparent,
-    var(--gold) 20%,
+    var(--gold) 15%,
     var(--gold-bright) 50%,
-    var(--gold) 80%,
+    var(--gold) 85%,
     transparent
   );
 
-  /* Typography */
+  /* Type — refined institutional + warm body */
   --font-display: "Cinzel", "Times New Roman", serif;
   --font-body: "Cormorant Garamond", Georgia, serif;
   --font-script: "Pinyon Script", "Segoe Script", cursive;
   --font-ui: "Cormorant Garamond", Georgia, serif;
 
-  /* Spacing & radius */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
   --radius-pill: 999px;
 
-  /* Shadows */
-  --shadow-soft: 0 8px 32px rgba(42, 38, 32, 0.08);
-  --shadow-card: 0 12px 40px rgba(11, 77, 58, 0.1);
-  --shadow-gold: 0 0 0 1px rgba(198, 161, 91, 0.45),
-    0 8px 28px rgba(198, 161, 91, 0.15);
-  --shadow-elevated: 0 20px 60px rgba(42, 38, 32, 0.14);
+  --shadow-soft: 0 12px 40px rgba(20, 18, 16, 0.06);
+  --shadow-card: 0 20px 50px rgba(6, 78, 59, 0.12);
+  --shadow-gold: 0 0 0 1px rgba(201, 162, 39, 0.55),
+    0 12px 40px rgba(201, 162, 39, 0.2);
+  --shadow-elevated: 0 28px 70px rgba(20, 18, 16, 0.14);
+  --shadow-glow-rose: 0 0 48px rgba(225, 29, 116, 0.22);
+  --shadow-glow-emerald: 0 16px 48px rgba(6, 78, 59, 0.3);
+  --shadow-glow-gold: 0 0 40px rgba(201, 162, 39, 0.32);
 
-  /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-fast: 180ms;
-  --dur-med: 320ms;
-  --dur-slow: 600ms;
+  --ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+  --dur-fast: 160ms;
+  --dur-med: 340ms;
+  --dur-slow: 700ms;
 
-  /* Layout */
-  --nav-h: 72px;
-  --max-w: 1180px;
+  --nav-h: 78px;
+  --max-w: 1200px;
   --gigi-z: 1000;
 }

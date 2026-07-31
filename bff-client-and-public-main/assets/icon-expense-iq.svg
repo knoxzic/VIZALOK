@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Expense IQ">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12805f"/>
+      <stop offset="50%" stop-color="#0a5c45"/>
+      <stop offset="100%" stop-color="#04291e"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d78c"/>
+      <stop offset="50%" stop-color="#d4af5a"/>
+      <stop offset="100%" stop-color="#b8923e"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e85d8f"/>
+      <stop offset="100%" stop-color="#efb0c6"/>
+    </linearGradient>
+    <filter id="soft" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#04291e" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect x="6" y="6" width="108" height="108" rx="30" fill="url(#bg)" filter="url(#soft)"/>
+  <rect x="11" y="11" width="98" height="98" rx="26" fill="none" stroke="url(#gold)" stroke-width="1.75" opacity="0.9"/>
+  <!-- Receipt / ledger -->
+  <rect x="28" y="26" width="64" height="58" rx="10" fill="#fdf8f5"/>
+  <path d="M28 36h64" stroke="#0a5c45" stroke-opacity="0.1" stroke-width="8"/>
+  <rect x="28" y="26" width="64" height="14" rx="10" fill="url(#rose)"/>
+  <rect x="28" y="36" width="64" height="4" fill="#0a5c45" opacity="0.1"/>
+  <rect x="36" y="48" width="30" height="3.5" rx="1.75" fill="#0a5c45" opacity="0.5"/>
+  <rect x="70" y="48" width="14" height="3.5" rx="1.75" fill="url(#gold)"/>
+  <rect x="36" y="56" width="24" height="3.5" rx="1.75" fill="#0a5c45" opacity="0.38"/>
+  <rect x="64" y="56" width="20" height="3.5" rx="1.75" fill="url(#gold)"/>
+  <rect x="36" y="64" width="34" height="3.5" rx="1.75" fill="#0a5c45" opacity="0.32"/>
+  <!-- IQ spark badge -->
+  <circle cx="80" cy="82" r="18" fill="url(#gold)"/>
+  <circle cx="80" cy="82" r="14" fill="none" stroke="#04291e" stroke-opacity="0.12" stroke-width="1"/>
+  <text x="80" y="87" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#04291e">IQ</text>
+</svg>

@@ -1,0 +1,34 @@
+/* Expense IQ™ — brand tokens (Technical Specification palette) */
+:root {
+  --green: #1b4332;
+  --green-dk: #0f2a1e;
+  --green-soft: #2d6a4f;
+  --gold: #c9a227;
+  --gold-soft: #e0c35a;
+  --pink: #e85d8f;
+  --pink-soft: #f4a0bc;
+  --charcoal: #222222;
+  --muted: #6b6b6b;
+  --bg: #faf9f6;
+  --card: #ffffff;
+  --border: #e3e1da;
+  --warn: #b33a3a;
+  --ok: #2d6a4f;
+  --surface-tint: #f3f7f4;
+  --capture-bg: #f8d9e5;
+  --process-bg: #fff4cc;
+  --gate-bg: #e85d8f;
+  --ledger-bg: #1b4332;
+
+  --font-ui: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
+  --shadow: 0 10px 40px rgba(15, 42, 30, 0.08);
+  --shadow-sm: 0 2px 12px rgba(15, 42, 30, 0.06);
+
+  --sidebar-w: 260px;
+  --topbar-h: 60px;
+}

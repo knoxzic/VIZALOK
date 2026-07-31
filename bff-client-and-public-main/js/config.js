@@ -27,6 +27,18 @@ BFF.config = {
   DEMO_MODE: true,
 
   /**
+   * Supabase (public anon key is safe in the browser).
+   * Override with NEXT_PUBLIC_SUPABASE_* env or window.__ENV on deploy.
+   * Project ref: rjxiytnoomgpodkpvxad
+   */
+  supabase: {
+    url: "https://rjxiytnoomgpodkpvxad.supabase.co",
+    anonKey:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqeGl5dG5vb21ncG9ka3B2eGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MTM4MDIsImV4cCI6MjEwMTA4OTgwMn0.TGW9RWrru2cqMyr19QGA_biryvNuaW4CGNJOaF7ACHk",
+    enabled: true,
+  },
+
+  /**
    * After real Stripe Checkout, success_url can hit success.html?product=ID
    * Webhooks (server-side) will later write the same unlock keys to Firestore.
    */
@@ -159,6 +171,18 @@ BFF.config = {
       icon: "◇",
       foot: "Custom software · AI integration · Workflow design",
       highlight: true,
+    },
+    {
+      id: "expense_iq",
+      name: "Expense IQ",
+      sub: "Financial Platform",
+      tagline: "Every dollar, one ledger.",
+      href: "expense-iq/index.html",
+      icon: "assets/icon-expense-iq.svg",
+      foot: "Capture · Ledger · Grants · Tax-ready",
+      cta: "Enter portal",
+      description:
+        "Smart expense tracking, AI-powered reporting, receipt management, budgeting, and real-time financial visibility for organizations.",
     },
   ],
 };

@@ -4,16 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home · Best Face Forward Consultants</title>
-  <meta name="description" content="Five divisions. One enterprise. Strategy, solutions, and impact." />
+  <meta name="description" content="Six portals. One enterprise. Strategy, solutions, and impact — grants, finance, insurance, logistics, software, and Expense IQ." />
   <link rel="icon" href="assets/icon-welcome.jpeg" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/landing.css" />
   <link rel="stylesheet" href="css/transitions.css" />
 </head>
-<body>
+<body class="page-landing">
   <div class="page-shell">
-    <header class="site-nav">
+    <!-- Living background -->
+    <div class="ambient" aria-hidden="true">
+      <span class="ambient__orb ambient__orb--rose"></span>
+      <span class="ambient__orb ambient__orb--gold"></span>
+      <span class="ambient__orb ambient__orb--emerald"></span>
+      <span class="ambient__mesh"></span>
+      <canvas class="ambient__particles" id="particle-canvas"></canvas>
+    </div>
+
+    <header class="site-nav site-nav--luxe" id="site-nav">
       <div class="container site-nav__inner">
         <a class="site-nav__brand" href="landing.html">
           <img src="assets/icon-welcome.jpeg" alt="" width="48" height="48" />
@@ -34,151 +43,249 @@
           <li><a href="pages/contact.html">Contact</a></li>
         </ul>
         <div class="site-nav__cta">
-          <a class="btn btn--sm btn--primary" href="portals/software.html">Software Portal</a>
+          <a class="btn btn--sm btn--outline" href="pages/auth.html">Sign in</a>
+          <a class="btn btn--sm btn--primary btn--pulse" href="portals/software.html">Software</a>
         </div>
       </div>
     </header>
 
-    <section class="landing-hero">
+    <!-- Hero -->
+    <section class="landing-hero" data-reveal>
+      <div class="landing-hero__bg" data-parallax="0.14"></div>
+      <div class="landing-hero__texture" aria-hidden="true"></div>
       <div class="container landing-hero__grid">
         <div class="landing-hero__copy">
-          <p class="eyebrow">Best Face Forward Enterprise</p>
-          <h1>
+          <p class="eyebrow reveal-item">Best Face Forward Enterprise</p>
+          <h1 class="reveal-item">
             Strategy. Solutions.
             <span>Impact.</span>
           </h1>
-          <p class="landing-hero__script">Moving You Forward.</p>
-          <p class="landing-hero__lead">
-            A feminine-business house of five divisions — grants, finance, insurance,
-            logistics, and intelligent software — designed to elevate how you operate and grow.
+          <p class="landing-hero__script reveal-item">Moving You Forward.</p>
+          <p class="landing-hero__lead reveal-item">
+            A high-profile house of six portals — foundation grants, financial practice systems,
+            insurance production, logistics, G&amp;G software, and Expense IQ — built for organizations
+            that lead with integrity.
           </p>
-          <div class="landing-hero__actions">
-            <a class="btn btn--primary" href="#divisions">Explore divisions</a>
+          <div class="landing-hero__actions reveal-item">
+            <a class="btn btn--primary btn--pulse" href="#divisions">Explore portals</a>
             <a class="btn btn--outline" href="pages/about.html">Our story</a>
+            <a class="btn btn--ghost" href="pages/auth.html">Sign in</a>
           </div>
         </div>
-        <div class="landing-hero__portrait">
-          <div class="landing-hero__portrait-frame">
+        <div class="landing-hero__portrait reveal-item" data-parallax-slow="0.06">
+          <div class="landing-hero__portrait-frame glass-frame">
             <img src="assets/owner.png" alt="Best Face Forward leadership" />
+            <div class="landing-hero__portrait-glow" aria-hidden="true"></div>
           </div>
           <p class="landing-hero__portrait-caption">Leadership · Integrity · Presence</p>
         </div>
       </div>
+      <div class="landing-hero__scroll-hint" aria-hidden="true">
+        <span>Scroll</span>
+        <span class="landing-hero__scroll-line"></span>
+      </div>
     </section>
 
-    <section class="divisions" id="divisions">
-      <div class="container">
-        <div class="divisions__header">
-          <p class="eyebrow">Our divisions</p>
-          <h2>Five portals. One standard of excellence.</h2>
-          <hr class="gold-line" />
-        </div>
+    <!-- PINNED CAROUSEL: tall track + sticky stage -->
+    <section class="pin-section" id="divisions">
+      <div class="pin-section__track">
+        <div class="pin-section__sticky" id="pin-sticky">
+          <div class="pin-section__glow" aria-hidden="true"></div>
+          <div class="container pin-section__inner">
+            <div class="divisions__header" data-reveal>
+              <p class="eyebrow reveal-item">Enterprise portals</p>
+              <h2 class="reveal-item">Six gateways. One standard of excellence.</h2>
+              <hr class="gold-line reveal-item" />
+              <p class="divisions__sub reveal-item">
+                The signature carousel — one portal in full focus at a time. Arrows, dots, or swipe to choose your path.
+              </p>
+            </div>
 
-        <div class="divisions__grid">
-          <a class="division-tile" href="portals/foundation.html">
-            <div class="division-tile__icon">
-              <img class="division-tile__img" src="assets/icon-foundation.jpeg" alt="Foundation" />
-            </div>
-            <div class="division-tile__body">
-              <h3 class="division-tile__name">Best Face Forward <span>Foundation</span></h3>
-              <p class="division-tile__tag">Strong organizations.</p>
-              <p class="division-tile__desc">Grant readiness, writing, board development, and community capacity.</p>
-              <span class="division-tile__cta">Enter portal →</span>
-            </div>
-            <div class="division-tile__foot">Grants · Compliance · Training</div>
-          </a>
+            <div
+              class="portal-carousel glass-panel"
+              id="portal-carousel"
+              role="region"
+              aria-roledescription="carousel"
+              aria-label="Service portals"
+            >
+              <button type="button" class="portal-carousel__arrow portal-carousel__arrow--prev" aria-label="Previous portal">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M15 6L9 12l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
 
-          <a class="division-tile" href="portals/financial.html">
-            <div class="division-tile__icon">
-              <img class="division-tile__img" src="assets/icon-financial.jpeg" alt="Financial Solutions" />
-            </div>
-            <div class="division-tile__body">
-              <h3 class="division-tile__name">Best Face Forward <span>Financial Solutions</span></h3>
-              <p class="division-tile__tag">Financial confidence.</p>
-              <p class="division-tile__desc">Bookkeeping, cash flow, reporting, tax, and strategic financial planning.</p>
-              <span class="division-tile__cta">Enter portal →</span>
-            </div>
-            <div class="division-tile__foot">Books · Tax · Advisory</div>
-          </a>
+              <div class="portal-carousel__viewport">
+                <div class="portal-carousel__track" id="portal-track">
+                  <article class="portal-slide is-active" data-index="0" aria-hidden="false">
+                    <div class="portal-showcase">
+                      <div class="portal-showcase__visual portal-showcase__visual--foundation">
+                        <img class="portal-showcase__img" src="assets/icon-foundation.jpeg" alt="" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 01 · Foundation</p>
+                        <h3 class="portal-showcase__title">Best Face Forward <span>Foundation</span></h3>
+                        <p class="portal-showcase__tag">Strong organizations.</p>
+                        <p class="portal-showcase__desc">
+                          Grant readiness, writing, board development, and community capacity —
+                          built so mission-driven teams can fund growth with integrity.
+                        </p>
+                        <div class="portal-showcase__foot">Grants · Compliance · Training</div>
+                        <a class="btn btn--primary btn--pulse portal-showcase__cta" href="portals/foundation.html">Enter portal</a>
+                      </div>
+                    </div>
+                  </article>
 
-          <a class="division-tile" href="portals/insurance.html">
-            <div class="division-tile__icon">
-              <img class="division-tile__img" src="assets/icon-insurance.jpeg" alt="Insurance Solutions" />
-            </div>
-            <div class="division-tile__body">
-              <h3 class="division-tile__name">Best Face Forward <span>Insurance Solutions</span></h3>
-              <p class="division-tile__tag">Protecting today.</p>
-              <p class="division-tile__desc">Life, final expense, retirement, benefits, and wealth protection.</p>
-              <span class="division-tile__cta">Enter portal →</span>
-            </div>
-            <div class="division-tile__foot">Life · Legacy · Benefits</div>
-          </a>
+                  <article class="portal-slide" data-index="1" aria-hidden="true">
+                    <div class="portal-showcase">
+                      <div class="portal-showcase__visual portal-showcase__visual--financial">
+                        <img class="portal-showcase__img" src="assets/icon-financial.jpeg" alt="" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 02 · Financial</p>
+                        <h3 class="portal-showcase__title">Best Face Forward <span>Financial Solutions</span></h3>
+                        <p class="portal-showcase__tag">Financial confidence.</p>
+                        <p class="portal-showcase__desc">
+                          Full practice platform: bookkeeping, advisory, tax prep with Form 8867 due diligence,
+                          business analysis, and service-bureau sales — one client, four possible engagements.
+                        </p>
+                        <div class="portal-showcase__foot">Books · Tax · Advisory · Service Bureau</div>
+                        <a class="btn btn--primary btn--pulse portal-showcase__cta" href="portals/financial.html">Enter portal</a>
+                      </div>
+                    </div>
+                  </article>
 
-          <a class="division-tile" href="portals/logistics.html">
-            <div class="division-tile__icon">
-              <img class="division-tile__img" src="assets/icon-logistics.jpeg" alt="Logistics Consulting" />
-            </div>
-            <div class="division-tile__body">
-              <h3 class="division-tile__name">Best Face Forward <span>Logistics Consulting</span></h3>
-              <p class="division-tile__tag">Moving businesses.</p>
-              <p class="division-tile__desc">Launch, scale, and operate transportation companies more efficiently.</p>
-              <span class="division-tile__cta">Enter portal →</span>
-            </div>
-            <div class="division-tile__foot">Ops · Fleet · Contracts</div>
-          </a>
+                  <article class="portal-slide" data-index="2" aria-hidden="true">
+                    <div class="portal-showcase">
+                      <div class="portal-showcase__visual portal-showcase__visual--insurance">
+                        <img class="portal-showcase__img" src="assets/icon-insurance.jpeg" alt="" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 03 · Insurance</p>
+                        <h3 class="portal-showcase__title">Best Face Forward <span>Insurance Solutions</span></h3>
+                        <p class="portal-showcase__tag">Protecting today.</p>
+                        <p class="portal-showcase__desc">
+                          Lead-to-bind production: multi-line quoting, policy CRM, commissions, and compliance —
+                          from first lead to renewal with one accurate chain of custody.
+                        </p>
+                        <div class="portal-showcase__foot">Life · Health · P&amp;C · Commissions</div>
+                        <a class="btn btn--primary btn--pulse portal-showcase__cta" href="portals/insurance.html">Enter portal</a>
+                      </div>
+                    </div>
+                  </article>
 
-          <a class="division-tile division-tile--software" href="portals/software.html">
-            <div class="division-tile__icon">
-              <img class="division-tile__img" src="assets/icon-software.jpeg" alt="G&amp;G Software Solutions" />
+                  <article class="portal-slide" data-index="3" aria-hidden="true">
+                    <div class="portal-showcase">
+                      <div class="portal-showcase__visual portal-showcase__visual--logistics">
+                        <img class="portal-showcase__img" src="assets/icon-logistics.jpeg" alt="" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 04 · Logistics</p>
+                        <h3 class="portal-showcase__title">Best Face Forward <span>Logistics Consulting</span></h3>
+                        <p class="portal-showcase__tag">Moving businesses.</p>
+                        <p class="portal-showcase__desc">
+                          Launch, scale, and operate transportation companies more efficiently —
+                          ops, fleet, and contracts with a business-first lens.
+                        </p>
+                        <div class="portal-showcase__foot">Ops · Fleet · Contracts</div>
+                        <a class="btn btn--primary btn--pulse portal-showcase__cta" href="portals/logistics.html">Enter portal</a>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="portal-slide" data-index="4" aria-hidden="true">
+                    <div class="portal-showcase portal-showcase--software">
+                      <div class="portal-showcase__visual portal-showcase__visual--software">
+                        <img class="portal-showcase__img" src="assets/icon-software.jpeg" alt="" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 05 · G&amp;G Software</p>
+                        <h3 class="portal-showcase__title">G&amp;G <span>Software Solutions</span></h3>
+                        <p class="portal-showcase__tag">Infinite possibilities.</p>
+                        <p class="portal-showcase__desc">
+                          Custom software, AI automation, CRM, and technology that scales —
+                          plus the Business Academy for teams who learn by doing.
+                        </p>
+                        <div class="portal-showcase__foot">Products · Academy · AI</div>
+                        <a class="btn btn--rose btn--pulse portal-showcase__cta" href="portals/software.html">Shop &amp; learn</a>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="portal-slide" data-index="5" aria-hidden="true">
+                    <div class="portal-showcase portal-showcase--eiq">
+                      <div class="portal-showcase__visual portal-showcase__visual--eiq">
+                        <img class="portal-showcase__img portal-showcase__img--svg" src="assets/icon-expense-iq.svg" alt="Expense IQ" />
+                      </div>
+                      <div class="portal-showcase__body">
+                        <p class="portal-showcase__eyebrow">Portal 06 · Expense IQ™</p>
+                        <h3 class="portal-showcase__title">Expense IQ <span>Financial Platform</span></h3>
+                        <p class="portal-showcase__tag">Every dollar, one ledger.</p>
+                        <p class="portal-showcase__desc">
+                          Smart expense tracking, AI-powered reporting, receipt management, budgeting,
+                          and real-time financial visibility for organizations.
+                        </p>
+                        <div class="portal-showcase__foot">Capture · Ledger · Grants · Tax-ready</div>
+                        <a class="btn btn--gold btn--pulse portal-showcase__cta" href="expense-iq/index.html">Enter portal</a>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <button type="button" class="portal-carousel__arrow portal-carousel__arrow--next" aria-label="Next portal">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div class="portal-carousel__dots" id="portal-dots" role="tablist" aria-label="Choose portal"></div>
+              <p class="portal-carousel__status" id="portal-status" aria-live="polite">1 / 6</p>
+              <p class="portal-carousel__pin-hint" id="pin-hint">
+                <span class="pin-dot"></span> Stage pinned — browse services, then scroll to release
+              </p>
             </div>
-            <div class="division-tile__body">
-              <h3 class="division-tile__name">G&amp;G <span>Software Solutions</span></h3>
-              <p class="division-tile__tag">Infinite possibilities.</p>
-              <p class="division-tile__desc">Custom software, AI automation, CRM, and technology that scales.</p>
-              <span class="division-tile__cta">Shop &amp; learn →</span>
-            </div>
-            <div class="division-tile__foot">Products · Academy · AI</div>
-          </a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="promise-strip">
+    <section class="promise-strip" data-reveal>
+      <div class="promise-strip__glow" aria-hidden="true"></div>
       <div class="container">
-        <p class="eyebrow" style="color: var(--gold-soft)">Our brand promise</p>
-        <p>
+        <p class="eyebrow reveal-item" style="color: var(--gold-bright)">Our brand promise</p>
+        <p class="promise-strip__text reveal-item">
           We provide innovative solutions with integrity, empower growth with purpose,
           and deliver lasting impact for our clients and communities.
         </p>
       </div>
     </section>
 
-    <section class="quick-links">
+    <section class="quick-links" data-reveal>
       <div class="container">
         <div class="quick-links__grid">
-          <article class="quick-card">
+          <article class="quick-card glass-card reveal-item">
             <span class="badge">Portal</span>
             <h3>Software &amp; Products</h3>
-            <p>Technology packages and digital products — Stripe links coming soon.</p>
-            <a class="btn btn--sm btn--primary" href="portals/software.html">Open Software</a>
+            <p>Technology packages, digital products, and G&amp;G solutions.</p>
+            <a class="btn btn--sm btn--primary btn--pulse" href="portals/software.html">Open Software</a>
           </article>
-          <article class="quick-card">
-            <span class="badge badge--rose">Learn</span>
+          <article class="quick-card glass-card reveal-item">
+            <span class="badge badge--rose">Product</span>
+            <h3>Expense IQ™</h3>
+            <p>Ledger-first expenses, receipts, and grant-ready financial visibility.</p>
+            <a class="btn btn--sm btn--gold btn--pulse" href="expense-iq/index.html">Open Expense IQ</a>
+          </article>
+          <article class="quick-card glass-card reveal-item">
+            <span class="badge badge--emerald">Learn</span>
             <h3>Business Academy</h3>
             <p>Enroll, play elegant quizzes, unlock graduate products.</p>
-            <a class="btn btn--sm btn--rose" href="portals/academy.html">Enter Academy</a>
-          </article>
-          <article class="quick-card">
-            <span class="badge badge--emerald">Connect</span>
-            <h3>Contact Us</h3>
-            <p>Tell us where you are — we’ll meet you with clarity.</p>
-            <a class="btn btn--sm btn--outline" href="pages/contact.html">Get in touch</a>
+            <a class="btn btn--sm btn--rose btn--pulse" href="portals/academy.html">Enter Academy</a>
           </article>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer">
+    <footer class="site-footer site-footer--luxe">
       <div class="container">
         <div class="site-footer__grid">
           <div>
@@ -196,7 +303,7 @@
             </ul>
           </div>
           <div>
-            <h4>Divisions</h4>
+            <h4>Portals</h4>
             <ul>
               <li><a href="portals/foundation.html">Foundation</a></li>
               <li><a href="portals/financial.html">Financial</a></li>
@@ -205,16 +312,17 @@
             </ul>
           </div>
           <div>
-            <h4>G&amp;G</h4>
+            <h4>G&amp;G &amp; Products</h4>
             <ul>
               <li><a href="portals/software.html">Software portal</a></li>
               <li><a href="portals/academy.html">Academy</a></li>
+              <li><a href="expense-iq/index.html">Expense IQ™</a></li>
             </ul>
           </div>
         </div>
         <div class="site-footer__bottom">
           <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
-          <span>Front-end demo · Packages &amp; Stripe links next</span>
+          <span>Six portals · One enterprise</span>
         </div>
       </div>
     </footer>
@@ -224,6 +332,7 @@
   <script src="js/storage.js"></script>
   <script src="js/main.js"></script>
   <script src="js/transitions.js"></script>
+  <script src="js/landing.js"></script>
   <script src="js/gigi.js"></script>
 </body>
 </html>

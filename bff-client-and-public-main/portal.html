@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal | Best Face Forward</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b">
+        <div class="max-w-screen-xl mx-auto px-6 flex justify-between items-center h-16">
+            <a href="index.html" class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-blue-700 rounded-2xl flex items-center justify-center text-white font-bold">BFF</div>
+                <span class="font-semibold text-xl">Best Face Forward <span class="text-slate-400 font-normal">| Client Portal</span></span>
+            </a>
+
+            <div id="nav-auth">
+                <a href="index.html" class="text-xs px-4 h-9 flex items-center border rounded-2xl inline-flex">Back to site</a>
+            </div>
+
+            <div id="nav-client" class="hidden items-center gap-x-4">
+                <span id="nav-user-name" class="font-semibold"></span>
+                <button onclick="logoutUser()" class="text-xs px-4 h-9 border rounded-2xl">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="max-w-md mx-auto px-6 py-16">
+        <div class="bg-white rounded-3xl shadow p-8">
+            <h1 class="text-2xl font-semibold mb-1">Welcome back</h1>
+            <p class="text-sm text-slate-500 mb-6">Log in to view your progress, deadlines, and documents.</p>
+
+            <label class="text-xs font-medium text-slate-500">Email</label>
+            <input id="login-email" type="email" placeholder="you@example.com" class="w-full border p-3 rounded-2xl mb-3 mt-1">
+
+            <label class="text-xs font-medium text-slate-500">Password</label>
+            <input id="login-password" type="password" placeholder="••••••••" class="w-full border p-3 rounded-2xl mb-2 mt-1">
+
+            <p id="login-error" class="text-sm text-red-600 mb-3 hidden"></p>
+
+            <button onclick="loginWithFirebase()" class="w-full h-12 bg-slate-900 text-white rounded-3xl font-semibold">Sign In</button>
+
+            <div class="mt-4 p-3 bg-slate-50 rounded-2xl text-xs text-slate-500">
+                <strong>Demo access:</strong> admin@example.com / demo-password<br>
+                Replace this with real client accounts created in Firebase before launch.
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENT PORTAL (protected view) -->
+    <div id="client-portal" class="hidden max-w-screen-xl mx-auto px-6 py-10">
+        <h2 id="client-welcome" class="text-3xl font-semibold">Welcome back</h2>
+        <p class="text-slate-500 mb-8">Thank you for choosing Best Face Forward.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white border rounded-3xl p-6">
+                <h3 class="font-semibold">Your Progress</h3>
+                <div class="text-4xl font-bold mt-2">42%</div>
+            </div>
+            <div class="bg-white border rounded-3xl p-6">
+                <h3 class="font-semibold">Next Deadline</h3>
+                <div class="text-4xl font-bold mt-2">11 days</div>
+            </div>
+            <div class="bg-white border rounded-3xl p-6">
+                <h3 class="font-semibold">Documents</h3>
+                <div class="text-4xl font-bold mt-2">8</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== FIREBASE CONFIG ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxZDiGhbDyPwIhCSH6f2YjlK0B_dlF2Qk",
+            authDomain: "bestfaceforward-a5f69.firebaseapp.com",
+            projectId: "bestfaceforward-a5f69",
+            storageBucket: "bestfaceforward-a5f69.firebasestorage.app",
+            messagingSenderId: "657899604318",
+            appId: "1:657899604318:web:227722de6309c83c5467cf"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+
+        async function loginWithFirebase() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            errorEl.classList.add('hidden');
+
+            try {
+                const result = await auth.signInWithEmailAndPassword(email, password);
+                currentUser = result.user;
+                showClientPortal();
+            } catch (error) {
+                errorEl.textContent = "Login failed: " + error.message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function showClientPortal() {
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('client-portal').classList.remove('hidden');
+            document.getElementById('nav-auth').classList.add('hidden');
+            document.getElementById('nav-client').classList.remove('hidden');
+            document.getElementById('nav-user-name').innerText = currentUser.email.split('@')[0];
+        }
+
+        function logoutUser() {
+            auth.signOut().then(() => location.reload());
+        }
+
+        // If already logged in (e.g. refreshed the page), skip straight to the portal.
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                showClientPortal();
+            }
+        });
+    </script>
+</body>
+</html>

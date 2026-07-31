@@ -142,15 +142,15 @@ button {
 }
 
 .btn--primary {
-  background: var(--emerald);
+  background: var(--grad-emerald-soft, linear-gradient(180deg, #12805f 0%, #0a5c45 100%));
   color: var(--ivory);
-  box-shadow: 0 8px 24px rgba(11, 77, 58, 0.25);
+  box-shadow: 0 8px 24px rgba(10, 92, 69, 0.28);
 }
 
 .btn--primary:hover {
-  background: var(--emerald-soft);
-  box-shadow: 0 12px 32px rgba(11, 77, 58, 0.32);
-  transform: translateY(-1px);
+  background: var(--grad-emerald, linear-gradient(145deg, #0e6b50 0%, #0a5c45 45%, #04291e 100%));
+  box-shadow: 0 12px 36px rgba(10, 92, 69, 0.38);
+  transform: translateY(-2px);
 }
 
 .btn--gold {

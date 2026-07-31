@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in · Best Face Forward</title>
+  <link rel="icon" href="../assets/icon-welcome.jpeg" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/landing.css" />
+  <style>
+    .auth-wrap {
+      min-height: calc(100vh - var(--nav-h));
+      display: grid;
+      place-items: center;
+      padding: 3rem 1.25rem 4rem;
+      background: var(--grad-hero);
+    }
+    .auth-card {
+      width: min(100%, 440px);
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(212,175,90,0.4);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-elevated);
+      padding: 2rem 1.75rem;
+    }
+    .auth-card h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.08em;
+      color: var(--emerald-deep);
+      margin: 0.5rem 0 0.35rem;
+    }
+    .auth-card .lede {
+      color: var(--charcoal-muted);
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+    }
+    .auth-tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 1.25rem;
+      background: var(--surface-muted);
+      padding: 0.3rem;
+      border-radius: var(--radius-pill);
+    }
+    .auth-tabs button {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 0.65rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--charcoal-muted);
+    }
+    .auth-tabs button.is-active {
+      background: var(--grad-emerald);
+      color: #fff;
+    }
+    .field { margin-bottom: 0.9rem; }
+    .field label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--charcoal-muted);
+      margin-bottom: 0.35rem;
+      font-family: var(--font-display);
+    }
+    .field input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(212,175,90,0.35);
+      font: inherit;
+      background: #fff;
+    }
+    .alert {
+      padding: 0.75rem 0.9rem;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      margin-bottom: 0.9rem;
+      display: none;
+    }
+    .alert.is-visible { display: block; }
+    .alert--err { background: #fce8e8; color: #7a1f1f; border: 1px solid #e8b4b4; }
+    .alert--ok { background: #e8f5ee; color: #0a5c45; border: 1px solid #b7dfc4; }
+    .alert--info { background: #fdf6e3; color: #6b4e00; border: 1px solid #e8d9a0; }
+    .auth-meta {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--charcoal-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="page-landing">
+  <div class="page-shell">
+    <header class="site-nav site-nav--luxe">
+      <div class="container site-nav__inner">
+        <a class="site-nav__brand" href="../landing.html">
+          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
+        </a>
+        <ul class="site-nav__links">
+          <li><a href="../landing.html">Home</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="site-nav__cta">
+          <a class="btn btn--sm btn--outline" href="../landing.html">Back</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <p class="eyebrow">Secure access</p>
+        <h1>Client &amp; team sign-in</h1>
+        <p class="lede">Supabase auth for portals and practice platforms.</p>
+
+        <div id="status-banner" class="alert alert--info is-visible">
+          Checking Supabase configuration…
+        </div>
+        <div id="msg" class="alert"></div>
+
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="is-active" data-tab="signin" id="tab-in">Sign in</button>
+          <button type="button" data-tab="signup" id="tab-up">Create account</button>
+        </div>
+
+        <form id="form-signin">
+          <div class="field">
+            <label for="in-email">Email</label>
+            <input id="in-email" type="email" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="in-pass">Password</label>
+            <input id="in-pass" type="password" autocomplete="current-password" required minlength="8" />
+          </div>
+          <button class="btn btn--primary btn--block" type="submit" id="btn-in">Sign in</button>
+        </form>
+
+        <form id="form-signup" class="hidden" style="display:none">
+          <div class="field">
+            <label for="up-name">Full name</label>
+            <input id="up-name" type="text" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="up-email">Email</label>
+            <input id="up-email" type="email" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="up-pass">Password</label>
+            <input id="up-pass" type="password" autocomplete="new-password" required minlength="8" />
+          </div>
+          <button class="btn btn--gold btn--block" type="submit" id="btn-up">Create account</button>
+        </form>
+
+        <div id="signed-in" class="hidden" style="display:none">
+          <p class="lede" id="who"></p>
+          <button type="button" class="btn btn--outline btn--block" id="btn-out">Sign out</button>
+          <p class="auth-meta"><a href="../landing.html">Return to site</a> · <a href="../expense-iq/index.html">Expense IQ</a></p>
+        </div>
+
+        <p class="auth-meta">
+          <a href="../landing.html">← Home</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase UMD CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase/config.js"></script>
+  <script>
+    // Inject from local env file values if you set window.__ENV before deploy
+    // For static hosting, paste URL + anon key into BFF.config.supabase in config.js
+    // or serve with env replacement.
+  </script>
+  <script src="../js/supabase/client.js"></script>
+  <script src="../js/supabase/auth.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    (function () {
+      const banner = document.getElementById("status-banner");
+      const msg = document.getElementById("msg");
+      const formIn = document.getElementById("form-signin");
+      const formUp = document.getElementById("form-signup");
+      const signed = document.getElementById("signed-in");
+      const who = document.getElementById("who");
+
+      // Map CDN global
+      if (window.supabase && !window.supabase.createClient && window.supabase.default) {
+        window.supabase = window.supabase.default;
+      }
+
+      function showMsg(text, kind) {
+        msg.textContent = text || "";
+        msg.className = "alert" + (text ? " is-visible alert--" + (kind || "err") : "");
+      }
+
+      function setTab(which) {
+        document.getElementById("tab-in").classList.toggle("is-active", which === "signin");
+        document.getElementById("tab-up").classList.toggle("is-active", which === "signup");
+        formIn.style.display = which === "signin" ? "block" : "none";
+        formUp.style.display = which === "signup" ? "block" : "none";
+        showMsg("");
+      }
+
+      document.getElementById("tab-in").onclick = () => setTab("signin");
+      document.getElementById("tab-up").onclick = () => setTab("signup");
+
+      async function refresh() {
+        const ready = BFF.supabase && BFF.supabase.isReady();
+        if (!ready) {
+          banner.className = "alert alert--info is-visible";
+          banner.textContent =
+            "Supabase not configured yet. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (see .env.example), or fill BFF.config.supabase in js/config.js.";
+          return;
+        }
+        banner.className = "alert alert--ok is-visible";
+        banner.textContent = "Supabase connected.";
+
+        const { user } = await BFF.auth.getUser();
+        if (user) {
+          formIn.style.display = "none";
+          formUp.style.display = "none";
+          document.querySelector(".auth-tabs").style.display = "none";
+          signed.style.display = "block";
+          who.textContent = "Signed in as " + (user.email || user.id);
+          banner.style.display = "none";
+        } else {
+          signed.style.display = "none";
+          document.querySelector(".auth-tabs").style.display = "flex";
+          setTab("signin");
+        }
+      }
+
+      formIn.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showMsg("");
+        const { data, error } = await BFF.auth.signIn({
+          email: document.getElementById("in-email").value,
+          password: document.getElementById("in-pass").value,
+        });
+        if (error) showMsg(error.message || "Sign-in failed", "err");
+        else {
+          showMsg("Welcome back.", "ok");
+          refresh();
+        }
+      });
+
+      formUp.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showMsg("");
+        const { data, error } = await BFF.auth.signUp({
+          email: document.getElementById("up-email").value,
+          password: document.getElementById("up-pass").value,
+          metadata: { full_name: document.getElementById("up-name").value },
+        });
+        if (error) showMsg(error.message || "Sign-up failed", "err");
+        else {
+          showMsg("Account created. Check email if confirmation is required.", "ok");
+          refresh();
+        }
+      });
+
+      document.getElementById("btn-out").onclick = async () => {
+        await BFF.auth.signOut();
+        location.reload();
+      };
+
+      refresh();
+    })();
+  </script>
+</body>
+</html>

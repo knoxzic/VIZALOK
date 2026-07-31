@@ -1,0 +1,14 @@
+{
+  "name": "best-face-forward",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Best Face Forward Consultants — multi-division site with Supabase auth",
+  "type": "module",
+  "scripts": {
+    "serve": "npx --yes serve . -p 3000",
+    "dev": "npx --yes serve . -p 3000"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}
