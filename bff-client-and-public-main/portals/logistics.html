@@ -86,29 +86,41 @@
           <hr class="gold-line" />
         </div>
         <div class="package-grid">
-          <article class="package-card">
-            <h3>Startup Consultation</h3>
-            <div class="package-card__price">$397</div>
-            <ul><li>Focused session to map launch path and priorities</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+          <article class="package-card" data-product="startup_readiness">
+            <h3>Startup Readiness Assessment</h3>
+            <div class="package-card__price">Assessment</div>
+            <ul><li>Launch readiness for new transportation operators</li></ul>
+            <button type="button" class="btn btn--primary btn--block" data-buy="startup_readiness">Buy with Stripe</button>
           </article>
-          <article class="package-card package-card--featured">
-            <h3>Business Launch Package</h3>
-            <div class="package-card__price">$1,997</div>
+          <article class="package-card package-card--featured" data-product="transportation_startup">
+            <h3>Transportation Startup Package</h3>
+            <div class="package-card__price">Package</div>
             <ul><li>Structured launch support for new logistics operators</li></ul>
-            <a class="btn btn--gold btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--gold btn--block" data-buy="transportation_startup">Buy with Stripe</button>
           </article>
-          <article class="package-card">
-            <h3>Operations Review</h3>
-            <div class="package-card__price">$997</div>
-            <ul><li>Deep dive into current ops with recommendations</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+          <article class="package-card" data-product="logistics_assessment">
+            <h3>Logistics Business Assessment</h3>
+            <div class="package-card__price">Assessment</div>
+            <ul><li>Full review of logistics business health and opportunities</li></ul>
+            <button type="button" class="btn btn--primary btn--block" data-buy="logistics_assessment">Buy with Stripe</button>
           </article>
-          <article class="package-card">
-            <h3>Government Readiness Package</h3>
-            <div class="package-card__price">$2,500</div>
-            <ul><li>Capability, compliance, and bid-readiness support</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+          <article class="package-card" data-product="route_optimization">
+            <h3>Route Optimization Review</h3>
+            <div class="package-card__price">Review</div>
+            <ul><li>Smarter routes for cost, time, and service quality</li></ul>
+            <button type="button" class="btn btn--primary btn--block" data-buy="route_optimization">Buy with Stripe</button>
+          </article>
+          <article class="package-card" data-product="operations_manual">
+            <h3>Operations Manual</h3>
+            <div class="package-card__price">Manual</div>
+            <ul><li>Documented SOPs for transportation operations</li></ul>
+            <button type="button" class="btn btn--primary btn--block" data-buy="operations_manual">Buy with Stripe</button>
+          </article>
+          <article class="package-card" data-product="transportation_bundle">
+            <h3>Transportation Success Bundle</h3>
+            <div class="package-card__price">Bundle</div>
+            <ul><li>Combined package for operators ready to scale</li></ul>
+            <button type="button" class="btn btn--primary btn--block" data-buy="transportation_bundle">Buy with Stripe</button>
           </article>
         </div>
       </div>
@@ -153,6 +165,7 @@
   <script src="../js/config.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/device-lease.js"></script>
   <script src="../js/transitions.js"></script>
   <script src="../js/gigi.js"></script>
 </body>

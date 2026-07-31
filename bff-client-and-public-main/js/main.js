@@ -51,12 +51,23 @@ BFF.ui = (function () {
       return;
     }
 
-    if (BFF.storage.productUnlocked(productId)) {
+    if (product.inactive) {
+      toast("This package is temporarily unavailable. Contact us to purchase.");
+      return;
+    }
+
+    if (BFF.storage && BFF.storage.productUnlocked && BFF.storage.productUnlocked(productId)) {
       toast("Already unlocked — enjoy your access");
       return;
     }
 
-    const demo = BFF.config.DEMO_MODE || !product.stripeUrl;
+    // Real Stripe when URL present and DEMO_MODE is false
+    const demo = Boolean(BFF.config.DEMO_MODE) || !product.stripeUrl;
+    if (!demo && product.stripeUrl) {
+      window.open(product.stripeUrl, "_blank", "noopener");
+      toast("Opening secure Stripe checkout…");
+      return;
+    }
     openCheckoutModal(product, demo);
   }
 
@@ -198,6 +209,12 @@ BFF.ui = (function () {
         startCheckout(buy.getAttribute("data-buy"));
       }
     });
+
+    // Soft device-lease refresh when online (non-blocking for marketing pages)
+    if (BFF.deviceLease && BFF.config && BFF.config.DEVICE_LEASE && BFF.config.DEVICE_LEASE.enabled) {
+      BFF.deviceLease.evaluate().catch(function () {});
+      BFF.deviceLease.scheduleRefresh();
+    }
   }
 
   if (document.readyState === "loading") {

@@ -587,6 +587,12 @@
       if (!auth) return;
     }
 
+    // Device lease: online issue_device_lease / offline signed cache
+    if (window.BFF && BFF.deviceLease) {
+      const lease = await BFF.deviceLease.gate({ hard: true });
+      if (!lease.allowed) return;
+    }
+
     if (EIQ.db.isSupabase) {
       try {
         await EIQ.db.hydrateFromAuth();

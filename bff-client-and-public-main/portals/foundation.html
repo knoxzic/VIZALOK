@@ -110,12 +110,12 @@
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">Featured solutions</p>
-          <h2 class="section-title">Packages (preview pricing)</h2>
+          <h2 class="section-title">Packages — secure checkout</h2>
           <hr class="gold-line" />
-          <p style="color:var(--charcoal-muted);max-width:40ch;margin:0.75rem auto 0">Stripe payment links will be hard-coded per package when ready. CTAs route to contact for now.</p>
+          <p style="color:var(--charcoal-muted);max-width:42ch;margin:0.75rem auto 0">Active Stripe Payment Links. Custom grant writing is quote-based.</p>
         </div>
         <div class="package-grid">
-          <article class="package-card">
+          <article class="package-card" data-product="grant_readiness_assessment">
             <h3>Grant Ready Assessment™</h3>
             <div class="package-card__price">Starting at $497</div>
             <ul>
@@ -125,9 +125,10 @@
               <li>Financial Readiness Score</li>
               <li>Funding Readiness Report</li>
             </ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--outline btn--block" data-buy="grant_readiness_assessment" title="Stripe link currently inactive">Temporarily unavailable</button>
+            <p class="field-hint" style="margin-top:0.5rem;font-size:0.85rem;text-align:center"><a href="../pages/contact.html">Contact to purchase</a></p>
           </article>
-          <article class="package-card package-card--featured">
+          <article class="package-card package-card--featured" data-product="grant_readiness_package">
             <span class="badge badge--rose" style="align-self:flex-start;margin-bottom:0.5rem">Popular</span>
             <h3>Grant Readiness Package™</h3>
             <div class="package-card__price">Starting at $1,500</div>
@@ -138,9 +139,9 @@
               <li>Grant Calendar</li>
               <li>Organizational Checklist</li>
             </ul>
-            <a class="btn btn--gold btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--gold btn--block" data-buy="grant_readiness_package">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="grant_writing">
             <h3>Professional Grant Writing</h3>
             <div class="package-card__price">Starting at $2,500</div>
             <ul>
@@ -150,9 +151,9 @@
               <li>Submission Support</li>
               <li>Custom pricing for federal grants</li>
             </ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <a class="btn btn--primary btn--block" href="../pages/contact.html?product=grant_writing">Request quote</a>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="nonprofit_startup">
             <h3>Nonprofit Startup Package</h3>
             <div class="package-card__price">Starting at $2,995</div>
             <ul>
@@ -162,9 +163,9 @@
               <li>Policies</li>
               <li>Startup Roadmap</li>
             </ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="nonprofit_startup">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="strategic_plan">
             <h3>Strategic Planning Package</h3>
             <div class="package-card__price">Starting at $3,500</div>
             <ul>
@@ -173,7 +174,7 @@
               <li>Board Retreat Facilitation</li>
               <li>Three-Year Strategic Plan</li>
             </ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="strategic_plan">Buy with Stripe</button>
           </article>
         </div>
       </div>
@@ -286,6 +287,7 @@
   <script src="../js/config.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/device-lease.js"></script>
   <script src="../js/transitions.js"></script>
   <script src="../js/gigi.js"></script>
 </body>

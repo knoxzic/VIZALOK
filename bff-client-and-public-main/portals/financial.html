@@ -124,45 +124,46 @@
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">Featured solutions</p>
-          <h2 class="section-title">Packages (preview pricing)</h2>
+          <h2 class="section-title">Packages — secure checkout</h2>
           <hr class="gold-line" />
+          <p style="color:var(--charcoal-muted);max-width:42ch;margin:0.75rem auto 0">Live Stripe Payment Links. You complete payment on Stripe’s secure page.</p>
         </div>
         <div class="package-grid">
-          <article class="package-card package-card--featured">
+          <article class="package-card package-card--featured" data-product="phase_i_growth">
             <h3>Phase I Business Growth &amp; Financial Assessment™</h3>
             <div class="package-card__price">$497</div>
             <ul><li>Comprehensive assessment of financial health and growth readiness</li></ul>
-            <a class="btn btn--gold btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--gold btn--block" data-buy="phase_i_growth">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="phase_ii_clarity">
             <h3>Phase II Financial Clarity &amp; Growth Implementation™</h3>
             <div class="package-card__price">$750</div>
             <ul><li>Implementation support after assessment</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="phase_ii_clarity">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="monthly_bookkeeping">
             <h3>Monthly Bookkeeping</h3>
             <div class="package-card__price">From $350/mo</div>
             <ul><li>Ongoing bookkeeping with reporting rhythm</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="monthly_bookkeeping">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="cfo_advisory">
             <h3>CFO Advisory</h3>
             <div class="package-card__price">From $750/mo</div>
             <ul><li>Strategic advisory for owners and leadership teams</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="cfo_advisory">Buy with Stripe</button>
           </article>
-          <article class="package-card">
+          <article class="package-card" data-product="financial_cleanup">
             <h3>Business Financial Cleanup</h3>
             <div class="package-card__price">From $1,500</div>
             <ul><li>Catch-up, reconciliation, and clean books foundation</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <button type="button" class="btn btn--primary btn--block" data-buy="financial_cleanup">Buy with Stripe</button>
           </article>
           <article class="package-card">
             <h3>Tax Preparation</h3>
             <div class="package-card__price">Ind. from $350 · Biz from $850</div>
-            <ul><li>Individual and business return preparation</li></ul>
-            <a class="btn btn--primary btn--block" href="../pages/contact.html">Inquire</a>
+            <ul><li>Individual and business return preparation — scoped per engagement</li></ul>
+            <a class="btn btn--outline btn--block" href="../pages/contact.html">Request quote</a>
           </article>
         </div>
       </div>
@@ -285,6 +286,7 @@
   <script src="../js/config.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/device-lease.js"></script>
   <script src="../js/transitions.js"></script>
   <script src="../js/gigi.js"></script>
 </body>

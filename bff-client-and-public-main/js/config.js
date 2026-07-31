@@ -1,7 +1,6 @@
 /**
  * Best Face Forward — site config
- * Swap Stripe URLs and GIGI_ENDPOINT when backend goes live.
- * Structure is ready for webhooks without major refactoring.
+ * Stripe Payment Links (active as of 2026-07-31) + paywall + Supabase.
  */
 window.BFF = window.BFF || {};
 
@@ -13,31 +12,35 @@ BFF.config = {
     motto: "Strategy. Solutions. Impact.",
   },
 
-  /**
-   * Set to your Cloud Function URL when ready, e.g.:
-   * "https://us-central1-bestfaceforward-a5f69.cloudfunctions.net/gigiChat"
-   * null = smart demo replies (no API key in the browser)
-   */
   GIGI_ENDPOINT: null,
 
   /**
-   * Demo mode: simulate purchases/enrollment via localStorage unlocks.
-   * When false and stripe links exist, real checkout opens.
+   * When false, products with stripeUrl open real Stripe Checkout.
+   * Demo unlock still available only if stripeUrl is empty.
    */
-  DEMO_MODE: true,
+  DEMO_MODE: false,
 
   /**
-   * Paywall — product access after confirmed email.
-   * freePreview: true lets confirmed users into paid apps until Stripe webhooks fill `subscriptions`.
-   * Set freePreview: false once Stripe is live.
+   * Device lease (desktop / offline entitlement)
+   * Online: RPC issue_device_lease() → store signed payload
+   * Offline: allow only if NOW() < lease.expires_at
+   * Refresh: every 12 hours while online
    */
+  DEVICE_LEASE: {
+    enabled: true,
+    refreshHours: 12,
+    storageKey: "bff_device_lease_v1",
+    lockMessage: "Access locked. Connect to the internet to renew your license lease.",
+  },
+
   PAYWALL: {
+    // Set false when Stripe webhooks write subscriptions rows
     freePreview: true,
     products: {
       expense_iq: {
         key: "expense_iq",
         name: "Expense IQ",
-        stripeUrl: "", // paste Stripe Payment Link when ready
+        stripeUrl: "",
         priceLabel: "Subscription",
       },
       full_suite: {
@@ -49,11 +52,6 @@ BFF.config = {
     },
   },
 
-  /**
-   * Supabase (public anon key is safe in the browser).
-   * Override with NEXT_PUBLIC_SUPABASE_* env or window.__ENV on deploy.
-   * Project ref: rjxiytnoomgpodkpvxad
-   */
   supabase: {
     url: "https://rjxiytnoomgpodkpvxad.supabase.co",
     anonKey:
@@ -61,18 +59,239 @@ BFF.config = {
     enabled: true,
   },
 
-  /**
-   * After real Stripe Checkout, success_url can hit success.html?product=ID
-   * Webhooks (server-side) will later write the same unlock keys to Firestore.
-   */
   successPath: "success.html",
 
+  /**
+   * Catalog — each product has portal + stripeUrl for checkout.
+   * inactive: true means Stripe link is deactivated (do not sell).
+   */
   products: {
+    // ── Foundation ──────────────────────────────────────────
+    grant_readiness_assessment: {
+      id: "grant_readiness_assessment",
+      name: "Grant Ready Assessment™",
+      price: 497,
+      priceLabel: "Starting at $497",
+      description: "Organizational, compliance, board, and funding readiness score.",
+      benefits: [
+        "Organizational Assessment",
+        "Compliance Review",
+        "Board Review",
+        "Financial Readiness Score",
+        "Funding Readiness Report",
+      ],
+      // plink inactive on Stripe dashboard — keep URL for re-enable
+      stripeUrl: "https://buy.stripe.com/7sY9AUbchb40bIUflV1sQ0f",
+      inactive: true,
+      unlockKey: "bff_unlock_grant_readiness_assessment",
+      portal: "foundation",
+      stripeId: "plink_1TdjLgLavWJ4R5kOtKS6mqB2",
+    },
+    grant_readiness_package: {
+      id: "grant_readiness_package",
+      name: "Grant Readiness Package™",
+      price: 1500,
+      priceLabel: "Starting at $1,500",
+      description: "Policies, board docs, financial review, and grant calendar.",
+      benefits: [
+        "Policies & Procedures",
+        "Board Documents",
+        "Financial Review",
+        "Grant Calendar",
+        "Organizational Checklist",
+      ],
+      stripeUrl: "https://buy.stripe.com/14A14oeot8VSbIU8Xx1sQ0h",
+      unlockKey: "bff_unlock_grant_readiness_package",
+      portal: "foundation",
+      stripeId: "plink_1TdjN7LavWJ4R5kONg6S3Sa9",
+      popular: true,
+    },
+    nonprofit_startup: {
+      id: "nonprofit_startup",
+      name: "Nonprofit Startup Package",
+      price: 2995,
+      priceLabel: "Starting at $2,995",
+      description: "Formation guidance, bylaws, IRS prep, policies, startup roadmap.",
+      benefits: [
+        "Formation Guidance",
+        "Bylaws & Board Documents",
+        "IRS Preparation Guidance",
+        "Policies",
+        "Startup Roadmap",
+      ],
+      stripeUrl: "https://buy.stripe.com/eVqdRa1BH7ROeV6flV1sQ0q",
+      unlockKey: "bff_unlock_nonprofit_startup",
+      portal: "foundation",
+      stripeId: "plink_1TzMqCLavWJ4R5kOH8Bwhjhv",
+    },
+    strategic_plan: {
+      id: "strategic_plan",
+      name: "Strategic Plan",
+      price: 3500,
+      priceLabel: "Starting at $3,500",
+      description: "SWOT, goals & KPIs, board facilitation, three-year plan.",
+      benefits: ["SWOT Analysis", "Strategic Goals & KPIs", "Board Retreat Facilitation", "Three-Year Strategic Plan"],
+      stripeUrl: "https://buy.stripe.com/5kQ00k6W1egceV6b5F1sQ0p",
+      unlockKey: "bff_unlock_strategic_plan",
+      portal: "foundation",
+      stripeId: "plink_1TzMpjLavWJ4R5kOSDVDwZyw",
+    },
+    grant_writing: {
+      id: "grant_writing",
+      name: "Professional Grant Writing",
+      price: 2500,
+      priceLabel: "Starting at $2,500",
+      description: "Research, proposal, budget, and submission support — custom-scoped; inquire for checkout.",
+      benefits: ["Research", "Proposal Writing", "Budget Development", "Submission Support"],
+      stripeUrl: "",
+      unlockKey: "bff_unlock_grant_writing",
+      portal: "foundation",
+    },
+
+    // ── Financial Solutions ─────────────────────────────────
+    phase_i_growth: {
+      id: "phase_i_growth",
+      name: "Phase I Business Growth Package & Financial Assessment",
+      price: 497,
+      priceLabel: "$497",
+      description: "Comprehensive assessment of financial health and growth readiness.",
+      benefits: ["Financial health review", "Growth readiness score", "Priority action plan"],
+      stripeUrl: "https://buy.stripe.com/28EeVe0xDfkg5kw3Dd1sQ0r",
+      unlockKey: "bff_unlock_phase_i_growth",
+      portal: "financial",
+      stripeId: "plink_1TzMtwLavWJ4R5kOF5vNNVQM",
+      popular: true,
+    },
+    phase_ii_clarity: {
+      id: "phase_ii_clarity",
+      name: "Phase II Financial Clarity & Growth Implementation",
+      price: 750,
+      priceLabel: "$750",
+      description: "Implementation support after Phase I assessment.",
+      benefits: ["Systems implementation", "Reporting cadence", "Growth tracking"],
+      stripeUrl: "https://buy.stripe.com/7sYcN60xD6NK9AMc9J1sQ0s",
+      unlockKey: "bff_unlock_phase_ii_clarity",
+      portal: "financial",
+      stripeId: "plink_1TzMvXLavWJ4R5kOW5CERSFD",
+    },
+    monthly_bookkeeping: {
+      id: "monthly_bookkeeping",
+      name: "Monthly Bookkeeping",
+      price: 350,
+      priceLabel: "From $350/mo",
+      description: "Ongoing bookkeeping with a reliable reporting rhythm.",
+      benefits: ["Monthly close", "Reconciliations", "Owner reports"],
+      stripeUrl: "https://buy.stripe.com/eVq3cw5RX0pm9AM2z91sQ0t",
+      unlockKey: "bff_unlock_monthly_bookkeeping",
+      portal: "financial",
+      stripeId: "plink_1TzMxWLavWJ4R5kOA5VnTZiR",
+    },
+    cfo_advisory: {
+      id: "cfo_advisory",
+      name: "CFO Advisory",
+      price: 750,
+      priceLabel: "From $750/mo",
+      description: "Executive-level financial partnership on a flexible cadence.",
+      benefits: ["Strategic sessions", "KPI reviews", "Decision support"],
+      stripeUrl: "https://buy.stripe.com/9B64gAbch6NKdR2ddN1sQ0u",
+      unlockKey: "bff_unlock_cfo_advisory",
+      portal: "financial",
+      stripeId: "plink_1TzMyyLavWJ4R5kOUio63mXr",
+    },
+    financial_cleanup: {
+      id: "financial_cleanup",
+      name: "Business Financial Cleanup",
+      price: 1500,
+      priceLabel: "From $1,500",
+      description: "Catch-up, reconciliation, and clean books foundation.",
+      benefits: ["Catch-up bookkeeping", "Reconciliation", "Clean starting point"],
+      stripeUrl: "https://buy.stripe.com/7sYeVefsxdc83cob5F1sQ0v",
+      unlockKey: "bff_unlock_financial_cleanup",
+      portal: "financial",
+      stripeId: "plink_1TzN0YLavWJ4R5kO8wjkMGcg",
+    },
+
+    // ── Logistics ───────────────────────────────────────────
+    logistics_assessment: {
+      id: "logistics_assessment",
+      name: "Logistics Business Assessment",
+      price: null,
+      priceLabel: "Assessment",
+      description: "Full review of logistics business health and opportunities.",
+      benefits: ["Ops review", "Risk scan", "Priority roadmap"],
+      stripeUrl: "https://buy.stripe.com/6oU28seot2xu8wIb5F1sQ0o",
+      unlockKey: "bff_unlock_logistics_assessment",
+      portal: "logistics",
+      stripeId: "plink_1Ty20ILavWJ4R5kOGC6lqU14",
+    },
+    route_optimization: {
+      id: "route_optimization",
+      name: "Route Optimization Review",
+      price: null,
+      priceLabel: "Review",
+      description: "Smarter routes for cost, time, and service quality.",
+      benefits: ["Route analysis", "Cost opportunities", "Service impact"],
+      stripeUrl: "https://buy.stripe.com/9B67sMgwB3ByeV68Xx1sQ0n",
+      unlockKey: "bff_unlock_route_optimization",
+      portal: "logistics",
+      stripeId: "plink_1TxyfPLavWJ4R5kOa9n1tePK",
+    },
+    startup_readiness: {
+      id: "startup_readiness",
+      name: "Startup Readiness Assessment",
+      price: null,
+      priceLabel: "Assessment",
+      description: "Launch readiness for new transportation operators.",
+      benefits: ["Launch checklist", "Compliance baseline", "Go/no-go guidance"],
+      stripeUrl: "https://buy.stripe.com/7sY28s8055JG6oA4Hh1sQ0m",
+      unlockKey: "bff_unlock_startup_readiness",
+      portal: "logistics",
+      stripeId: "plink_1TxyeXLavWJ4R5kOwgRAQ9ar",
+    },
+    transportation_startup: {
+      id: "transportation_startup",
+      name: "Transportation Startup Package",
+      price: 1997,
+      priceLabel: "Package",
+      description: "Structured launch support for new logistics operators.",
+      benefits: ["Launch plan", "Ops structure", "Compliance path"],
+      stripeUrl: "https://buy.stripe.com/9B6cN6dkp8VSfZa0r11sQ0l",
+      unlockKey: "bff_unlock_transportation_startup",
+      portal: "logistics",
+      stripeId: "plink_1TxycnLavWJ4R5kOscR0duYA",
+      popular: true,
+    },
+    operations_manual: {
+      id: "operations_manual",
+      name: "Operations Manual",
+      price: null,
+      priceLabel: "Manual",
+      description: "Documented SOPs for transportation operations.",
+      benefits: ["SOP templates", "Role clarity", "Training base"],
+      stripeUrl: "https://buy.stripe.com/9B6fZicgldc87sE7Tt1sQ0k",
+      unlockKey: "bff_unlock_operations_manual",
+      portal: "logistics",
+      stripeId: "plink_1TxyVVLavWJ4R5kOvcx2f4nu",
+    },
+    transportation_bundle: {
+      id: "transportation_bundle",
+      name: "Transportation Success Bundle",
+      price: null,
+      priceLabel: "Bundle",
+      description: "Combined package for transportation operators ready to scale.",
+      benefits: ["Assessment", "Launch tools", "Ops playbook"],
+      stripeUrl: "https://buy.stripe.com/28E4gA8055JGfZaflV1sQ0j",
+      unlockKey: "bff_unlock_transportation_bundle",
+      portal: "logistics",
+      stripeId: "plink_1TxyOeLavWJ4R5kO7eTiHzS2",
+    },
+
+    // ── Software / legacy catalog (kept) ────────────────────
     diy_starter: {
       id: "diy_starter",
       name: "D.I.Y Starter Kit",
       price: 197,
-      description: "Templates, checklists, and guided systems to stand up your books and ops with confidence.",
+      description: "Templates, checklists, and guided systems to stand up your books and ops.",
       benefits: ["Foundation workbook", "Document checklist", "Self-paced setup guide"],
       stripeUrl: "https://buy.stripe.com/3cI8wQ5RXgokdR2a1B1sQ0e",
       unlockKey: "bff_unlock_diy_starter",
@@ -82,9 +301,10 @@ BFF.config = {
       id: "funding_readiness",
       name: "Funding Readiness Assessment",
       price: 497,
-      description: "A polished readiness review so you know exactly where funders will scrutinize you.",
+      description: "Readiness review for funders (legacy product id).",
       benefits: ["Scorecard report", "Gap analysis", "Priority action plan"],
       stripeUrl: "https://buy.stripe.com/7sY9AUbchb40bIUflV1sQ0f",
+      inactive: true,
       unlockKey: "bff_unlock_funding_readiness",
       portal: "software",
     },
@@ -92,29 +312,18 @@ BFF.config = {
       id: "childcare_accelerator",
       name: "Child Care Funding Accelerator",
       price: 2997,
-      description: "Our flagship path for child-care operators ready to pursue serious funding.",
+      description: "Flagship path for child-care operators ready for serious funding.",
       benefits: ["Done-with-you strategy", "Packet polish", "Priority support"],
       stripeUrl: "https://buy.stripe.com/3cI00kcgl9ZWfZa6Pp1sQ0g",
       unlockKey: "bff_unlock_childcare_accelerator",
       portal: "software",
       popular: true,
     },
-    grant_writing: {
-      id: "grant_writing",
-      name: "Grant Writing Services",
-      price: 1500,
-      priceLabel: "$1,500+",
-      description: "Professional narrative, budgets, and attachments crafted for your mission.",
-      benefits: ["Custom narrative", "Budget alignment", "Submission-ready package"],
-      stripeUrl: "https://buy.stripe.com/14A14oeot8VSbIU8Xx1sQ0h",
-      unlockKey: "bff_unlock_grant_writing",
-      portal: "software",
-    },
     first_two_grants: {
       id: "first_two_grants",
       name: "First 2 Grants — Done For You",
       price: 750,
-      description: "We research and package your first two grant submissions end to end.",
+      description: "Research and package your first two grant submissions.",
       benefits: ["Two full applications", "Research included", "Revision round"],
       stripeUrl: "https://buy.stripe.com/14A8wQ3JPfkgbIUgpZ1sQ0i",
       unlockKey: "bff_unlock_first_two_grants",
@@ -124,13 +333,12 @@ BFF.config = {
       id: "academy_enroll",
       name: "Business Academy Enrollment",
       price: 497,
-      description: "Game-based curriculum with elegant business styling — enroll once, learn for life (demo).",
+      description: "Game-based curriculum — enroll once, learn for life.",
       benefits: [
-        "Interactive modules & Kahoot-style quizzes",
+        "Interactive modules & quizzes",
         "Progress tracking",
         "Standalone product unlocks after completion",
       ],
-      // Replace with real Stripe Payment Link when ready
       stripeUrl: "",
       unlockKey: "bff_unlock_academy",
       portal: "academy",
@@ -139,7 +347,7 @@ BFF.config = {
       id: "academy_playbook",
       name: "Academy Graduate Playbook",
       price: 0,
-      description: "Standalone ops playbook unlocked after Academy enrollment (demo).",
+      description: "Standalone ops playbook unlocked after Academy enrollment.",
       benefits: ["Systems map", "90-day calendar", "Template vault"],
       stripeUrl: "",
       unlockKey: "bff_unlock_academy_playbook",
