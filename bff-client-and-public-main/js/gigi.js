@@ -50,9 +50,9 @@ BFF.gigi = (function () {
         "Checkout is live Stripe Payment Links (not a demo). After you pay, Stripe webhooks write your entitlement to Supabase subscriptions. Sign in with the same email you used at checkout for product access.",
     },
     {
-      keys: ["contact", "email", "phone", "reach", "talk", "human"],
+      keys: ["contact", "email", "phone", "reach", "talk", "human", "call"],
       reply:
-        "Use the Contact page to send an intake message — it is saved to our Supabase leads pipeline. Mention your division so the right team can follow up.",
+        "Call us at 1-855-888-4233 (1-855-888-4BFF), email info@urlocalbff.com, or use the Contact page to send an intake message. Mention your division so the right team can follow up.",
     },
     {
       keys: ["about", "who", "culture", "owner", "story"],

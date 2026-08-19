@@ -115,9 +115,58 @@ BFF.ui = (function () {
       return;
     }
 
-    const href = await stripeCheckoutUrl(product);
-    window.open(href, "_blank", "noopener");
     toast("Opening secure Stripe checkout…");
+    const apiUrl = await createCheckoutSession(product);
+    if (apiUrl) {
+      window.location.href = apiUrl;
+      return;
+    }
+    const href = await stripeCheckoutUrl(product);
+    if (!href) {
+      toast("Checkout unavailable. Contact us.");
+      return;
+    }
+    window.open(href, "_blank", "noopener");
+  }
+
+  async function createCheckoutSession(product) {
+    try {
+      const sb = BFF.supabase && BFF.supabase.getClient && BFF.supabase.getClient();
+      const cfg = BFF.config || {};
+      const fn = (cfg.stripe && cfg.stripe.createCheckoutFn) || "create-checkout";
+      if (!sb || !cfg.supabase || !cfg.supabase.url) return "";
+
+      const origin = location.origin + location.pathname.replace(/[^/]+$/, "");
+      const success =
+        origin +
+        (cfg.successPath || "success.html") +
+        "?session_id={CHECKOUT_SESSION_ID}&product=" +
+        encodeURIComponent(product.id);
+      const cancel = location.href;
+
+      let email = "";
+      try {
+        const { user } = (BFF.auth && (await BFF.auth.getUser())) || {};
+        if (user && user.email) email = user.email;
+      } catch (_) {}
+
+      const { data, error } = await sb.functions.invoke(fn, {
+        body: {
+          productKey: product.id,
+          successUrl: success,
+          cancelUrl: cancel,
+          email,
+        },
+      });
+      if (error) {
+        console.warn("[BFF] create-checkout", error);
+        return "";
+      }
+      return (data && data.url) || "";
+    } catch (err) {
+      console.warn("[BFF] create-checkout failed, using Payment Link", err);
+      return "";
+    }
   }
 
   function escapeHtml(str) {
@@ -213,9 +262,40 @@ BFF.ui = (function () {
     });
   }
 
+  function injectBrandPhone() {
+    var brand = (window.BFF && BFF.config && BFF.config.brand) || {};
+    var tel = brand.phone || "+18558884233";
+    var vanity = brand.phoneVanity || "1-855-888-4BFF";
+    var display = brand.phoneDisplay || "1-855-888-4233";
+
+    document.querySelectorAll(".site-nav__cta").forEach(function (cta) {
+      if (cta.querySelector("[data-bff-phone]")) return;
+      var a = document.createElement("a");
+      a.href = "tel:" + tel;
+      a.className = "nav-phone";
+      a.setAttribute("data-bff-phone", "");
+      a.setAttribute("aria-label", "Call " + display);
+      a.textContent = vanity;
+      cta.insertBefore(a, cta.firstChild);
+    });
+
+    document.querySelectorAll(".site-nav__links").forEach(function (links) {
+      if (links.querySelector("[data-bff-phone]")) return;
+      var li = document.createElement("li");
+      li.className = "is-phone";
+      var a = document.createElement("a");
+      a.href = "tel:" + tel;
+      a.setAttribute("data-bff-phone", "");
+      a.textContent = display;
+      li.appendChild(a);
+      links.appendChild(li);
+    });
+  }
+
   function init() {
     initNav();
     setYear();
+    injectBrandPhone();
     refreshUnlockUI();
     window.addEventListener("bff:unlock", refreshUnlockUI);
 
@@ -238,6 +318,7 @@ BFF.ui = (function () {
     toast,
     startCheckout,
     stripeCheckoutUrl,
+    createCheckoutSession,
     refreshUnlockUI,
     getVerifiedEntitlements,
     escapeHtml,

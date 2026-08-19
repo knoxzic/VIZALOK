@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Dashboard · BFF</title>
+  <link rel="icon" href="../assets/logo.png" />
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/marketing.css" />
+</head>
+<body class="admin-shell">
+  <div class="admin-bar">
+    <strong>BFF Staff · Lead Review</strong>
+    <span>
+      <a href="../pages/auth.html">Sign in</a> ·
+      <a href="../landing.html">Public site</a> ·
+      <button type="button" id="btn-signout" class="btn btn--sm" style="color:var(--bff-gold)">Sign out</button>
+    </span>
+  </div>
+
+  <div class="admin-wrap">
+    <p id="admin-gate" style="padding:1rem;background:#fff3;border-radius:8px;margin-bottom:1rem">
+      Checking session…
+    </p>
+
+    <div id="admin-app" hidden>
+      <div class="admin-kpis">
+        <div class="admin-kpi"><strong id="kpi-total">0</strong>Total leads loaded</div>
+        <div class="admin-kpi"><strong id="kpi-new">0</strong>Stage: new</div>
+        <div class="admin-kpi"><strong id="kpi-week">0</strong>Last 7 days</div>
+      </div>
+
+      <div class="admin-filters">
+        <input type="search" id="filter-q" placeholder="Search name or email" />
+        <select id="filter-stage">
+          <option value="">All stages</option>
+          <option value="new">new</option>
+          <option value="reviewed">reviewed</option>
+          <option value="contacted">contacted</option>
+          <option value="closed">closed</option>
+        </select>
+        <button type="button" class="btn btn--sm btn--green" id="btn-refresh">Refresh</button>
+      </div>
+
+      <div style="overflow:auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Stage</th>
+              <th>Notes preview</th>
+            </tr>
+          </thead>
+          <tbody id="leads-body">
+            <tr><td colspan="5">No data yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="lead-detail" class="contact-card--mkt" style="margin-top:1.5rem;display:none">
+        <h2>Lead detail</h2>
+        <pre id="lead-json" style="white-space:pre-wrap;font-size:0.9rem;max-height:240px;overflow:auto"></pre>
+        <div class="field" style="margin-top:1rem">
+          <label for="lead-stage">Status / stage</label>
+          <select id="lead-stage">
+            <option value="new">new</option>
+            <option value="reviewed">reviewed</option>
+            <option value="contacted">contacted</option>
+            <option value="closed">closed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lead-notes">Staff notes</label>
+          <textarea id="lead-notes" rows="3"></textarea>
+        </div>
+        <button type="button" class="btn btn--green" id="btn-save-lead">Save</button>
+        <p style="margin-top:1rem;opacity:0.7;font-size:0.95rem">Call logs — coming soon (voice deferred).</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase/config.js"></script>
+  <script src="../js/supabase/client.js"></script>
+  <script src="../js/supabase/auth.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

@@ -104,4 +104,13 @@
   --nav-h: 78px;
   --max-w: 1200px;
   --gigi-z: 1000;
+
+  /* ——— Marketing mockup aliases (4-page BFF reference) ———
+     Aliases only — existing emerald/rose tokens stay for portals */
+  --bff-green-dark: #16332a;
+  --bff-pink: #c6487d;
+  --bff-cream: #f5f1e8;
+  --bff-gold: #c9a24b;
+  --bff-white: #ffffff;
+  --bff-text-dark: #1e1e1e;
 }

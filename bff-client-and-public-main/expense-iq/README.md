@@ -9,11 +9,11 @@ Multi-tenant financial management platform for small businesses, nonprofits, and
 
 | Phase | Scope | Status |
 |-------|--------|--------|
-| **1 — App foundation** | Auth, MFA (demo), orgs, roles, multi-org, `org_id` scope | **In progress / demoable** |
-| 2 — Capture & dashboard | OCR, review queue | Shell only |
-| 3 — Transactions & COA | Ledger pipeline, validation gate | Shell only |
-| 4 — Grants, mileage, travel | Same pipeline as receipts | Shell only |
-| 5 — Reports, Gigi, security hard | Read-only rollups, launch | Shell only |
+| **1 — App foundation** | Auth, MFA (demo), orgs, roles, multi-org, `org_id` scope | **Done / demoable** |
+| **2 — Capture & dashboard** | Dual-engine (Grok via Edge Function / local Tesseract OCR) receipt capture, Transactions, Bookings & Tasks, live dashboard stats | **Done / demoable** — run `supabase/schema_capture.sql`, deploy the `eiq-ai` Edge Function, and set `XAI_API_KEY` to enable the Grok path (Local OCR works with no setup) |
+| 3 — Chart of Accounts & GL | Double-entry ledger, COA-based posting, Bank & Reconcile | Shell only |
+| 4 — Grants, mileage, travel | Same pipeline as receipts, real GPS mileage capture | Shell only |
+| 5 — Reports, Gigi, security hard | Balance Sheet / P&L, read-only rollups, launch | Shell only |
 
 Spec sources (kept with the product package):
 
@@ -46,10 +46,16 @@ Data is stored in **this browser only** (`localStorage` key `eiq_v1`).
 - This folder is self-contained: copy `expense-iq/` to its own GitHub repo when ready.
 - Point a custom domain at static hosting (GitHub Pages, Cloudflare Pages, Netlify, Firebase Hosting).
 - **Supabase (default):** `STORAGE_MODE: "supabase"` — Auth + org-scoped tables with RLS.
-  1. In Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql) once.
+  1. In Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql) once, then [`supabase/schema_capture.sql`](supabase/schema_capture.sql) (adds Capture/Transactions/Bookings columns and tables — both are idempotent, safe to re-run).
   2. Auth → disable “Confirm email” for faster testing (optional), or leave on for production.
   3. Open `index.html` — status banner should say **Supabase connected**.
   4. Create account → create organization → data lives in your project under that `org_id`.
+- **Grok (AI) capture:** deploy the `eiq-ai` Edge Function so the xAI API key never reaches the browser:
+  ```powershell
+  supabase functions deploy eiq-ai
+  supabase secrets set XAI_API_KEY=xai-...
+  ```
+  Local OCR (Tesseract.js, on-device) works immediately with no key and no deploy — it's the default engine on the Capture page.
 - Fallback: set `STORAGE_MODE` to `local` for browser-only demos.
 
 ## Architecture (runtime spine)

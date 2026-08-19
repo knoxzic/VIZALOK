@@ -2,138 +2,304 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About · Best Face Forward</title>
-  <link rel="icon" href="../assets/logo.png" />
-  <link rel="stylesheet" href="../css/tokens.css" />
-  <link rel="stylesheet" href="../css/main.css" />
-  <link rel="stylesheet" href="../css/transitions.css" />
-  <link rel="stylesheet" href="../css/landing.css" />
-  <style>
-    .about-grid {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 3rem;
-      align-items: center;
-      padding: 3rem 0 5rem;
-    }
-    .about-grid__frame {
-      border: 1px solid rgba(198, 161, 91, 0.55);
-      box-shadow: var(--shadow-gold);
-      position: relative;
-    }
-    .about-grid__frame::before {
-      content: "";
-      position: absolute;
-      inset: 5px;
-      border: 1px solid rgba(198, 161, 91, 0.25);
-      pointer-events: none;
-      z-index: 1;
-    }
-    .about-grid__frame img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 4/5;
-      object-fit: cover;
-      object-position: top;
-    }
-    .about-copy h2 {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--emerald);
-      margin-bottom: 1rem;
-    }
-    .about-copy p {
-      margin-bottom: 1rem;
-      color: var(--charcoal-soft);
-      font-size: 1.15rem;
-    }
-    @media (max-width: 800px) {
-      .about-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About · Best Face Forward Consultants</title>
+  <meta name="description" content="Best Face Forward Consultants, LLC — a strategic partner for lasting foundations. Call 1-855-888-4233 (1-855-888-4BFF)." />
+  <link rel="icon" href="../assets/icon-welcome.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Source+Serif+4:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/about.css" />
 </head>
-<body>
-  <div class="page-shell">
-    <header class="site-nav">
-      <div class="container site-nav__inner">
-        <a class="site-nav__brand" href="../landing.html">
-          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
-          <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
-        </a>
-        <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="site-nav__links">
-          <li><a href="../landing.html">Home</a></li>
-          <li><a href="about.html" class="is-active">About</a></li>
-          <li><a href="culture.html">Culture</a></li>
-          <li><a href="../landing.html#divisions">Services</a></li>
-          <li><a href="../portals/academy.html">Academy</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-        <div class="site-nav__cta">
-          <a class="btn btn--sm btn--primary" href="../portals/software.html">Software Portal</a>
-        </div>
-      </div>
-    </header>
+<body class="page-about">
 
-    <div class="page-hero">
-      <div class="container">
-        <p class="eyebrow">About us</p>
-        <h1>Best Face Forward</h1>
-        <p class="script">Presence with purpose.</p>
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="../landing.html">
+      <img src="../assets/icon-welcome.jpeg" alt="Best Face Forward emblem" />
+      <div class="word">
+        <div class="l1">BEST FACE <b>FORWARD</b></div>
+        <div class="l2">CONSULTANTS</div>
       </div>
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div id="navlinks">
+      <a href="../landing.html">HOME</a>
+      <a href="about.html" class="active" aria-current="page">ABOUT</a>
+      <a href="services.html">SERVICES</a>
+      <a href="pathways.html">PATHWAYS</a>
+      <a href="contact.html">CONTACT</a>
     </div>
-
-    <div class="container about-grid">
-      <div class="about-grid__frame">
-        <img src="../assets/owner.png" alt="Founder portrait" />
-      </div>
-      <div class="about-copy">
-        <h2>An enterprise built to elevate</h2>
-        <p>
-          Best Face Forward Consultants is a multi-division enterprise serving organizations
-          that want strength, polish, and momentum â€” without sacrificing warmth or integrity.
-        </p>
-        <p>
-          From grant-ready foundations to financial confidence, protection, logistics, and
-          G&amp;G Software Solutions, every portal is designed as a refined experience:
-          clear paths, guided decisions, and outcomes that last.
-        </p>
-        <p class="script" style="font-size:1.75rem;color:var(--rose-deep);margin:1.25rem 0">
-          Moving You Forward.
-        </p>
-        <a class="btn btn--primary" href="contact.html">Start a conversation</a>
-      </div>
+    <div class="nav-cta">
+      <a class="nav-phone" href="tel:+18558884233">1-855-888-4BFF</a>
+      <a href="tel:+18558884233" class="btn-pink">BOOK A CALL</a>
     </div>
-
-    <section class="promise-strip">
-      <div class="container">
-        <p class="eyebrow" style="color:var(--gold-soft)">Brand promise</p>
-        <p>
-          Innovative solutions with integrity. Growth with purpose. Lasting impact
-          for clients and communities.
-        </p>
-      </div>
-    </section>
-
-    <footer class="site-footer">
-      <div class="container">
-        <div class="site-footer__bottom" style="border:0;padding-top:0">
-          <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
-          <a href="../landing.html">Back to home</a>
-        </div>
-      </div>
-    </footer>
   </div>
-  <script src="../js/config.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/main.js"></script>
-  <script src="../js/transitions.js"></script>
-  <script src="../js/gigi.js"></script>
+</nav>
+
+<section id="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow reveal in">WHO WE ARE</div>
+      <h1 class="reveal in reveal-delay-1">A strategic partner for <em>lasting foundations</em></h1>
+      <p class="reveal in reveal-delay-2">Best Face Forward Consultants, LLC is a strategic financial consulting and business development firm dedicated to helping entrepreneurs, nonprofit organizations, and small businesses build stronger financial foundations through education, strategic planning, compliance, and access to capital.</p>
+      <p class="reveal in reveal-delay-3">With more than two decades of experience in government finance, accounting operations, nonprofit financial management, bookkeeping, tax strategy, compliance support, and financial education, we understand that sustainable success requires more than great ideas &mdash; it requires the right systems, sound financial practices, and a clear strategy for growth.</p>
+      <div class="hero-actions reveal in reveal-delay-4">
+        <a href="tel:+18558884233" class="btn-pink">CALL 1-855-888-4BFF</a>
+        <a href="contact.html" class="btn-outline-gold">SEND A MESSAGE</a>
+      </div>
+      <p class="hero-phone reveal in reveal-delay-4">
+        <a href="tel:+18558884233">1-855-888-4233</a>
+        <span class="vanity"> or 1-855-888-4BFF</span>
+      </p>
+    </div>
+    <div class="hero-photo reveal reveal-delay-2">
+      <div class="gold-corner tl"></div>
+      <div class="gold-corner br"></div>
+      <div class="frame">
+        <img src="../assets/founder-desk.png" alt="Founder at work — Vision. Strategy. Wealth." />
+        <div class="tag">VISION &nbsp;·&nbsp; STRATEGY &nbsp;·&nbsp; WEALTH</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lede-band">
+  <div class="wrap">
+    <p class="reveal">Our approach combines practical experience with personalized guidance to help clients strengthen their operations, improve financial clarity, and position themselves for long-term success. Whether launching a new business, forming a nonprofit organization, preparing for funding opportunities, improving financial management, or protecting personal and business assets, we provide solutions designed to move our clients forward with confidence.</p>
+    <p class="reveal reveal-delay-1">No two clients arrive at the same starting point, and no two plans should look identical. Some come to us with a business already generating revenue but no real financial system behind it. Others are still shaping an idea into a formal entity. What every engagement shares is the same starting question: what does a financially sound version of this organization actually look like, and what is the shortest honest path to get there?</p>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="stick">
+      <div class="eyebrow reveal">WHY WE DO THIS WORK</div>
+      <h2 class="reveal reveal-delay-1">Closing the gap between ambition and access</h2>
+    </div>
+    <div class="copy">
+      <p class="reveal">Numbers tell a story &mdash; but too often, the people who most need to understand that story are shut out of it.</p>
+      <p class="reveal reveal-delay-1">Underserved entrepreneurs, first-generation nonprofit founders, and small business owners are frequently expected to compete for funding, contracts, and credibility without ever having been taught the financial language the system runs on. That gap isn&rsquo;t a failure of ambition or talent &mdash; it&rsquo;s a failure of access.</p>
+      <p class="reveal reveal-delay-2">We started Best Face Forward because we believe that gap can and should be closed. Financial literacy and compliance shouldn&rsquo;t be privileges reserved for those who can afford a full back-office team from day one. They should be tools every founder has in hand before the stakes get high &mdash; before a missed filing costs a grant, before a disorganized ledger costs a loan, before an under-resourced nonprofit loses momentum it can&rsquo;t get back.</p>
+      <p class="reveal reveal-delay-3">Our work is not just spreadsheets and strategy sessions. It&rsquo;s about restoring dignity to the process of building something &mdash; helping people walk into rooms, applications, and negotiations with their full financial picture in order, so they are taken seriously and treated fairly from the start.</p>
+      <p class="reveal reveal-delay-4">That belief is what the firm was actually built on &mdash; not just as a value we mention, but as the story behind why Best Face Forward exists in the first place.</p>
+    </div>
+  </div>
+</section>
+
+<div id="banner">
+  <img id="bannerImg" src="../assets/founder-banner.jpg" alt="Best Face Forward office — looking toward the skyline" />
+  <div class="fade"></div>
+</div>
+
+<section id="aboutband">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">ABOUT US</div>
+      <h2>Our Vision. Our Mission. Our Story.</h2>
+      <p class="script">Strategy. Solutions. Impact.</p>
+      <p>Best Face Forward Consultants, LLC was founded on the belief that strategy creates clarity, solutions drive growth, and impact builds legacy. We partner with businesses, nonprofits, and individuals to turn vision into actionable plans that deliver measurable and lasting results.</p>
+    </div>
+
+    <div class="triad">
+      <div class="col reveal reveal-delay-1">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ddc077" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="#ddc077"/><path d="M12 3v3M12 18v3"/></svg>
+        </div>
+        <h3>OUR VISION</h3>
+        <p>To be the trusted partner in building prosperous organizations and generational impact.</p>
+        <a class="more" href="vision.html">Read our vision →</a>
+      </div>
+      <div class="col reveal reveal-delay-2">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ddc077" stroke-width="1.4"><circle cx="12" cy="8" r="3"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+        </div>
+        <h3>OUR MISSION</h3>
+        <p>To deliver strategy, solutions, and resources that empower our clients to move forward with confidence.</p>
+        <a class="more" href="mission.html">Read our mission →</a>
+      </div>
+      <div class="col reveal reveal-delay-3">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ddc077" stroke-width="1.4"><path d="M12 2l4 5-4 15-4-15z"/><path d="M2 7h20"/></svg>
+        </div>
+        <h3>OUR PROMISE</h3>
+        <p>We are committed to excellence, integrity, and results that create lasting change.</p>
+        <a class="more" href="core-values.html">See our values →</a>
+      </div>
+    </div>
+
+    <p class="band-foot reveal reveal-delay-3">Every plan we build traces back to these three commitments. They are not aspirational language reserved for a homepage &mdash; they are the standard each engagement is measured against, from the first conversation to the final signature.</p>
+  </div>
+</section>
+
+<section id="believe">
+  <div class="wrap">
+    <div class="band-head reveal">
+      <div class="eyebrow">WHAT WE BELIEVE</div>
+      <h2>The principles behind every engagement</h2>
+    </div>
+
+    <div class="value-grid">
+      <div class="value-card reveal reveal-delay-1">
+        <div class="mark">01 &mdash; Equity</div>
+        <h3>Access is a form of equity</h3>
+        <p>Capital, compliance knowledge, and financial systems are often distributed unevenly along lines of geography, race, and opportunity. We see our role as helping to level that ground &mdash; one client, one organization, one clear financial plan at a time.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <div class="mark">02 &mdash; Education</div>
+        <h3>Education outlasts advice</h3>
+        <p>We don&rsquo;t just hand clients an answer; we leave them more capable than we found them. A client who understands why a decision matters can make the next ten decisions well after we&rsquo;ve stepped back.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-3">
+        <div class="mark">03 &mdash; Integrity</div>
+        <h3>Integrity is not negotiable</h3>
+        <p>Sound financial practices and honest compliance work protect more than a balance sheet &mdash; they protect a founder&rsquo;s reputation, a nonprofit&rsquo;s mission, and the trust of every stakeholder depending on them.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-1">
+        <div class="mark">04 &mdash; Community</div>
+        <h3>Small organizations are community infrastructure</h3>
+        <p>Every local business that stays open, every nonprofit that keeps its doors funded, represents jobs, services, and stability for the people around it. Strengthening one foundation reaches well beyond its own walls.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <div class="mark">05 &mdash; Purpose</div>
+        <h3>Strategy should serve people, not the other way around</h3>
+        <p>Growth for growth&rsquo;s sake isn&rsquo;t the goal. We build plans around what actually matters to each client &mdash; their family&rsquo;s security, their mission, their community &mdash; and let the strategy follow from there.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-3" style="display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;">
+          <div class="mark" style="margin-bottom:8px;">06 &mdash; And you</div>
+          <p style="font-family:var(--serif);font-style:italic;font-weight:600;font-size:22px;color:var(--green-800);">What matters most in <br>your foundation?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="commit">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow reveal">OUR COMMITMENT</div>
+      <h2 class="reveal reveal-delay-1">What every client can expect</h2>
+      <p class="reveal reveal-delay-2">We meet clients where they are, not where a template assumes they should be.</p>
+    </div>
+    <ul class="clist">
+      <li class="reveal reveal-delay-1"><span class="diamond"></span><div><strong>Honest assessments</strong><span>Even when the truth is that a plan needs more groundwork before it&rsquo;s ready for funders or regulators.</span></div></li>
+      <li class="reveal reveal-delay-2"><span class="diamond"></span><div><strong>Clear, judgment-free education</strong><span>No gatekeeping financial concepts behind jargon &mdash; every client deserves to understand their own numbers.</span></div></li>
+      <li class="reveal reveal-delay-3"><span class="diamond"></span><div><strong>Compliance built to last</strong><span>Solutions designed to hold up under real scrutiny, not just pass a first review.</span></div></li>
+      <li class="reveal reveal-delay-4"><span class="diamond"></span><div><strong>Advocacy alongside advice</strong><span>We help position clients to actually reach the capital and protections we recommend.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section id="legacy">
+  <div class="wrap">
+    <div class="rule reveal"></div>
+    <div class="eyebrow" style="justify-content:center;margin-bottom:18px;"><span class="reveal">THE LEGACY WE&rsquo;RE BUILDING</span></div>
+    <h2 class="reveal reveal-delay-1">We measure success by what remains standing after we&rsquo;re gone.</h2>
+    <blockquote class="reveal reveal-delay-2">&ldquo;At Best Face Forward, we believe strategy creates clarity, solutions drive growth, and measurable impact builds lasting legacies. Every engagement is centered on empowering our clients with the knowledge, structure, and confidence needed to make informed decisions that strengthen families, businesses, and communities.&rdquo;</blockquote>
+    <cite class="reveal reveal-delay-3">Best Face Forward Consultants, LLC</cite>
+    <div class="final reveal reveal-delay-3">That is the foundation we&rsquo;re here to help you lay.</div>
+    <div class="legacy-actions reveal reveal-delay-4">
+      <a href="tel:+18558884233" class="btn-pink">BOOK A CALL</a>
+      <a href="contact.html" class="btn-outline-gold">WRITE TO US</a>
+    </div>
+    <p class="legacy-phone reveal reveal-delay-4">
+      <a href="tel:+18558884233">1-855-888-4233</a> &nbsp;·&nbsp; 1-855-888-4BFF
+    </p>
+  </div>
+</section>
+
+<section id="reach">
+  <div class="wrap">
+    <div class="item reveal">
+      <div class="label">Call</div>
+      <a href="tel:+18558884233">1-855-888-4233</a>
+      <div class="sub">or 1-855-888-4BFF</div>
+    </div>
+    <div class="item reveal reveal-delay-1">
+      <div class="label">Email</div>
+      <a href="mailto:info@urlocalbff.com">info@urlocalbff.com</a>
+      <div class="sub">We respond in business hours</div>
+    </div>
+    <div class="item reveal reveal-delay-2">
+      <div class="label">Message</div>
+      <a href="contact.html">Start a conversation</a>
+      <div class="sub">Share where you are — we’ll follow up</div>
+    </div>
+  </div>
+</section>
+
+<footer id="foot">
+  <div class="wrap">
+    <a class="brand" href="../landing.html">
+      <img src="../assets/icon-welcome.jpeg" alt="BFF logo" style="width:40px;height:40px;" />
+      <div class="word">
+        <div class="l1">BEST FACE <b>FORWARD</b></div>
+        <div class="l2">CONSULTANTS, LLC</div>
+      </div>
+    </a>
+    <div id="foot-links">
+      <a href="../landing.html">HOME</a>
+      <a href="about.html">ABOUT</a>
+      <a href="services.html">SERVICES</a>
+      <a href="pathways.html">PATHWAYS</a>
+      <a href="contact.html">CONTACT</a>
+      <a class="tel" href="tel:+18558884233">1-855-888-4233</a>
+    </div>
+  </div>
+  <div class="wrap bottom">
+    <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC. All rights reserved.</span>
+    <span>1-855-888-4BFF &nbsp;·&nbsp; STRATEGY · SOLUTIONS · IMPACT</span>
+  </div>
+</footer>
+
+<script src="../js/config.js"></script>
+<script src="../js/site-chrome.js"></script>
+<script>
+  (function () {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) e.target.classList.add("in");
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+
+    var heroPhoto = document.querySelector(".hero-photo");
+    if (heroPhoto) setTimeout(function () { heroPhoto.classList.add("in"); }, 300);
+
+    var nav = document.getElementById("nav");
+    var toggle = nav && nav.querySelector(".nav-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", function () {
+        var open = nav.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      nav.querySelectorAll("#navlinks a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          nav.classList.remove("is-open");
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+    window.addEventListener("scroll", function () {
+      if (nav) nav.classList.toggle("shrink", window.scrollY > 40);
+    });
+
+    var bannerImg = document.getElementById("bannerImg");
+    var banner = document.getElementById("banner");
+    if (bannerImg && banner) {
+      window.addEventListener("scroll", function () {
+        var rect = banner.getBoundingClientRect();
+        var vh = window.innerHeight;
+        if (rect.bottom > 0 && rect.top < vh) {
+          var progress = (vh - rect.top) / (vh + rect.height);
+          bannerImg.style.transform = "translateY(" + (progress - 0.5) * -40 + "px)";
+        }
+      });
+    }
+  })();
+</script>
 </body>
 </html>
-

@@ -339,6 +339,28 @@ button {
 
 .site-nav__cta {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.nav-phone {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  white-space: nowrap;
+}
+.nav-phone:hover {
+  color: var(--gold);
+}
+
+@media (min-width: 901px) {
+  .site-nav__links .is-phone {
+    display: none;
+  }
 }
 
 .nav-toggle {
@@ -862,6 +884,10 @@ button {
 
   .site-nav__cta {
     display: none;
+  }
+
+  .site-nav__links .is-phone a {
+    color: var(--gold);
   }
 }
 

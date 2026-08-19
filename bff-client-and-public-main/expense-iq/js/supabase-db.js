@@ -422,6 +422,7 @@
         receipts: "eiq_receipts",
         grants: "eiq_grants",
         mileage_trips: "eiq_mileage_trips",
+        tasks: "eiq_tasks",
         chart_of_accounts: null,
       };
       const t = map[table];
@@ -539,6 +540,183 @@
     async wipeAll() {
       // Cloud mode: only clear local session + sign out — never mass-delete remote tenants
       await this.signOut();
+    },
+
+    async listReceipts(orgId) {
+      const sb = requireSb();
+      const { data, error } = await sb
+        .from("eiq_receipts")
+        .select("*")
+        .eq("org_id", orgId)
+        .order("date", { ascending: false })
+        .order("created_at", { ascending: false });
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+
+    async createReceipt(orgId, data, userId) {
+      const sb = requireSb();
+      const payload = {
+        org_id: orgId,
+        vendor: data.vendor || "Unknown",
+        date: data.date || now().slice(0, 10),
+        total: Number(data.total) || 0,
+        category: data.category || "Uncategorized",
+        items: Array.isArray(data.items) ? data.items : [],
+        engine: data.engine || null,
+        created_by: userId,
+      };
+      const { data: row, error } = await sb
+        .from("eiq_receipts")
+        .insert(payload)
+        .select("*")
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      await sb.from("eiq_audit_log").insert({
+        org_id: orgId,
+        user_id: userId,
+        action: "create",
+        entity_type: "receipt",
+        entity_id: row ? row.id : null,
+        after_value: { vendor: payload.vendor, total: payload.total },
+      });
+      return row;
+    },
+
+    async deleteReceipt(receiptId, orgId, userId) {
+      const sb = requireSb();
+      const { data: before } = await sb
+        .from("eiq_receipts")
+        .select("*")
+        .eq("id", receiptId)
+        .eq("org_id", orgId)
+        .maybeSingle();
+      const { error } = await sb
+        .from("eiq_receipts")
+        .delete()
+        .eq("id", receiptId)
+        .eq("org_id", orgId);
+      if (error) throw new Error(error.message);
+      await sb.from("eiq_audit_log").insert({
+        org_id: orgId,
+        user_id: userId,
+        action: "delete",
+        entity_type: "receipt",
+        entity_id: receiptId,
+        before_value: before || null,
+      });
+      return true;
+    },
+
+    async listTasks(orgId) {
+      const sb = requireSb();
+      const { data, error } = await sb
+        .from("eiq_tasks")
+        .select("*")
+        .eq("org_id", orgId)
+        .order("date", { ascending: true, nullsFirst: false })
+        .order("time", { ascending: true, nullsFirst: false });
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+
+    async createTask(orgId, data, userId) {
+      const sb = requireSb();
+      const payload = {
+        org_id: orgId,
+        type: data.type === "booking" ? "booking" : "task",
+        title: data.title,
+        date: data.date || null,
+        time: data.time || null,
+        notes: data.notes || "",
+        created_by: userId,
+      };
+      const { data: row, error } = await sb
+        .from("eiq_tasks")
+        .insert(payload)
+        .select("*")
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      await sb.from("eiq_audit_log").insert({
+        org_id: orgId,
+        user_id: userId,
+        action: "create",
+        entity_type: "task",
+        entity_id: row ? row.id : null,
+        after_value: { type: payload.type, title: payload.title },
+      });
+      return row;
+    },
+
+    async updateTask(taskId, orgId, patch, userId) {
+      const sb = requireSb();
+      const { data: before } = await sb
+        .from("eiq_tasks")
+        .select("*")
+        .eq("id", taskId)
+        .eq("org_id", orgId)
+        .maybeSingle();
+      const payload = Object.assign({}, patch, { updated_at: now() });
+      if ("date" in payload && !payload.date) payload.date = null;
+      if ("time" in payload && !payload.time) payload.time = null;
+      const { data, error } = await sb
+        .from("eiq_tasks")
+        .update(payload)
+        .eq("id", taskId)
+        .eq("org_id", orgId)
+        .select("*")
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      await sb.from("eiq_audit_log").insert({
+        org_id: orgId,
+        user_id: userId,
+        action: "edit",
+        entity_type: "task",
+        entity_id: taskId,
+        before_value: before || null,
+        after_value: data,
+      });
+      return data;
+    },
+
+    async deleteTask(taskId, orgId, userId) {
+      const sb = requireSb();
+      const { data: before } = await sb
+        .from("eiq_tasks")
+        .select("*")
+        .eq("id", taskId)
+        .eq("org_id", orgId)
+        .maybeSingle();
+      const { error } = await sb.from("eiq_tasks").delete().eq("id", taskId).eq("org_id", orgId);
+      if (error) throw new Error(error.message);
+      await sb.from("eiq_audit_log").insert({
+        org_id: orgId,
+        user_id: userId,
+        action: "delete",
+        entity_type: "task",
+        entity_id: taskId,
+        before_value: before || null,
+      });
+      return true;
+    },
+
+    async invokeAi(action, payload) {
+      const sb = requireSb();
+      const { data, error } = await sb.functions.invoke("eiq-ai", {
+        body: Object.assign({ action }, payload),
+      });
+      if (error) {
+        let message = error.message || "AI request failed.";
+        if (error.context && typeof error.context.json === "function") {
+          try {
+            const body = await error.context.json();
+            if (body && body.error) message = body.error;
+          } catch (_) {}
+        }
+        throw new Error(message);
+      }
+      if (data && data.error) throw new Error(data.error);
+      return data;
     },
 
     /** Restore EIQ session from Supabase auth if local session missing */

@@ -7,34 +7,15 @@
   <link rel="icon" href="../assets/logo.png" />
   <link rel="stylesheet" href="../css/tokens.css" />
   <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/marketing.css" />
   <link rel="stylesheet" href="../css/transitions.css" />
-  <style>
-    .contact-wrap {
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 1rem 0 5rem;
-    }
-    .contact-card {
-      background: white;
-      border: 1px solid rgba(198, 161, 91, 0.3);
-      border-radius: var(--radius-xl);
-      padding: 2rem;
-      box-shadow: var(--shadow-card);
-    }
-    #contact-status {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 1rem;
-      min-height: 1.4em;
-    }
-  </style>
 </head>
-<body>
+<body class="theme-marketing">
   <div class="page-shell">
-    <header class="site-nav">
+    <header class="site-nav site-nav--mkt">
       <div class="container site-nav__inner">
         <a class="site-nav__brand" href="../landing.html">
-          <img src="../assets/icon-welcome.jpeg" alt="" width="48" height="48" />
+          <img src="../assets/logo.png" alt="" width="48" height="48" />
           <span class="site-nav__brand-text">Best Face Forward<span>Consultants</span></span>
         </a>
         <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
@@ -43,42 +24,59 @@
         <ul class="site-nav__links">
           <li><a href="../landing.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="culture.html">Culture</a></li>
-          <li><a href="../landing.html#divisions">Services</a></li>
-          <li><a href="../portals/academy.html">Academy</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="pathways.html">Pathways</a></li>
           <li><a href="contact.html" class="is-active">Contact</a></li>
         </ul>
         <div class="site-nav__cta">
-          <a class="btn btn--sm btn--outline" href="auth.html">Sign in</a>
+          <a class="btn btn--sm btn--pink" href="contact.html">Book a Call</a>
         </div>
       </div>
     </header>
 
-    <div class="page-hero">
-      <div class="container">
-        <p class="eyebrow">Contact</p>
-        <h1>We're listening</h1>
-        <p class="script">Tell us how to help.</p>
+    <section class="hero-split">
+      <div class="hero-split__inner">
+        <div class="hero-split__copy">
+          <p class="eyebrow">Contact Us</p>
+          <h1>Let’s Start the <span class="accent">Conversation.</span></h1>
+          <p class="lead">Share a little about where you are — we’ll follow up with care and clarity. Or call us now at <a href="tel:+18558884233" style="color:var(--bff-gold)">1-855-888-4233</a> (1-855-888-4BFF).</p>
+        </div>
+        <div class="hero-split__portrait">
+          <img src="../assets/owner.png" alt="Contact Best Face Forward" />
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="container contact-wrap">
-      <div class="contact-card">
-        <form id="contact-form">
-          <div class="field">
-            <label for="org-name">Organization / Name</label>
-            <input id="org-name" name="orgName" required placeholder="Your organization" />
+    <div class="container contact-layout">
+      <div class="contact-card--mkt">
+        <h2>Send Us a Message</h2>
+        <form id="contact-form" novalidate>
+          <div class="field-hp" aria-hidden="true">
+            <label for="company_website">Leave blank</label>
+            <input id="company_website" name="company_website" tabindex="-1" autocomplete="off" />
           </div>
           <div class="field">
-            <label for="contact-email">Email</label>
+            <label for="full-name">Full Name</label>
+            <input id="full-name" name="fullName" required placeholder="Your name" />
+          </div>
+          <div class="field">
+            <label for="contact-email">Email Address</label>
             <input id="contact-email" name="contactEmail" type="email" required placeholder="you@example.com" />
           </div>
           <div class="field">
-            <label for="contact-phone">Phone (optional)</label>
+            <label for="contact-phone">Phone Number</label>
             <input id="contact-phone" name="phone" type="tel" placeholder="(optional)" />
           </div>
           <div class="field">
-            <label for="division">Division of interest</label>
+            <label for="org-name">Business / Organization Name</label>
+            <input id="org-name" name="orgName" placeholder="Organization" />
+          </div>
+          <div class="field">
+            <label for="contact-interest">Interest</label>
+            <input id="contact-interest" name="interest" placeholder="e.g. Pathway 3, Bookkeeping" />
+          </div>
+          <div class="field">
+            <label for="division">Division (optional)</label>
             <select id="division" name="division">
               <option value="">Select…</option>
               <option value="foundation">Foundation (Grants)</option>
@@ -87,24 +85,66 @@
               <option value="logistics">Logistics Consulting</option>
               <option value="software">G&amp;G Software / Academy</option>
               <option value="expense_iq">Expense IQ</option>
+              <option value="pathways">Nonprofit Pathways</option>
             </select>
           </div>
           <div class="field">
-            <label for="business-desc">How can we help?</label>
-            <textarea id="business-desc" name="businessDescription" rows="4" placeholder="Brief description"></textarea>
+            <label for="business-desc">How can we help you?</label>
+            <textarea id="business-desc" name="businessDescription" rows="4" required placeholder="Brief description"></textarea>
           </div>
-          <button type="submit" class="btn btn--primary btn--block" id="contact-submit">Send message</button>
-          <p id="contact-status"></p>
+          <button type="submit" class="btn btn--green btn--block" id="contact-submit">Send Message</button>
+          <p id="contact-status" style="text-align:center;margin-top:1rem;min-height:1.4em"></p>
         </form>
+      </div>
+
+      <div>
+        <div class="contact-card--mkt" style="margin-bottom:1.25rem">
+          <h2>Other Ways to Connect</h2>
+          <p style="margin-bottom:0.75rem;color:var(--charcoal-soft)"><strong>Call</strong><br /><a href="tel:+18558884233" style="color:var(--bff-pink)">1-855-888-4233</a><br /><span>or 1-855-888-4BFF</span></p>
+          <p style="margin-bottom:0.75rem;color:var(--charcoal-soft)"><strong>Email</strong><br /><a href="mailto:info@urlocalbff.com" style="color:var(--bff-pink)">info@urlocalbff.com</a></p>
+          <p style="margin-bottom:0.75rem;color:var(--charcoal-soft)"><strong>Portals</strong><br /><a href="../landing.html#divisions" style="color:var(--bff-pink)">Explore enterprise portals</a></p>
+          <p style="color:var(--charcoal-soft)"><strong>Hours</strong><br />Weekdays — message anytime; we respond in business hours.</p>
+        </div>
+        <div class="contact-card--mkt" style="background:var(--bff-pink);color:white;border:0">
+          <h2 style="color:white">Follow Us</h2>
+          <p style="opacity:0.95;margin-bottom:1rem">Stay connected on social for updates and opportunities.</p>
+          <div style="display:flex;gap:0.75rem">
+            <a href="#" class="btn btn--sm" style="background:rgba(255,255,255,0.2);color:white">Facebook</a>
+            <a href="#" class="btn btn--sm" style="background:rgba(255,255,255,0.2);color:white">Instagram</a>
+            <a href="#" class="btn btn--sm" style="background:rgba(255,255,255,0.2);color:white">LinkedIn</a>
+          </div>
+        </div>
       </div>
     </div>
 
-    <footer class="site-footer">
+    <footer class="mkt-footer">
       <div class="container">
-        <div class="site-footer__bottom" style="border:0;padding-top:0">
-          <span>&copy; <span data-year></span> Best Face Forward Consultants, LLC</span>
-          <a href="../landing.html">Back to home</a>
+        <div class="mkt-footer__grid">
+          <div>
+            <img src="../assets/logo.png" alt="BFF" width="48" height="48" />
+            <p class="mkt-footer__blurb">We’re here to help you move forward with confidence.</p>
+          </div>
+          <div>
+            <h4>Quick Links</h4>
+            <a href="../landing.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="pathways.html">Pathways</a>
+          </div>
+          <div>
+            <h4>Clients</h4>
+            <a href="auth.html">Sign in</a>
+            <a href="../admin/dashboard.html">Staff portal</a>
+          </div>
+          <div>
+            <h4>Connect</h4>
+            <a href="tel:+18558884233">1-855-888-4233</a>
+            <a href="tel:+18558884233">1-855-888-4BFF</a>
+            <a href="mailto:info@urlocalbff.com">info@urlocalbff.com</a>
+            <a href="contact.html">Book a call</a>
+          </div>
         </div>
+        <p class="mkt-footer__copy">&copy; <span data-year></span> Best Face Forward Consultants, LLC</p>
       </div>
     </footer>
   </div>
@@ -114,77 +154,92 @@
   <script src="../js/supabase/client.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/main.js"></script>
-  <script src="../js/transitions.js"></script>
-  <script src="../js/gigi.js"></script>
+  <script src="../js/site-chrome.js"></script>
   <script>
     (function () {
-      const params = new URLSearchParams(location.search);
-      const product = params.get("product");
-      if (product) {
-        const desc = document.getElementById("business-desc");
-        if (desc && !desc.value) {
-          desc.value = "Interested in: " + product.replace(/_/g, " ");
-        }
-        const div = document.getElementById("division");
-        if (div && product === "expense_iq") div.value = "expense_iq";
-      }
+      var lastSubmit = 0;
 
       document.getElementById("contact-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        const status = document.getElementById("contact-status");
-        const btn = document.getElementById("contact-submit");
+        var status = document.getElementById("contact-status");
+        var btn = document.getElementById("contact-submit");
+
+        // Honeypot
+        var hp = document.getElementById("company_website");
+        if (hp && hp.value) {
+          status.textContent = "Received — thank you.";
+          status.style.color = "var(--bff-green-dark)";
+          return;
+        }
+
+        // Simple throttle (8s)
+        if (Date.now() - lastSubmit < 8000) {
+          status.textContent = "Please wait a moment before sending again.";
+          status.style.color = "var(--charcoal-muted)";
+          return;
+        }
+
         btn.disabled = true;
         status.textContent = "Sending…";
         status.style.color = "var(--charcoal-muted)";
 
-        const orgName = document.getElementById("org-name").value.trim();
-        const email = document.getElementById("contact-email").value.trim();
-        const phone = document.getElementById("contact-phone").value.trim();
-        const division = document.getElementById("division").value;
-        const notes = document.getElementById("business-desc").value.trim();
+        var fullName = document.getElementById("full-name").value.trim();
+        var orgName = document.getElementById("org-name").value.trim();
+        var email = document.getElementById("contact-email").value.trim();
+        var phone = document.getElementById("contact-phone").value.trim();
+        var interest = document.getElementById("contact-interest").value.trim();
+        var division = document.getElementById("division").value;
+        var notes = document.getElementById("business-desc").value.trim();
 
-        const lineMap = {
+        if (!fullName || !email || !notes) {
+          status.textContent = "Please complete name, email, and message.";
+          status.style.color = "var(--bff-pink)";
+          btn.disabled = false;
+          return;
+        }
+
+        var lineMap = {
           foundation: ["analysis"],
           financial: ["bookkeeping", "advisory", "tax"],
           insurance: ["life", "health"],
           logistics: ["analysis"],
           software: ["analysis"],
           expense_iq: ["bookkeeping", "analysis"],
+          pathways: ["analysis"],
         };
 
         try {
-          const sb = BFF.supabase && BFF.supabase.getClient && BFF.supabase.getClient();
-          if (!sb) throw new Error("Connection unavailable");
+          var sb = BFF.supabase && BFF.supabase.getClient && BFF.supabase.getClient();
+          if (!sb) throw new Error("Connection unavailable — check Supabase config");
 
-          const payload = {
+          var payload = {
             source: "web_form",
-            contact_name: orgName,
+            contact_name: fullName + (orgName ? " / " + orgName : ""),
             email: email.toLowerCase(),
             phone: phone || null,
             lines_of_interest: lineMap[division] || [],
             stage: "new",
             score: 0,
             notes:
+              (interest ? "Interest: " + interest + "\n" : "") +
               (division ? "Division: " + division + "\n" : "") +
-              (product ? "Product: " + product + "\n" : "") +
+              "Source page: contact\n" +
               (notes || ""),
           };
 
-          const { error } = await sb.from("leads").insert(payload);
-          if (error) throw error;
+          var res = await sb.from("leads").insert(payload);
+          if (res.error) throw res.error;
 
+          lastSubmit = Date.now();
           status.textContent = "Received — thank you. Our team will follow up.";
-          status.style.color = "var(--emerald)";
+          status.style.color = "var(--bff-green-dark)";
           e.target.reset();
-          BFF.ui.toast("Message sent");
+          if (BFF.ui && BFF.ui.toast) BFF.ui.toast("Message sent");
         } catch (err) {
           console.error(err);
           status.textContent =
-            "Could not send right now. Email us directly or try again. (" +
-            (err.message || "error") +
-            ")";
-          status.style.color = "var(--rose, #a33)";
-          // If public_leads policy not applied yet
+            "Could not send right now. (" + (err.message || "error") + ")";
+          status.style.color = "var(--bff-pink)";
           if (/policy|RLS|permission|row-level/i.test(err.message || "")) {
             status.textContent +=
               " Run supabase/public_leads.sql in Supabase if this is the first submission.";

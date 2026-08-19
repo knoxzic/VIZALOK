@@ -21,6 +21,7 @@
       receipts: [],
       grants: [],
       mileage_trips: [],
+      tasks: [],
     };
   }
 
@@ -365,6 +366,133 @@
       localStorage.removeItem(KEY());
       sessionStorage.removeItem("eiq_session");
     },
+
+    async listReceipts(orgId) {
+      const rows = await this.scoped(orgId, "receipts");
+      return rows
+        .slice()
+        .sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.created_at || "").localeCompare(a.created_at || ""));
+    },
+
+    async createReceipt(orgId, data, userId) {
+      const store = load();
+      const receipt = {
+        id: uuid(),
+        org_id: orgId,
+        vendor: data.vendor || "Unknown",
+        date: data.date || now().slice(0, 10),
+        total: Number(data.total) || 0,
+        category: data.category || "Uncategorized",
+        items: Array.isArray(data.items) ? data.items : [],
+        engine: data.engine || null,
+        created_by: userId,
+        created_at: now(),
+      };
+      store.receipts.push(receipt);
+      audit(store, {
+        org_id: orgId,
+        user_id: userId,
+        action: "create",
+        entity_type: "receipt",
+        entity_id: receipt.id,
+        before_value: null,
+        after_value: { vendor: receipt.vendor, total: receipt.total },
+      });
+      save(store);
+      return receipt;
+    },
+
+    async deleteReceipt(receiptId, orgId, userId) {
+      const store = load();
+      const receipt = store.receipts.find((r) => r.id === receiptId && r.org_id === orgId);
+      store.receipts = store.receipts.filter((r) => !(r.id === receiptId && r.org_id === orgId));
+      audit(store, {
+        org_id: orgId,
+        user_id: userId,
+        action: "delete",
+        entity_type: "receipt",
+        entity_id: receiptId,
+        before_value: receipt || null,
+        after_value: null,
+      });
+      save(store);
+      return true;
+    },
+
+    async listTasks(orgId) {
+      const rows = await this.scoped(orgId, "tasks");
+      return rows
+        .slice()
+        .sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.time || "").localeCompare(b.time || ""));
+    },
+
+    async createTask(orgId, data, userId) {
+      const store = load();
+      const task = {
+        id: uuid(),
+        org_id: orgId,
+        type: data.type === "booking" ? "booking" : "task",
+        title: data.title,
+        date: data.date || null,
+        time: data.time || null,
+        notes: data.notes || "",
+        done: false,
+        created_by: userId,
+        created_at: now(),
+      };
+      store.tasks.push(task);
+      audit(store, {
+        org_id: orgId,
+        user_id: userId,
+        action: "create",
+        entity_type: "task",
+        entity_id: task.id,
+        before_value: null,
+        after_value: { type: task.type, title: task.title },
+      });
+      save(store);
+      return task;
+    },
+
+    async updateTask(taskId, orgId, patch, userId) {
+      const store = load();
+      const task = store.tasks.find((t) => t.id === taskId && t.org_id === orgId);
+      if (!task) throw new Error("Task not found.");
+      const before = { ...task };
+      Object.assign(task, patch, { updated_at: now() });
+      audit(store, {
+        org_id: orgId,
+        user_id: userId,
+        action: "edit",
+        entity_type: "task",
+        entity_id: taskId,
+        before_value: before,
+        after_value: { ...task },
+      });
+      save(store);
+      return task;
+    },
+
+    async deleteTask(taskId, orgId, userId) {
+      const store = load();
+      const task = store.tasks.find((t) => t.id === taskId && t.org_id === orgId);
+      store.tasks = store.tasks.filter((t) => !(t.id === taskId && t.org_id === orgId));
+      audit(store, {
+        org_id: orgId,
+        user_id: userId,
+        action: "delete",
+        entity_type: "task",
+        entity_id: taskId,
+        before_value: task || null,
+        after_value: null,
+      });
+      save(store);
+      return true;
+    },
+
+    async invokeAi() {
+      throw new Error("AI capture requires cloud mode. Use the Local OCR engine instead.");
+    },
   };
 
   function active() {
@@ -409,5 +537,13 @@
     recentAudit: (...a) => active().recentAudit(...a),
     stats: (...a) => active().stats(...a),
     wipeAll: (...a) => active().wipeAll(...a),
+    listReceipts: (...a) => active().listReceipts(...a),
+    createReceipt: (...a) => active().createReceipt(...a),
+    deleteReceipt: (...a) => active().deleteReceipt(...a),
+    listTasks: (...a) => active().listTasks(...a),
+    createTask: (...a) => active().createTask(...a),
+    updateTask: (...a) => active().updateTask(...a),
+    deleteTask: (...a) => active().deleteTask(...a),
+    invokeAi: (...a) => active().invokeAi(...a),
   };
 })();

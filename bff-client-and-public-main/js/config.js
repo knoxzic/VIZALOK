@@ -10,6 +10,10 @@ BFF.config = {
     short: "BFF",
     tagline: "Moving You Forward.",
     motto: "Strategy. Solutions. Impact.",
+    email: "info@urlocalbff.com",
+    phone: "+18558884233",
+    phoneDisplay: "1-855-888-4233",
+    phoneVanity: "1-855-888-4BFF",
   },
 
   GIGI_ENDPOINT: null,
@@ -63,6 +67,16 @@ BFF.config = {
     anonKey:
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqeGl5dG5vb21ncG9ka3B2eGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MTM4MDIsImV4cCI6MjEwMTA4OTgwMn0.TGW9RWrru2cqMyr19QGA_biryvNuaW4CGNJOaF7ACHk",
     enabled: true,
+  },
+
+  /**
+   * Stripe — Checkout Sessions via Edge Function + Payment Link fallback.
+   * Merchant object used on every transaction (not a secret key).
+   * Secret key lives only in Supabase: STRIPE_SECRET_KEY
+   */
+  stripe: {
+    merchantId: "mk_1La4NoLavWJ4R5kOSWUYbaQ6",
+    createCheckoutFn: "create-checkout",
   },
 
   successPath: "success.html",

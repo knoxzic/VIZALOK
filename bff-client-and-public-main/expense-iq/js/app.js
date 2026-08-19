@@ -98,6 +98,33 @@
     if (!org) {
       return `<div class="alert alert--error">Organization not found. <a href="index.html">Sign in again</a>.</div>`;
     }
+    const [receipts, tasks] = await Promise.all([
+      EIQ.db.listReceipts(s.org_id),
+      EIQ.db.listTasks(s.org_id),
+    ]);
+    const nowDate = new Date();
+    const monthTotal = receipts
+      .filter((r) => {
+        if (!r.date) return false;
+        const d = new Date(r.date + "T00:00:00");
+        return d.getMonth() === nowDate.getMonth() && d.getFullYear() === nowDate.getFullYear();
+      })
+      .reduce((sum, r) => sum + (Number(r.total) || 0), 0);
+    const upcomingBookings = tasks.filter((t) => t.type === "booking" && !t.done).length;
+    const openTasks = tasks.filter((t) => t.type === "task" && !t.done).length;
+    const recent = [
+      ...receipts.map((r) => ({
+        when: r.date || "",
+        msg: `Receipt — ${r.vendor || "Unknown"} ($${(Number(r.total) || 0).toFixed(2)})`,
+      })),
+      ...tasks.map((t) => ({
+        when: t.date || "",
+        msg: `${t.type === "booking" ? "Booking" : "Task"} — ${t.title}`,
+      })),
+    ]
+      .sort((a, b) => (b.when || "").localeCompare(a.when || ""))
+      .slice(0, 8);
+
     return `
       <div class="page-head">
         <h1>Executive Dashboard</h1>
@@ -112,10 +139,37 @@
       </div>
 
       <div class="grid-kpi">
+        <div class="kpi"><div class="kpi__label">Spent this month</div><div class="kpi__value">$${monthTotal.toFixed(
+          2
+        )}</div><div class="kpi__hint">Live · from Capture</div></div>
+        <div class="kpi"><div class="kpi__label">Receipts logged</div><div class="kpi__value">${
+          receipts.length
+        }</div><div class="kpi__hint">Live count</div></div>
+        <div class="kpi"><div class="kpi__label">Upcoming bookings</div><div class="kpi__value">${upcomingBookings}</div><div class="kpi__hint">Live count</div></div>
+        <div class="kpi"><div class="kpi__label">Open tasks</div><div class="kpi__value">${openTasks}</div><div class="kpi__hint">Live count</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent activity</h2>
+        <p class="field-hint" style="margin:0 0 10px">Latest captures and ledger entries.</p>
+        ${
+          recent.length
+            ? recent
+                .map(
+                  (r) => `<div class="receipt-row"><span>${escapeHtml(r.msg)}</span><span class="field-hint" style="margin:0">${escapeHtml(
+                    r.when || "—"
+                  )}</span></div>`
+                )
+                .join("")
+            : `<p class="field-hint" style="margin:0">Nothing yet — try Capture or Bookings &amp; Tasks.</p>`
+        }
+      </div>
+
+      <div class="nav-section-label" style="padding-left:0">Ledger rollups (Phase 3+)</div>
+      <div class="grid-kpi">
         <div class="kpi"><div class="kpi__label">Income</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
         <div class="kpi"><div class="kpi__label">Expenses</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
         <div class="kpi"><div class="kpi__label">Net cash flow</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
-        <div class="kpi"><div class="kpi__label">Missing receipts</div><div class="kpi__value">${stats.receipts}</div><div class="kpi__hint">Live count</div></div>
         <div class="kpi"><div class="kpi__label">Needs review</div><div class="kpi__value">0</div><div class="kpi__hint">Coming soon</div></div>
         <div class="kpi"><div class="kpi__label">Mileage trips</div><div class="kpi__value">${stats.mileage}</div><div class="kpi__hint">Live count</div></div>
         <div class="kpi"><div class="kpi__label">Grant funds left</div><div class="kpi__value">—</div><div class="kpi__hint">Coming soon</div></div>
@@ -166,6 +220,176 @@
       <p class="footer-meta">Expense IQ ${escapeHtml(EIQ.config.version)} · Storage: ${escapeHtml(
       EIQ.config.STORAGE_MODE
     )} · ${escapeHtml(EIQ.config.brand)}</p>
+    `;
+  }
+
+  let captureEngine = "local";
+  let captureImage = null;
+  let captureFlash = null;
+
+  async function viewCapture(s) {
+    const canWrite = EIQ.permissions.can(s, "receipts", "own");
+    const flash = captureFlash;
+    captureFlash = null;
+    return `
+      <div class="page-head">
+        <h1>Capture</h1>
+        <p>Photograph or upload a receipt. Local OCR needs no key; Grok gives richer extraction.</p>
+      </div>
+      ${flash ? `<div class="alert alert--${flash.type}">${escapeHtml(flash.msg)}</div>` : ""}
+      ${
+        canWrite
+          ? `
+      <div class="seg-toggle" id="engine-toggle">
+        <button type="button" id="eng-local" class="${captureEngine === "local" ? "is-active" : ""}">Local OCR (offline, no key)</button>
+        <button type="button" id="eng-grok" class="${captureEngine === "grok" ? "is-active" : ""}">Grok (AI vision)</button>
+      </div>
+
+      <div class="scan-zone" id="scan-zone">
+        <img id="capture-preview" class="scan-zone__preview" style="display:none">
+        <p id="scan-hint" class="field-hint">Local OCR reads raw text on-device — no account needed, works offline after the page loads. Grok reads vendor, date, total &amp; line items automatically via the eiq-ai server function.</p>
+        <input type="file" id="capture-file" accept="image/*" capture="environment" class="hidden">
+        <button type="button" class="btn btn--primary" id="scan-btn">📷 Scan Receipt</button>
+        <div id="extract-row" class="stack-row hidden" style="margin-top:10px">
+          <button type="button" class="btn btn--gold" id="extract-btn">Extract Details</button>
+          <button type="button" class="btn btn--ghost" id="retake-btn">Retake</button>
+        </div>
+      </div>
+
+      <div id="draft-form" class="panel hidden">
+        <div class="field"><label>Vendor</label><input type="text" id="d-vendor"></div>
+        <div class="stack-row">
+          <div class="field" style="flex:1;min-width:140px"><label>Date</label><input type="date" id="d-date"></div>
+          <div class="field" style="flex:1;min-width:140px"><label>Total</label><input type="text" id="d-total" inputmode="decimal"></div>
+        </div>
+        <div class="field"><label>Category</label><input type="text" id="d-category" placeholder="e.g. Office Supplies, Travel, Meals"></div>
+        <div class="field"><label>Items (one per line — name — amount)</label><textarea id="d-items" style="min-height:70px"></textarea></div>
+        <div id="draft-status" class="hidden"></div>
+        <button type="button" class="btn btn--primary" id="save-receipt-btn">Save Receipt</button>
+      </div>
+      `
+          : `<div class="alert alert--info">Your role can view receipts but not capture new ones.</div>`
+      }
+    `;
+  }
+
+  async function viewTransactions(s) {
+    const receipts = await EIQ.db.listReceipts(s.org_id);
+    const canWrite = EIQ.permissions.can(s, "receipts", "own");
+    return `
+      <div class="page-head">
+        <h1>Transactions</h1>
+        <p>Everything captured, in one ledger. Free-text category for now — Chart of Accounts posting is Phase 3.</p>
+      </div>
+      <div class="panel" style="overflow-x:auto">
+        ${
+          receipts.length
+            ? `<table class="table">
+          <thead><tr><th>Vendor</th><th>Date</th><th>Category</th><th style="text-align:right">Amount</th><th></th></tr></thead>
+          <tbody>
+            ${receipts
+              .map(
+                (r) => `<tr>
+              <td>${escapeHtml(r.vendor)}</td>
+              <td>${escapeHtml(r.date || "—")}</td>
+              <td>${escapeHtml(r.category || "Uncategorized")}</td>
+              <td style="text-align:right;font-weight:700">$${(Number(r.total) || 0).toFixed(2)}</td>
+              <td>${
+                canWrite
+                  ? `<button type="button" class="del-link" data-del-receipt="${r.id}">Delete</button>`
+                  : ""
+              }</td>
+            </tr>`
+              )
+              .join("")}
+          </tbody>
+        </table>`
+            : `<p class="field-hint" style="margin:0">No transactions yet — capture a receipt first.</p>`
+        }
+      </div>
+    `;
+  }
+
+  let bookingsTaskType = "task";
+
+  async function viewBookings(s) {
+    const tasks = await EIQ.db.listTasks(s.org_id);
+    const canWrite = EIQ.permissions.can(s, "tasks", "own");
+    const groups = {};
+    tasks.forEach((t) => {
+      const key = t.date || "No date";
+      (groups[key] = groups[key] || []).push(t);
+    });
+    const keys = Object.keys(groups).sort(
+      (a, b) => (a === "No date") - (b === "No date") || a.localeCompare(b)
+    );
+    return `
+      <div class="page-head">
+        <h1>Bookings &amp; Tasks</h1>
+        <p>Not part of the ledger pipeline — a home for to-dos and appointments alongside the books.</p>
+      </div>
+      ${
+        canWrite
+          ? `
+      <div class="panel">
+        <div class="seg-toggle" id="type-toggle">
+          <button type="button" id="type-task" class="${bookingsTaskType === "task" ? "is-active" : ""}">Task</button>
+          <button type="button" id="type-booking" class="${bookingsTaskType === "booking" ? "is-active" : ""}">Booking</button>
+        </div>
+        <div class="field"><label>Title</label><input type="text" id="t-title" placeholder="e.g. Call the dentist"></div>
+        <div class="stack-row">
+          <div class="field" style="flex:1;min-width:140px"><label>Date</label><input type="date" id="t-date"></div>
+          <div class="field" style="flex:1;min-width:140px"><label>Time</label><input type="time" id="t-time"></div>
+        </div>
+        <div class="field"><label>Notes</label><textarea id="t-notes" style="min-height:50px"></textarea></div>
+        <div id="task-status" class="hidden"></div>
+        <button type="button" class="btn btn--primary" id="save-task-btn">Add</button>
+        <button type="button" class="btn btn--ghost" id="quick-add-btn" style="margin-left:8px">Describe it in one line (Grok) →</button>
+      </div>
+      `
+          : ""
+      }
+      <div id="task-lists">
+        ${
+          keys.length
+            ? keys
+                .map(
+                  (date) => `
+          <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin:16px 0 8px">${
+            date === "No date" ? "No date" : escapeHtml(date)
+          }</h3>
+          ${groups[date]
+            .map(
+              (t) => `
+            <div class="task-item ${t.type === "booking" ? "is-booking" : ""} ${t.done ? "is-done" : ""}">
+              <input type="checkbox" ${t.done ? "checked" : ""} ${
+                canWrite ? `data-toggle-task="${t.id}"` : "disabled"
+              } style="margin-top:3px">
+              <div class="content">
+                <div class="t-title">${escapeHtml(t.title)}</div>
+                <div class="t-meta">${t.type === "booking" ? "Booking" : "Task"}${t.time ? " · " + escapeHtml(String(t.time).slice(0, 5)) : ""}</div>
+                ${t.notes ? `<div class="t-meta">${escapeHtml(t.notes)}</div>` : ""}
+              </div>
+              ${canWrite ? `<button type="button" class="del-link" data-del-task="${t.id}">✕</button>` : ""}
+            </div>`
+            )
+            .join("")}
+        `
+                )
+                .join("")
+            : `<p class="field-hint">Nothing on the ledger yet.</p>`
+        }
+      </div>
+
+      <div class="quick-add-backdrop hidden" id="quick-add-backdrop"></div>
+      <div class="quick-add-drawer" id="quick-add-drawer">
+        <button type="button" class="icon-btn" id="quick-add-close" style="position:absolute;top:14px;right:14px">✕</button>
+        <h2>Quick add</h2>
+        <p class="field-hint">Type it plainly — Grok fills in the title, date and time.</p>
+        <div class="field"><textarea id="quick-add-text" placeholder="Book a dentist appointment next Tuesday afternoon" style="min-height:60px"></textarea></div>
+        <div id="quick-add-status" class="hidden"></div>
+        <button type="button" class="btn btn--gold" id="quick-add-parse-btn">Parse with Grok</button>
+      </div>
     `;
   }
 
@@ -355,18 +579,9 @@
 
     const map = {
       dashboard: () => viewDashboard(s),
-      capture: () =>
-        Promise.resolve(
-          placeholder("Capture", 2, "Coming soon — camera, upload, bulk, and email-in with OCR.")
-        ),
-      transactions: () =>
-        Promise.resolve(
-          placeholder(
-            "Transactions",
-            3,
-            "Coming soon — register, imports, and posting into the central Ledger."
-          )
-        ),
+      capture: () => viewCapture(s),
+      transactions: () => viewTransactions(s),
+      bookings: () => viewBookings(s),
       coa: () =>
         Promise.resolve(
           placeholder(
@@ -431,6 +646,278 @@
   }
 
   function wireViewHandlers(r, s) {
+    if (r === "capture") {
+      const engineToggle = document.getElementById("engine-toggle");
+      if (engineToggle) {
+        engineToggle.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            captureEngine = btn.id === "eng-grok" ? "grok" : "local";
+            engineToggle
+              .querySelectorAll("button")
+              .forEach((b) => b.classList.toggle("is-active", b === btn));
+          });
+        });
+      }
+
+      const fileInput = document.getElementById("capture-file");
+      const scanBtn = document.getElementById("scan-btn");
+      const preview = document.getElementById("capture-preview");
+      const scanHint = document.getElementById("scan-hint");
+      const extractRow = document.getElementById("extract-row");
+      const draftForm = document.getElementById("draft-form");
+
+      if (scanBtn && fileInput) scanBtn.addEventListener("click", () => fileInput.click());
+
+      function resetScanUi() {
+        captureImage = null;
+        if (preview) {
+          preview.style.display = "none";
+          preview.removeAttribute("src");
+        }
+        if (scanHint) scanHint.style.display = "block";
+        if (scanBtn) scanBtn.style.display = "inline-flex";
+        if (extractRow) extractRow.classList.add("hidden");
+        if (draftForm) draftForm.classList.add("hidden");
+        if (fileInput) fileInput.value = "";
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            captureImage = reader.result;
+            if (preview) {
+              preview.src = captureImage;
+              preview.style.display = "block";
+            }
+            if (scanHint) scanHint.style.display = "none";
+            if (scanBtn) scanBtn.style.display = "none";
+            if (extractRow) extractRow.classList.remove("hidden");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const retakeBtn = document.getElementById("retake-btn");
+      if (retakeBtn) retakeBtn.addEventListener("click", resetScanUi);
+
+      const extractBtn = document.getElementById("extract-btn");
+      if (extractBtn) {
+        extractBtn.addEventListener("click", async () => {
+          if (!captureImage) return;
+          const original = extractBtn.textContent;
+          extractBtn.disabled = true;
+          extractBtn.innerHTML = '<span class="spinner"></span>Reading receipt…';
+          try {
+            const parsed =
+              captureEngine === "local"
+                ? await EIQ.ocr.localExtract(captureImage)
+                : await EIQ.db.invokeAi("extract_receipt", { orgId: s.org_id, image: captureImage });
+            document.getElementById("d-vendor").value = parsed.vendor || "";
+            document.getElementById("d-date").value =
+              parsed.date || new Date().toISOString().slice(0, 10);
+            document.getElementById("d-total").value = parsed.total ?? "";
+            document.getElementById("d-category").value = parsed.category || "";
+            document.getElementById("d-items").value = (parsed.items || [])
+              .map((i) => `${i.name} — ${i.amount}`)
+              .join("\n");
+            if (draftForm) {
+              draftForm.classList.remove("hidden");
+              draftForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          } catch (err) {
+            alert(err.message || "Extraction failed.");
+          } finally {
+            extractBtn.disabled = false;
+            extractBtn.textContent = original;
+          }
+        });
+      }
+
+      const saveBtn = document.getElementById("save-receipt-btn");
+      if (saveBtn) {
+        saveBtn.addEventListener("click", async () => {
+          const vendor = document.getElementById("d-vendor").value.trim() || "Unknown";
+          const date =
+            document.getElementById("d-date").value || new Date().toISOString().slice(0, 10);
+          const total = parseFloat(document.getElementById("d-total").value) || 0;
+          const category = document.getElementById("d-category").value.trim() || "Uncategorized";
+          const items = document
+            .getElementById("d-items")
+            .value.split("\n")
+            .filter(Boolean)
+            .map((line) => {
+              const [name, amt] = line.split("—").map((x) => x && x.trim());
+              return { name: name || line, amount: parseFloat(amt) || 0 };
+            });
+          try {
+            await EIQ.db.createReceipt(
+              s.org_id,
+              { vendor, date, total, category, items, engine: captureEngine },
+              s.user_id
+            );
+            captureFlash = { type: "ok", msg: `Saved — ${vendor} ($${total.toFixed(2)})` };
+            captureImage = null;
+            await render();
+          } catch (err) {
+            const statusEl = document.getElementById("draft-status");
+            if (statusEl) {
+              statusEl.className = "alert alert--error";
+              statusEl.textContent = err.message || "Save failed.";
+              statusEl.classList.remove("hidden");
+            } else {
+              alert(err.message || "Save failed.");
+            }
+          }
+        });
+      }
+    }
+
+    if (r === "transactions") {
+      document.querySelectorAll("[data-del-receipt]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Delete this receipt?")) return;
+          try {
+            await EIQ.db.deleteReceipt(btn.getAttribute("data-del-receipt"), s.org_id, s.user_id);
+            await render();
+          } catch (err) {
+            alert(err.message || "Delete failed.");
+          }
+        });
+      });
+    }
+
+    if (r === "bookings") {
+      const typeToggle = document.getElementById("type-toggle");
+      if (typeToggle) {
+        typeToggle.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            bookingsTaskType = btn.id === "type-booking" ? "booking" : "task";
+            typeToggle
+              .querySelectorAll("button")
+              .forEach((b) => b.classList.toggle("is-active", b === btn));
+          });
+        });
+      }
+
+      const saveTaskBtn = document.getElementById("save-task-btn");
+      if (saveTaskBtn) {
+        saveTaskBtn.addEventListener("click", async () => {
+          const title = document.getElementById("t-title").value.trim();
+          if (!title) {
+            alert("Give it a title.");
+            return;
+          }
+          const date = document.getElementById("t-date").value;
+          const time = document.getElementById("t-time").value;
+          const notes = document.getElementById("t-notes").value.trim();
+          try {
+            await EIQ.db.createTask(
+              s.org_id,
+              { type: bookingsTaskType, title, date, time, notes },
+              s.user_id
+            );
+            await render();
+          } catch (err) {
+            const statusEl = document.getElementById("task-status");
+            if (statusEl) {
+              statusEl.className = "alert alert--error";
+              statusEl.textContent = err.message || "Save failed.";
+              statusEl.classList.remove("hidden");
+            } else {
+              alert(err.message || "Save failed.");
+            }
+          }
+        });
+      }
+
+      document.querySelectorAll("[data-toggle-task]").forEach((cb) => {
+        cb.addEventListener("change", async () => {
+          try {
+            await EIQ.db.updateTask(
+              cb.getAttribute("data-toggle-task"),
+              s.org_id,
+              { done: cb.checked },
+              s.user_id
+            );
+            await render();
+          } catch (err) {
+            alert(err.message || "Update failed.");
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-del-task]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          try {
+            await EIQ.db.deleteTask(btn.getAttribute("data-del-task"), s.org_id, s.user_id);
+            await render();
+          } catch (err) {
+            alert(err.message || "Delete failed.");
+          }
+        });
+      });
+
+      const quickBackdrop = document.getElementById("quick-add-backdrop");
+      const quickDrawer = document.getElementById("quick-add-drawer");
+      const openQuick = () => {
+        if (quickBackdrop) quickBackdrop.classList.remove("hidden");
+        if (quickDrawer) quickDrawer.classList.add("is-open");
+      };
+      const closeQuick = () => {
+        if (quickBackdrop) quickBackdrop.classList.add("hidden");
+        if (quickDrawer) quickDrawer.classList.remove("is-open");
+      };
+      const quickBtn = document.getElementById("quick-add-btn");
+      if (quickBtn) quickBtn.addEventListener("click", openQuick);
+      const quickClose = document.getElementById("quick-add-close");
+      if (quickClose) quickClose.addEventListener("click", closeQuick);
+      if (quickBackdrop) quickBackdrop.addEventListener("click", closeQuick);
+
+      const parseBtn = document.getElementById("quick-add-parse-btn");
+      if (parseBtn) {
+        parseBtn.addEventListener("click", async () => {
+          const textEl = document.getElementById("quick-add-text");
+          const text = textEl.value.trim();
+          if (!text) return;
+          const original = parseBtn.textContent;
+          parseBtn.disabled = true;
+          parseBtn.innerHTML = '<span class="spinner"></span>Parsing…';
+          try {
+            const parsed = await EIQ.db.invokeAi("quick_add_task", { orgId: s.org_id, text });
+            await EIQ.db.createTask(
+              s.org_id,
+              {
+                type: parsed.type === "booking" ? "booking" : "task",
+                title: parsed.title || text,
+                date: parsed.date || "",
+                time: parsed.time || "",
+                notes: parsed.notes || "",
+              },
+              s.user_id
+            );
+            textEl.value = "";
+            closeQuick();
+            await render();
+          } catch (err) {
+            const statusEl = document.getElementById("quick-add-status");
+            if (statusEl) {
+              statusEl.className = "alert alert--error";
+              statusEl.textContent = err.message || "Parse failed.";
+              statusEl.classList.remove("hidden");
+            } else {
+              alert(err.message || "Parse failed.");
+            }
+          } finally {
+            parseBtn.disabled = false;
+            parseBtn.textContent = original;
+          }
+        });
+      }
+    }
+
     if (r === "org") {
       const form = document.getElementById("form-org-edit");
       if (form) {

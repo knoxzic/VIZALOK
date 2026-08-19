@@ -15,6 +15,9 @@
 import Stripe from "https://esm.sh/stripe@14?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const MERCHANT_ID =
+  Deno.env.get("STRIPE_MERCHANT_ID") || "mk_1La4NoLavWJ4R5kOSWUYbaQ6";
+
 const PAYMENT_LINK_MAP: Record<string, string> = {
   plink_1TzN0YLavWJ4R5kO8wjkMGcg: "financial_cleanup",
   plink_1TzMyyLavWJ4R5kOUio63mXr: "cfo_advisory",
@@ -108,6 +111,42 @@ Deno.serve(async (req) => {
     return row?.profile_id || null;
   }
 
+  async function recordTx(row: {
+    profileId?: string | null;
+    email?: string | null;
+    productKey?: string | null;
+    kind?: string;
+    status?: string;
+    amount?: number | null;
+    currency?: string | null;
+    sessionId?: string | null;
+    paymentIntentId?: string | null;
+    chargeId?: string | null;
+    invoiceId?: string | null;
+    customerId?: string | null;
+    paymentLink?: string | null;
+    extra?: Record<string, unknown>;
+  }) {
+    const { error } = await sb.rpc("upsert_stripe_transaction", {
+      p_merchant_id: MERCHANT_ID,
+      p_profile_id: row.profileId || null,
+      p_email: row.email || null,
+      p_product_key: row.productKey || null,
+      p_kind: row.kind || "checkout",
+      p_status: row.status || "paid",
+      p_amount_total: row.amount ?? null,
+      p_currency: row.currency || "usd",
+      p_stripe_session_id: row.sessionId || null,
+      p_stripe_payment_intent_id: row.paymentIntentId || null,
+      p_stripe_charge_id: row.chargeId || null,
+      p_stripe_invoice_id: row.invoiceId || null,
+      p_stripe_customer_id: row.customerId || null,
+      p_stripe_payment_link: row.paymentLink || null,
+      p_metadata: { merchant_id: MERCHANT_ID, ...(row.extra || {}) },
+    });
+    if (error) console.error("stripe_transactions", error);
+  }
+
   async function grant(
     profileId: string,
     productKey: string,
@@ -155,6 +194,21 @@ Deno.serve(async (req) => {
           subscriptionId: session.subscription,
         });
       }
+      await recordTx({
+        profileId,
+        email,
+        productKey,
+        kind: session.mode === "subscription" ? "subscription" : "checkout",
+        status: "paid",
+        amount: session.amount_total,
+        currency: session.currency,
+        sessionId: session.id,
+        paymentIntentId:
+          typeof session.payment_intent === "string" ? session.payment_intent : null,
+        customerId: typeof session.customer === "string" ? session.customer : null,
+        paymentLink: typeof session.payment_link === "string" ? session.payment_link : null,
+        extra: { event: event.type },
+      });
       if (productKey) {
         await sb.from("purchases").upsert(
           {
@@ -197,6 +251,43 @@ Deno.serve(async (req) => {
             : null,
         });
       }
+    }
+
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const meta = (pi.metadata || {}) as Record<string, string>;
+      const profileId = await profileFor(meta.email || null, meta.profile_id || null);
+      await recordTx({
+        profileId,
+        email: meta.email || null,
+        productKey: meta.product_key || resolveProductKey(pi as unknown as Record<string, unknown>),
+        kind: "payment_intent",
+        status: "paid",
+        amount: pi.amount_received ?? pi.amount,
+        currency: pi.currency,
+        paymentIntentId: pi.id,
+        customerId: typeof pi.customer === "string" ? pi.customer : null,
+        extra: { event: event.type },
+      });
+    }
+
+    if (event.type === "invoice.paid") {
+      const inv = event.data.object as Stripe.Invoice;
+      const meta = (inv.metadata || {}) as Record<string, string>;
+      const profileId = await profileFor(inv.customer_email || meta.email || null, meta.profile_id || null);
+      await recordTx({
+        profileId,
+        email: inv.customer_email || meta.email || null,
+        productKey: meta.product_key || resolveProductKey(inv as unknown as Record<string, unknown>),
+        kind: "invoice",
+        status: "paid",
+        amount: inv.amount_paid,
+        currency: inv.currency,
+        invoiceId: inv.id,
+        paymentIntentId: typeof inv.payment_intent === "string" ? inv.payment_intent : null,
+        customerId: typeof inv.customer === "string" ? inv.customer : null,
+        extra: { event: event.type },
+      });
     }
 
     if (event.type === "customer.subscription.deleted") {

@@ -1,3 +1,45 @@
+# Stripe API → transactions + entitlements
+
+Merchant / account object on every transaction:
+`mk_1La4NoLavWJ4R5kOSWUYbaQ6` (`STRIPE_MERCHANT_ID`)
+
+This is **not** a Stripe secret key. The secret key (`sk_live_…` / `sk_test_…`) stays in Supabase secrets only.
+
+## Checkout
+1. Browser calls Edge Function `create-checkout` (preferred).
+2. Function creates a Stripe Checkout Session tagged with `merchant_id`.
+3. A **pending** row is written to `public.stripe_transactions`.
+4. After pay, webhook marks the row **paid** and grants `subscriptions`.
+5. If the function is down, the site falls back to existing Payment Links.
+
+## SQL
+1. `supabase/bff_multi_division_schema.sql`
+2. `supabase/stripe_entitlements.sql`
+3. `supabase/stripe_transactions.sql`
+
+## Deploy
+```bash
+supabase secrets set STRIPE_SECRET_KEY=sk_... \
+  STRIPE_WEBHOOK_SECRET=whsec_... \
+  STRIPE_MERCHANT_ID=mk_1La4NoLavWJ4R5kOSWUYbaQ6
+
+supabase functions deploy create-checkout --no-verify-jwt
+supabase functions deploy stripe-webhook --no-verify-jwt
+```
+
+Webhook URL:
+`https://<project-ref>.supabase.co/functions/v1/stripe-webhook`
+
+Events:
+- `checkout.session.completed`
+- `payment_intent.succeeded`
+- `invoice.paid`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+
+---
+
 # Stripe webhook → Supabase subscriptions
 
 ## Goal
